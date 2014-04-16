@@ -1,4 +1,4 @@
-# Lab Kit
+# Lab Kit JS
 
 Lab Kit is a simple JavaScript library that helps build web pages with live CSS and HTML examples.
 The main functionality is provided by a set of tags that can be added to any HTML page.
