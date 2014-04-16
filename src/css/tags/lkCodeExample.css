@@ -1,0 +1,56 @@
+/*
+  ~ lkCodeExample.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+
+/* ---------------------------------
+ * Code block (with gutter and line numbers)
+ * --------------------------------- */
+
+/*
+  Format example code blocks (CSS, JS, HTML, etc).
+    - border color: #ccc
+    - zebra stripe color: #efefef
+    - gutter color: #efefef
+    - gutter-divider color: #0c0
+*/
+code.lk-code-example {
+  display: block;
+  white-space: pre;
+  color: initial;
+  margin: 8px 6px;
+  padding: 0;
+  border-left: thin solid #ccc;
+  width: 93%;
+  overflow: auto;
+  font-size: 11px;
+
+  /* hack to shade gutter, without also shading the code area. */
+  background-image: -webkit-gradient(linear, 0% 0%, 40% 0%, from(#efefef), to(#fff) );
+  background: linear-gradient(to right, #efefef, #fff 40%);
+}
+
+code.lk-code-example ol {
+  margin: 0 0 0 36px;
+  padding: 0;
+  list-style-type: decimal-leading-zero;
+  border-left: 2px solid #0c0;
+  border-top: thin solid #ccc;
+  border-bottom: thin solid #ccc;
+}
+
+code.lk-code-example ol li:nth-child(odd) {
+  background-color: #fff;
+}
+
+code.lk-code-example ol li:nth-child(even) {
+  background-color: #efefef;
+}
+
+.lk-code-example-comment {
+  margin: 6px 0 10px 6px;
+  color: #777;
+}

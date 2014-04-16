@@ -1,0 +1,194 @@
+/*
+  ~ baseKit.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ CSS common to all ThruZero Labs
+  ~
+*/
+
+/* ---------------------------------
+ * Anchors
+ * --------------------------------- */
+
+a {
+  text-decoration: none;
+  color: #69c;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---------------------------------
+ * Lists
+ * --------------------------------- */
+
+ul, ol {
+  margin-top:0;
+}
+
+/* ---------------------------------
+ * Header
+ * --------------------------------- */
+
+/* Create an empty shell for the header content */
+header {
+  background: linear-gradient(45deg, #777, #fcfcfc);
+  color: #fff;
+  padding: 8px;
+  white-space: nowrap;
+}
+
+/* Add a logo, align the header text */
+header h1 {
+  margin: 0 0;
+
+  /* add the logo */
+  background: url("../img/logo/tz-icon-24.png") no-repeat;
+  width: 24px;
+  height: 24px;
+
+  /* vertically align the header text with the logo */
+  line-height: 23px;
+}
+
+/* Move the header text off of the logo */
+header h1:before {
+  content: "\00a0"; /* requires one space for margin to work */
+  margin-right: 22px;
+}
+
+header h1 a.labHome {
+  position: absolute;
+  top: 8px;
+  display: block;
+  height: 21px;
+  width: 21px;
+}
+
+/* ---------------------------------
+ * Headings (h2-h4)
+ * --------------------------------- */
+
+h2 {
+  margin-top: 20px;
+  border-bottom: 1px solid #999;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  color: #669;
+}
+
+h3 {
+  margin: 18px 18px 0 0;
+  border-top: 1px dashed #bbb;
+  border-bottom: 1px dashed #bbb;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  color: #669;
+  font-style: italic;
+}
+
+h4 {
+  margin: 12px 6px 0 0;
+  color: #888;
+}
+
+/* ---------------------------------
+ * Main content
+ * --------------------------------- */
+
+main {
+  margin: 0 16px;
+  display: block; /* for IE */
+}
+
+/* ---------------------------------
+ * Footer
+ * --------------------------------- */
+
+/* Create an empty shell for the footer content */
+footer {
+  margin-top: 48px;
+  padding: 6px;
+  color: #fff;
+  background: linear-gradient(45deg, #fcfcfc, #777);
+  text-align: right;
+}
+
+/* Add the standard header content (same for every page) */
+footer:after {
+  content: "Copyright \00a9  2014 George Norman"
+}
+
+/* ---------------------------------
+ * Note
+ * --------------------------------- */
+
+.note {
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* ---------------------------------
+ * Image Box
+ * --------------------------------- */
+
+.image-frame {
+  margin-top: 16px;
+  border: 2px solid #ccc;
+  padding: 8px;
+  box-shadow: 3px 3px 4px #000;
+  max-width: 96%;
+}
+
+/* ---------------------------------
+ * Notes
+ * --------------------------------- */
+
+.special-note {
+  color: #f83;;
+}
+
+/* ---------------------------------
+ * Background Colors
+ * --------------------------------- */
+
+/* http://stackoverflow.com/questions/11578867/is-there-a-list-of-standard-tile-colors-for-metro-style-windows-8-apps */
+
+.magenta-bg {
+  background: #ff0097;
+}
+
+.teal-bg {
+  background: #00aba9;
+}
+
+.lime-bg {
+  background: #8cbf26;
+}
+
+.brown-bg {
+  background: #a05000;
+}
+
+.pink-bg {
+  background: #e671b8;
+}
+
+.orange-bg {
+  background: #f09609;
+}
+
+.blue-bg {
+  background: #1ba1e2;
+}
+
+.red-bg {
+  background: #e51400;
+}
+
+.green-bg {
+  background: #339933;
+}

@@ -1,0 +1,67 @@
+/*
+  ~ lkTableOfContents.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+/* TOC heading */
+lkTableOfContents h2 {
+  border: initial;
+  padding: 6px;
+  background: #eee;
+  margin-bottom: 10px;
+}
+
+/* TOC list */
+lkTableOfContents ul.toc {
+  list-style-type: none;
+  padding-left: 12px;
+  margin: 0;
+}
+
+/* TOC items */
+lkTableOfContents .toc li {
+  padding-left: 6px;
+}
+
+/* TOC bullet */
+lkTableOfContents ul.toc li:before {
+  content: "\2666";
+  margin-right: 6px;
+  color: #ccc;
+}
+
+lkTableOfContents ul.toc li.fail:before {
+  color: #f83;
+}
+
+lkTableOfContents ul.toc li.pass:before {
+  color: #0c0;
+}
+
+/* Sub item bullet */
+lkTableOfContents ul.toc > li > ul {
+  list-style-type: none;
+  padding-left: 6px;
+  margin-left: 6px;
+}
+
+/* Sub item bullet */
+lkTableOfContents ul.toc > li > ul > li {
+  padding: 0;
+}
+
+/* Sub item bullet */
+lkTableOfContents ul.toc > li > ul > li:before {
+  content: "\2022";
+  margin: 6px;
+}
+
+lkTableOfContents ul.toc > li > ul > li.fail:before {
+  color: #f83;
+}
+
+lkTableOfContents ul.toc > li > ul > li.pass:before {
+  color: #0d0;
+}

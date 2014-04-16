@@ -1,0 +1,42 @@
+/*
+  ~ lkDisplayStyles.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+
+/* Matrix */
+
+div.lk-display-styles-matrix {
+  margin-bottom: 28px;
+  width: 93%;
+  overflow: auto;
+}
+
+div.lk-display-styles-matrix > table {
+  margin: 8px 0 0 6px;
+  border-collapse:collapse;
+  border: 1px solid #ccc;
+}
+
+div.lk-display-styles-matrix > table tr > th {
+  padding: 4px;
+  color: #555;
+  background-color: #ececec;
+  border-left: 1px solid #ccc;
+}
+
+div.lk-display-styles-matrix > table tr > td {
+  padding: 4px;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+div.lk-display-styles-matrix > table tr > td:first-child {
+  border-left: none;
+}
+
+div.lk-display-styles-matrix > table tr > td.center {
+  text-align: center;
+}

@@ -1,0 +1,66 @@
+/*
+  ~ tzCommons.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+html {
+  -webkit-text-size-adjust: none; /* Prevent font scaling in landscape */
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: #555;
+  background-color: #fff;
+  margin: 0;
+  height: 100%;
+  padding: 0 1px 2px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* http://css-tricks.com/snippets/css/clear-fix/ */
+.group:after {
+  content: "";
+  display: block; /* use block instead of table, to avoid extra space after group */
+  clear: both;
+}
+
+
+/* Code Highlighter */
+
+/* Generic */
+
+.tz-highlight-comment {
+  color: #008200;
+}
+
+/* *ML */
+
+.tz-highlight-tag-name {
+  color: #3f7f7f;
+}
+
+.tz-highlight-attribute-name {
+  color: #990099;
+}
+
+.tz-highlight-attribute-value {
+  color: #2a00ff;
+}
+
+/* CSS */
+
+.tz-highlight-css-selector {
+  color: #354B5E;
+  font-weight: bold;
+}
+
+.tz-highlight-css-property {
+  color: #00c;
+}

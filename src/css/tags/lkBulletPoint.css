@@ -1,0 +1,77 @@
+/*
+  ~ lkTableOfContents.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+/* ---------------------------------
+ * Layout
+ * --------------------------------- */
+
+lkBulletPoint {
+  display: block;
+  margin-top:12px;
+}
+
+lkBulletPoint > div > div:nth-child(1) {
+  float: left;
+  margin-top: 0;
+}
+
+lkBulletPoint > div > div:nth-child(2) > p:first-child {
+  margin-top: 0;
+}
+
+/* ---------------------------------
+ * Icons
+ * --------------------------------- */
+
+/* PASS */
+.lk-bullet-point-pass {
+  color: green;
+  border: 1px solid green;
+  padding: 1px 3px 1px 3px;
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+.lk-bullet-point-pass::after {
+  content: "\2714";
+  font-style: normal;
+}
+
+/* FAIL */
+.lk-bullet-point-fail {
+  color: #f83;
+}
+
+.lk-bullet-point-fail::after {
+  content: "\2620";
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+/* STAR */
+.lk-bullet-point-star {
+  color: gold;
+}
+
+.lk-bullet-point-star::after {
+  content: "\2605";
+  font-style: normal;
+  font-size: 18px;
+}
+
+/* INFO */
+.lk-bullet-point-info {
+  color: #06f;
+}
+
+.lk-bullet-point-info::after {
+  content: "\24D8";
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+}
