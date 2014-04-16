@@ -17,8 +17,11 @@ The &lt;lkCssHtmlExample&gt; tag renders the CSS style, CSS style code-example, 
 The tag attributes are read from the lkCssHtmlExample element, as shown in the examples below:
 
 ```html
-<lkCssHtmlExample cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml"></lkCssHtmlExample>
-<lkCssHtmlExample htmlTemplateId="tmplExampleRelInStaticNoMarginHtml"></lkCssHtmlExample>
+<lkCssHtmlExample cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml">
+</lkCssHtmlExample>
+
+<lkCssHtmlExample htmlTemplateId="tmplExampleRelInStaticNoMarginHtml">
+</lkCssHtmlExample>
 ```
 
 Tag attributes:
@@ -27,7 +30,7 @@ Tag attributes:
 * htmlTemplateId - ID of the element containing the HTML code to insert.
 * templateId - optional; use this instead of cssTemplateId and htmlTemplateId to simplify the code. "Css" and "Html" will be appended to the given templateId, to form the IDs to the CSS and HTML templates.
 
-Example:
+Complete Example:
 
 ```html
 <script type="multiline-template" id="simpleTemplateCss">
