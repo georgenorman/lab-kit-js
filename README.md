@@ -7,7 +7,7 @@ To help organize the experiments, the &lt;lkTableOfContents&gt; tag can be used 
 
 ## Demo
 
-[CSS Lab demo](http://www.thruzero.com/pages/jcat3/css-lab/selectors.html).
+[CSS Lab demo](http://www.thruzero.com/pages/jcat3/css-lab/index.html).
 
 ## Features
 
