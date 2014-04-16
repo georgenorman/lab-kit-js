@@ -11,7 +11,7 @@ To help organize the experiments, the &lt;lkTableOfContents&gt; tag can be used 
 
 ## Features
 
-### Css and Html Example
+### Css and Html Example tag
 
 The &lt;lkCssHtmlExample&gt; tag renders the CSS style, CSS style code-example, HTML code-example and then the live HTML, for the result, using the code templates identified by the cssTemplateId and htmlTemplateId attributes.
 The tag attributes are read from the lkCssHtmlExample element, as shown in the examples below:
