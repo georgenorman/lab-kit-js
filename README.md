@@ -13,34 +13,45 @@ To help organize the experiments, the &lt;lkTableOfContents&gt; tag can be used 
 
 ### Css and Html Example tag
 
-The &lt;lkCssHtmlExample&gt; tag renders the CSS style, CSS style code-example, HTML code-example and then the live HTML, for the result, using the code templates identified by the cssTemplateId and htmlTemplateId attributes.
-The tag attributes are read from the lkCssHtmlExample element, as shown in the examples below:
+The &lt;lkCssHtmlExample&gt; tag renders the CSS and HTML code-examples, followed by the live CSS and HTML.
+The code examples use code templates, identified by the cssTemplateId and htmlTemplateId attributes.
 
-```html
+The following example uses separate IDs for the CSS and HTML code templates:
+
+```xml
 <lkCssHtmlExample cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml">
 </lkCssHtmlExample>
+```
 
+This example renders only an HTML code example with live HTML:
+
+```xml
 <lkCssHtmlExample htmlTemplateId="tmplExampleRelInStaticNoMarginHtml">
 </lkCssHtmlExample>
 ```
 
 Tag attributes:
 
-* cssTemplateId - ID of the element containing the CSS code to insert.
-* htmlTemplateId - ID of the element containing the HTML code to insert.
-* templateId - optional; use this instead of cssTemplateId and htmlTemplateId to simplify the code. "Css" and "Html" will be appended to the given templateId, to form the IDs to the CSS and HTML templates.
+* **cssTemplateId** - Optional ID of the element containing the CSS code to use as example code and live CSS.
+* **htmlTemplateId** - Required ID of the element containing the HTML code to use as example code and live HTML.
+* **templateId** - Optional form for defining the CSS and HTML template IDs. It combines the cssTemplateId and htmlTemplateId into a single templateId, where the "Css" and "Html" are appended to the given templateId.
 
 Complete Example:
 
-```html
+
+```xml
 <script type="multiline-template" id="simpleTemplateCss">
   .foo {color: red;}
 </script>
+```
 
+```xml
 <script type="multiline-template" id="simpleTemplateHtml">
   <span class="foo">This is red</span>
 </script>
+```
 
+```xml
 <lkCssHtmlExample templateId="simpleTemplate" width="750px">
   <cssComment>A comment rendered beneath the CSS header.</cssComment>
   <htmlComment>A comment rendered beneath the HTML header.</htmlComment>
@@ -52,23 +63,23 @@ Complete Example:
 
 The &lt;lkCssBlock&gt; tag renders a &lt;style&gt; block, with the text extracted from the element with the specified templateId.
 
-The tag attributes are read from the lkCssBlock element, as shown in the example below:
+Example:
 
-```html
+```xml
 <lkCssBlock templateId="basicBoxModelCss"></lkCssBlock>
 ```
 
 Tag attributes:
 
-* templateId - ID of the element containing the CSS code to insert.
+* **templateId** - ID of the element containing the CSS code to insert.
 
 ### Html Block tag
 
-The <lkHtmlBlock> tag renders a heading, followed by a <code> block with the XML escaped text from the element of the given templateId.
+The &lt;lkHtmlBlock&gt; tag renders a heading, followed by a &lt;code&gt; block with the XML escaped text from the element of the given templateId.
 
-The tag attributes are read from the lkCodeExample element, as shown in the example below:
+Example:
 
-```html
+```xml
 <lkHtmlBlock templateId="basicBoxModelHtml" heading="Rendered Result">
   <comment>Optional Comment</comment>
 </lkHtmlBlock>
@@ -76,38 +87,44 @@ The tag attributes are read from the lkCodeExample element, as shown in the exam
 
 Tag attributes:
 
-* templateId - ID of the element containing the raw HTML code to render.
-* heading - heading text [optional]
+* **templateId** - ID of the element containing the raw HTML code to render.
+* **heading** - Optional heading text
 
 ### Code Example tag
 
 The &lt;lkCodeExample&gt; tag renders an optional heading and comment, followed by a &lt;code&gt; block with the XML escaped text extracted from the element with the specified templateId.
-The tag attributes are read from the lkCodeExample element, as shown in the examples below:
+The code block used to render the example also has a primitive syntax highlighter (which is a bit buggy).
 
-```html
-<lkCodeExample templateId="lkCodeExampleHtmlTemplate" heading="HTML" lang="*ml" width="350px">
-  <comment>HTML lkCodeExample comment.</comment>
-</lkCodeExample>
-```
+CSS example:
 
-```html
+```xml
 <lkCodeExample templateId="lkCodeExampleCssTemplate" heading="CSS" lang="css" width="300px">
   <comment>CSS lkCodeExample comment.</comment>
 </lkCodeExample>
 ```
 
+HTML example:
+
+```xml
+<lkCodeExample templateId="lkCodeExampleHtmlTemplate" heading="HTML" lang="*ml" width="350px">
+  <comment>HTML lkCodeExample comment.</comment>
+</lkCodeExample>
+```
+
 Tag attributes:
 
-* templateId - ID of the element containing the HTML or JavaScript code to render.
-* heading - heading text (optional)
-* lang - language ID for the code syntax highlighter (e.g., "css", "*ml").
-* width - optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+* **templateId** - ID of the element containing the HTML code to render.
+* **heading** - Optional heading (h4).
+* **lang** - Language ID for the code syntax highlighter (e.g., "css", "*ml").
+* **width** - Optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
 
 ### Table Of Contents tag
 
 The &lt;lkTableOfContents&gt; tag auto-generates a simple two-level Table of Contents.
 
-```html
+Example:
+
+```xml
 <lkTableOfContents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"></lkTableOfContents>
 ```
 
@@ -118,10 +135,22 @@ Limitations:
 
 Tag attributes:
 
-* class - the CSS class to apply to the rendered Table of Contents
-* level1ItemsTagName - tag name used to identify the level-1 headers to be included in the Table of Contents (e.g., "h2" would cause all h2 elements on the page, to be used as items in the generated Table of Contents).
-* level2ItemsTagName - tag name used to identify the level-2 headers to be included under each level-1 header (e.g., "h3" would cause all h3 elements on the page, to be used as sub-items in the generated Table of Contents).
-* title - optional title (default is "Table of Contents").
+* **class** - CSS class used to render the Table of Contents.
+* **level1ItemsTagName** - Tag name used to identify the level-1 headers to be included in the Table of Contents (e.g., "h2" would cause all h2 elements on the page, to be used as first-level items in the generated Table of Contents).
+* **level2ItemsTagName** - Tag name used to identify the level-2 headers to be included under each level-1 header (e.g., "h3" would cause all h3 elements on the page, to be used as sub-items in the generated Table of Contents).
+* **title** - Optional title (default is "Table of Contents").
+
+First-level item Example:
+
+```xml
+<h2 id="basicFloats">Basic Floats</h2>
+```
+
+Second-level item Example (the ID from its parent item is prepended and uses a dot separator):
+
+```xml
+<h3 id="basicFloats.floatLeftNoFrills">Float Left No Frills</h3>
+```
 
 ### Display Styles tag
 
@@ -130,17 +159,19 @@ It has several forms, each of which are described below:
 
 ##### Compact unordered list
 
-The style name is the same for each item in the list. The list items are defined in the tag body.
+The style name is the same for each item in the list. The list items are defined in the tag body:
 
-```html
-<lkDisplayStyles styleName="position">outermost, middleGrid, innerBox</lkDisplayStyles>
+```xml
+<lkDisplayStyles styleName="position">
+  outermost, middleGrid, innerBox
+</lkDisplayStyles>
 ```
 
 ##### Verbose unordered list
 
-The style name is unique for each item in the list. The list items are defined in the tag body
+The style name is unique for each item in the list. The style name and list items are defined in the tag body:
 
-```html
+```xml
 <lkDisplayStyles>
   { "outerMost": "position", "middleGrid": "margin", "innerMost": "padding" }
 </lkDisplayStyles>
@@ -148,9 +179,9 @@ The style name is unique for each item in the list. The list items are defined i
 
 ##### Matrix
 
-The styles are displayed in a table. The rows and columns are defined in the tag body.
+The styles are displayed in a table. The rows and columns are defined in the tag body along with optional legend images:
 
-```html
+```xml
 <lkDisplayStyles>
   <styleNames>padding, margin</styleNames>
   <legendImages>./img/outermost.png, ./img/middleGrid.png, ./img/innerBox.png</legendImages>
@@ -160,17 +191,21 @@ The styles are displayed in a table. The rows and columns are defined in the tag
 
 ### Bullet Point tag
 
-The &lt;lkBulletPoint&gt; tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right.
+The &lt;lkBulletPoint&gt; tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right:
 
-```html
+```xml
 <lkBulletPoint iconClass="success">This experiment successfully shows that...</lkBulletPoint>
 ```
 
 Tag attributes:
 
-* iconClass - class name used to style the <i> element used as a placeholder for the icon. The following icons are predefined: "lk-bullet-point-pass", "lk-bullet-point-fail" (see css/lkBulletPoint.css).
-* leftColumnWidth - optional width of the left column.
-* style - optional style for the wrapper div.
+* **iconClass** - Class name used to style the element used as a placeholder for the icon. The following icons are predefined (see css/lkBulletPoint.css):
+  * lk-bullet-point-pass
+  * lk-bullet-point-fail
+  * lk-bullet-point-star
+  * lk-bullet-point-info
+* **leftColumnWidth** - Optional width of the left column.
+* **style** - Optional style for the wrapper div.
 
 
 ### Ancestor Styles tag
@@ -179,7 +214,7 @@ The &lt;lkAncestorStyles&gt; tag renders a set of styles for all ancestors of a 
 The ancestor styles are displayed in a table. The startElementId attribute specifies where to the start the traversal.
 The styleNames tag specifies the list of styles to be rendered in the table.
 
-```html
+```xml
 <lkAncestorStyles title="Genealogy of innermost" startElementId="innermost">
   <comment>A comment rendered beneath the Ancestors header</comment>
   <styleNames>position, display</styleNames>
