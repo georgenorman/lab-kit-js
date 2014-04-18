@@ -4,32 +4,32 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkDisplayStyles> tags - sharable among all projects.
+ ~ Renders <lk-display-styles> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  ~
  */
 
 /*
- * The <lkDisplayStyles> tag renders one or more styles from one or more elements.
+ * The <lk-display-styles> tag renders one or more styles from one or more elements.
  * It has several forms, each of which are described below:
  *
  * 1. Compact unordered list: The style name is the same for each item in the list. The list items are defined in the tag body.
  *
- *      <lkDisplayStyles styleName="position">outermost, middleGrid, innerBox</lkDisplayStyles>
+ *      <lk-display-styles styleName="position">outermost, middleGrid, innerBox</lk-display-styles>
  *
  * 2. Verbose unordered list: The style name is unique for each item in the list. The list items are defined in the tag body
  *
- *      <lkDisplayStyles>
+ *      <lk-display-styles>
  *        { "outerMost": "position", "middleGrid": "margin", "innerMost": "padding" }
- *      </lkDisplayStyles>
+ *      </lk-display-styles>
  *
  * 3. Matrix: The styles are displayed in a table. The rows and columns are defined in the tag body.
  *
- *      <lkDisplayStyles>
+ *      <lk-display-styles>
  *        <styleNames>padding, margin</styleNames>
  *        <legendImages>./img/outermost.png, ./img/middleGrid.png, ./img/innerBox.png</legendImages>
  *        <elementIds>outermost, middleGrid, innerBox</elementIds>
- *      </lkDisplayStyles>
+ *      </lk-display-styles>
  *
  */
 var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
@@ -45,16 +45,16 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
   // --------------------------------------------------------------
 
   var variantMgr = {
-    handleCompactListVariant: function(displayStylesTagNode, context) {
+    handleCompactListVariant: function(displayStylesTagNode, context, styleName) {
       // variant: compact unordered list, where the styleName is the same for each item
       context["useCompactUnorderedList"] = "true"; // all property names are the same
 
       if (tzDomHelper.isEmpty(context["title"])) {
-        context["title"] = "Rendered '" + context["styleName"] + " styles:";
+        context["title"] = "Rendered '" + styleName + "' styles:";
       }
       var itemIds = displayStylesTagNode.innerHTML.replace(/\s+/g, '');
 
-      context["unorderedListItems"] = listItemsToMap(itemIds, context["styleName"]); // e.g., {"id1": "margin", "id2": "margin"}
+      context["unorderedListItems"] = listItemsToMap(itemIds, styleName); // e.g., {"id1": "margin", "id2": "margin"}
     },
 
     handleVerboseListVariant: function(displayStylesTagNode, context) {
@@ -102,18 +102,18 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkDisplayStyles";
+      return "lk-display-styles";
     },
 
     /**
-     * Render all <lkDisplayStyles> tags on the page.
+     * Render all <lk-display-styles> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkDisplayStyles> tag identified by the given tagId.
+     * Render the <lk-display-styles> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -160,7 +160,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
           }
         } else {
           // all styles use the same styleName (making a compact list)
-          variantMgr.handleCompactListVariant(displayStylesTagNode, context);
+          variantMgr.handleCompactListVariant(displayStylesTagNode, context, styleName);
         }
       }
 

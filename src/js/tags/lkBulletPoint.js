@@ -4,16 +4,16 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkBulletPoint> tags - sharable among all projects.
+ ~ Renders <lk-bullet-point> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /*
- * The <lkBulletPoint> tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right.
+ * The <lk-bullet-point> tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right.
  *
- * The tag attributes are read from the lkBulletPoint element, as shown in the example below:
+ * The tag attributes are read from the lk-bullet-point element, as shown in the example below:
  *
- *    <lkBulletPoint iconClass="success" widthLeft="25px">This experiment successfully shows that...</lkBulletPoint>
+ *    <lk-bullet-point iconClass="success" widthLeft="25px">This experiment successfully shows that...</lk-bullet-point>
  *
  * @attribute iconClass class name used to style the <i> element used as a placeholder for the icon.
  *      The following icons are predefined: "lk-bullet-point-pass", "lk-bullet-point-fail" (see css/lkBulletPoint.css).
@@ -32,18 +32,18 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkBulletPoint";
+      return "lk-bullet-point";
     },
 
     /**
-     * Render all <lkBulletPoint> tags on the page.
+     * Render all <lk-bullet-point> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkBulletPoint> tag identified by the given tagId.
+     * Render the <lk-bullet-point> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -74,7 +74,7 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the <lkBulletPoint> tag into the given containerNode.
+     * Render the <lk-bullet-point> tag into the given containerNode.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:

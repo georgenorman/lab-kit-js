@@ -4,23 +4,23 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkCodeExample> tags - sharable among all projects.
+ ~ Renders <lk-code-example> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /**
- * The <lkCodeExample> tag renders an optional heading and comment, followed by a <code> block with the XML escaped text
+ * The <lk-code-example> tag renders an optional heading and comment, followed by a <code> block with the XML escaped text
  * extracted from the element with the specified templateId.
  *
- * The tag attributes are read from the lkCodeExample element, as shown in the examples below:
+ * The tag attributes are read from the lk-code-example element, as shown in the examples below:
  *
- *   <lkCodeExample templateId="lkCodeExampleHtmlTemplate" heading="HTML" lang="*ml" width="350px">
- *     <comment>HTML lkCodeExample comment.</comment>
- *   </lkCodeExample>
+ *   <lk-code-example templateId="myHtmlTemplate" heading="HTML" lang="*ml" width="350px">
+ *     <comment>HTML code example comment.</comment>
+ *   </lk-code-example>
  *
- *   <lkCodeExample templateId="lkCodeExampleCssTemplate" heading="CSS" lang="css" width="300px">
- *     <comment>CSS lkCodeExample comment.</comment>
- *   </lkCodeExample>
+ *   <lk-code-example templateId="myCssTemplate" heading="CSS" lang="css" width="300px">
+ *     <comment>CSS code example comment.</comment>
+ *   </lk-code-example>
  *
  * @attribute templateId - ID of the element containing the HTML or JavaScript code to render.
  * @attribute heading - heading text [optional]
@@ -34,18 +34,18 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
 
   return {
     getTagName: function() {
-      return "lkCodeExample";
+      return "lk-code-example";
     },
 
     /**
-     * Render all <lkCodeExample> tags on the page.
+     * Render all <lk-code-example> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkCodeExample> tag identified by the given tagId.
+     * Render the <lk-code-example> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */

@@ -27,7 +27,7 @@ var tzCodeHighlighterModule = (function() {
 
       if (lang === '*ml') {
         // simple tags
-        result = result.replace(/(&lt;\w+&gt;|&lt;\w+|&lt;\/\w+&gt;)/gm, "[[tag-name]]$1[[/tag-name]]"); // matches tag: e.g., <div ...> or </div>
+        result = result.replace(/(&lt;[-\w]+|&lt;\w+|&lt;\/[-\w]+&gt;)/gm, "[[tag-name]]$1[[/tag-name]]"); // matches tag: e.g., <div ...> or </div>
 
         // simple xml attributes
         result = result.replace(/([-\w]+=)/gm, "[[attribute-name]]$1[[/attribute-name]]"); // matches attribute name: e.g., foo=

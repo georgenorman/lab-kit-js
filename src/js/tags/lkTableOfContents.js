@@ -4,12 +4,12 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkTableOfContents> tags - sharable among all projects.
+ ~ Renders <lk-table-of-contents> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /**
- * The &lt;lkTableOfContents&gt; tag auto-generates a simple two-level Table of Contents.
+ * The &lt;lk-table-of-contents&gt; tag auto-generates a simple two-level Table of Contents.
  * A default title of "Table of Contents" will be used if the title is not provided.
  * The title is rendered as an h2 element.
  *
@@ -19,7 +19,7 @@
  *
  * The tag attributes are read from the lkTableOfContents element, as shown in the example below:
  *
- *    &lt;lkTableOfContents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"&gt;&lt;/lkTableOfContents&gt;
+ *    &lt;lk-table-of-contents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"&gt;&lt;/lk-table-of-contents&gt;
  *
  * @attribute class - the CSS class to apply to the rendered Table of Contents
  * @attribute level1ItemsTagName - tag name used to identify the level-1 headers to be included in the Table of Contents
@@ -33,7 +33,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkTableOfContents";
+      return "lk-table-of-contents";
     },
 
     /**

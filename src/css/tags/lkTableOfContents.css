@@ -6,7 +6,7 @@
 */
 
 /* TOC heading */
-lkTableOfContents h2 {
+lk-table-of-contents h2 {
   border: initial;
   padding: 6px;
   background: #eee;
@@ -14,54 +14,54 @@ lkTableOfContents h2 {
 }
 
 /* TOC list */
-lkTableOfContents ul.toc {
+lk-table-of-contents ul.toc {
   list-style-type: none;
   padding-left: 12px;
   margin: 0;
 }
 
 /* TOC items */
-lkTableOfContents .toc li {
+lk-table-of-contents .toc li {
   padding-left: 6px;
 }
 
 /* TOC bullet */
-lkTableOfContents ul.toc li:before {
+lk-table-of-contents ul.toc li:before {
   content: "\2666";
   margin-right: 6px;
   color: #ccc;
 }
 
-lkTableOfContents ul.toc li.fail:before {
+lk-table-of-contents ul.toc li.fail:before {
   color: #f83;
 }
 
-lkTableOfContents ul.toc li.pass:before {
+lk-table-of-contents ul.toc li.pass:before {
   color: #0c0;
 }
 
 /* Sub item bullet */
-lkTableOfContents ul.toc > li > ul {
+lk-table-of-contents ul.toc > li > ul {
   list-style-type: none;
   padding-left: 6px;
   margin-left: 6px;
 }
 
 /* Sub item bullet */
-lkTableOfContents ul.toc > li > ul > li {
+lk-table-of-contents ul.toc > li > ul > li {
   padding: 0;
 }
 
 /* Sub item bullet */
-lkTableOfContents ul.toc > li > ul > li:before {
+lk-table-of-contents ul.toc > li > ul > li:before {
   content: "\2022";
   margin: 6px;
 }
 
-lkTableOfContents ul.toc > li > ul > li.fail:before {
+lk-table-of-contents ul.toc > li > ul > li.fail:before {
   color: #f83;
 }
 
-lkTableOfContents ul.toc > li > ul > li.pass:before {
+lk-table-of-contents ul.toc > li > ul > li.pass:before {
   color: #0d0;
 }

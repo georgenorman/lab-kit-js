@@ -4,19 +4,19 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkCssHtmlExample> tags - sharable among all projects.
+ ~ Renders <lk-css-html-example> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /*
- * The <lkCssHtmlExample> tag renders the CSS style, CSS style code-example, HTML code-example
+ * The <lk-css-html-example> tag renders the CSS style, CSS style code-example, HTML code-example
  * and then the live HTML, for the result, using the code templates identified by the
  * cssTemplateId and htmlTemplateId attributes.
  *
- * The tag attributes are read from the lkCssHtmlExample element, as shown in the examples below:
+ * The tag attributes are read from the lk-css-html-example element, as shown in the examples below:
  *
- *   <lkCssHtmlExample cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml"></lkCssHtmlExample>
- *   <lkCssHtmlExample htmlTemplateId="tmplExampleRelInStaticNoMarginHtml"></lkCssHtmlExample>
+ *   <lk-css-html-example cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml"></lk-css-html-example>
+ *   <lk-css-html-example htmlTemplateId="tmplExampleRelInStaticNoMarginHtml"></lk-css-html-example>
  *
  * @attribute cssTemplateId - ID of the element containing the CSS code to insert.
  * @attribute htmlTemplateId - ID of the element containing the HTML code to insert.
@@ -33,11 +33,11 @@
  *   <span class="foo">This is red</span>
  * </script>
  *
- * <lkCssHtmlExample templateId="simpleTemplate" width="750px">
+ * <lk-css-html-example templateId="simpleTemplate" width="750px">
  *   <cssComment>A comment rendered beneath the CSS header.</cssComment>
  *   <htmlComment>A comment rendered beneath the HTML header.</htmlComment>
  *   <resultComment>A comment rendered beneath the Result header.</resultComment>
- * </lkCssHtmlExample>
+ * </lk-css-html-example>
  *
  */
 var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, lkHtmlBlock, lkCodeExample) {
@@ -49,18 +49,18 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
 
   return {
     getTagName: function() {
-      return "lkCssHtmlExample";
+      return "lk-css-html-example";
     },
 
     /**
-     * Render all <lkCssHtmlExample> tags on the page.
+     * Render all <lk-css-html-example> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkCssHtmlExample> tag identified by the given tagId.
+     * Render the <lk-css-html-example> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */

@@ -15,13 +15,13 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
 
   return {
     /**
-     * Return a generated template ID, by concatenating "TagTemplate" to the tagModule's tag name.
-     * Example: tagModule.getTagName() + "TagTemplate" => "lkBulletPointTagTemplate".
+     * Return a generated template ID, by concatenating "-tag-template" to the tagModule's tag name.
+     * Example: tagModule.getTagName() + "-tag-template" => "lk-bullet-point-tag-template".
      *
      * @param tagModule the module that's responsible for rendering a particular custom tag.
      */
     getTemplateId: function( tagModule ) {
-      return tagModule.getTagName() + "TagTemplate";
+      return tagModule.getTagName() + "-tag-template";
     },
 
     /**

@@ -9,17 +9,17 @@
  * Layout
  * --------------------------------- */
 
-lkBulletPoint {
+lk-bullet-point {
   display: block;
   margin-top:12px;
 }
 
-lkBulletPoint > div > div:nth-child(1) {
+lk-bullet-point > div > div:nth-child(1) {
   float: left;
   margin-top: 0;
 }
 
-lkBulletPoint > div > div:nth-child(2) > p:first-child {
+lk-bullet-point > div > div:nth-child(2) > p:first-child {
   margin-top: 0;
 }
 

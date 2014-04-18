@@ -1,9 +1,9 @@
-# Lab Kit JS
+# LabKit JS
 
-Lab Kit is a simple JavaScript library that helps build web pages with live CSS and HTML examples.
+LabKit is a simple JavaScript library that helps build web pages with live CSS and HTML examples.
 The main functionality is provided by a set of tags that can be added to any HTML page.
-For example, the &lt;lkCssHtmlExample&gt; tag renders the given CSS and HTML code-examples and then inserts them into the document, for a live rendering of the example.
-To help organize the experiments, the &lt;lkTableOfContents&gt; tag can be used to automatically generate a Table of Contents for the page.
+For example, the &lt;lk-css-html-example&gt; tag renders the given CSS and HTML code-examples and then inserts them into the document, for a live rendering of the example.
+To help organize the experiments, the &lt;lk-table-of-contents&gt; tag can be used to automatically generate a Table of Contents for the page.
 
 ## Demo
 
@@ -11,23 +11,23 @@ To help organize the experiments, the &lt;lkTableOfContents&gt; tag can be used 
 
 ## Features
 
-### Css and Html Example tag
+### CSS and HTML Example tag
 
-The &lt;lkCssHtmlExample&gt; tag renders the CSS and HTML code-examples, followed by the live CSS and HTML.
+The &lt;lk-css-html-example&gt; tag renders the CSS and HTML code-examples, followed by the live CSS and HTML.
 The code examples use code templates, identified by the cssTemplateId and htmlTemplateId attributes.
 
 The following example uses separate IDs for the CSS and HTML code templates:
 
 ```xml
-<lkCssHtmlExample cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml">
-</lkCssHtmlExample>
+<lk-css-html-example cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml">
+</lk-css-html-example>
 ```
 
 This example renders only an HTML code example with live HTML:
 
 ```xml
-<lkCssHtmlExample htmlTemplateId="tmplExampleRelInStaticNoMarginHtml">
-</lkCssHtmlExample>
+<lk-css-html-example htmlTemplateId="tmplExampleRelInStaticNoMarginHtml">
+</lk-css-html-example>
 ```
 
 Tag attributes:
@@ -52,37 +52,37 @@ Complete Example:
 ```
 
 ```xml
-<lkCssHtmlExample templateId="simpleTemplate" width="750px">
+<lk-css-html-example templateId="simpleTemplate" width="750px">
   <cssComment>A comment rendered beneath the CSS header.</cssComment>
   <htmlComment>A comment rendered beneath the HTML header.</htmlComment>
   <resultComment>A comment rendered beneath the Result header.</resultComment>
-</lkCssHtmlExample>
+</lk-css-html-example>
 ```
 
-### Css Block tag
+### CSS Block tag
 
-The &lt;lkCssBlock&gt; tag renders a &lt;style&gt; block, with the text extracted from the element with the specified templateId.
+The &lt;lk-css-block&gt; tag renders a &lt;style&gt; block, with the text extracted from the element with the specified templateId.
 
 Example:
 
 ```xml
-<lkCssBlock templateId="basicBoxModelCss"></lkCssBlock>
+<lk-css-block templateId="basicBoxModelCss"></lk-css-block>
 ```
 
 Tag attributes:
 
 * **templateId** - ID of the element containing the CSS code to insert.
 
-### Html Block tag
+### HTML Block tag
 
-The &lt;lkHtmlBlock&gt; tag renders a heading, followed by a &lt;code&gt; block with the XML escaped text from the element of the given templateId.
+The &lt;lk-html-block&gt; tag renders a heading, followed by a &lt;code&gt; block with the XML escaped text from the element of the given templateId.
 
 Example:
 
 ```xml
-<lkHtmlBlock templateId="basicBoxModelHtml" heading="Rendered Result">
+<lk-html-block templateId="basicBoxModelHtml" heading="Rendered Result">
   <comment>Optional Comment</comment>
-</lkHtmlBlock>
+</lk-html-block>
 ```
 
 Tag attributes:
@@ -92,23 +92,23 @@ Tag attributes:
 
 ### Code Example tag
 
-The &lt;lkCodeExample&gt; tag renders an optional heading and comment, followed by a &lt;code&gt; block with the XML escaped text extracted from the element with the specified templateId.
+The &lt;lk-code-example&gt; tag renders an optional heading and comment, followed by a &lt;code&gt; block with the XML escaped text extracted from the element with the specified templateId.
 The code block used to render the example also has a primitive syntax highlighter (which is a bit buggy).
 
 CSS example:
 
 ```xml
-<lkCodeExample templateId="lkCodeExampleCssTemplate" heading="CSS" lang="css" width="300px">
-  <comment>CSS lkCodeExample comment.</comment>
-</lkCodeExample>
+<lk-code-example templateId="codeExampleCssTemplate" heading="CSS" lang="css" width="300px">
+  <comment>CSS code example comment.</comment>
+</lk-code-example>
 ```
 
 HTML example:
 
 ```xml
-<lkCodeExample templateId="lkCodeExampleHtmlTemplate" heading="HTML" lang="*ml" width="350px">
-  <comment>HTML lkCodeExample comment.</comment>
-</lkCodeExample>
+<lk-code-example templateId="codeExampleHtmlTemplate" heading="HTML" lang="*ml" width="350px">
+  <comment>HTML code example comment.</comment>
+</lk-code-example>
 ```
 
 Tag attributes:
@@ -120,12 +120,12 @@ Tag attributes:
 
 ### Table Of Contents tag
 
-The &lt;lkTableOfContents&gt; tag auto-generates a simple two-level Table of Contents.
+The &lt;lk-table-of-contents&gt; tag auto-generates a simple two-level Table of Contents.
 
 Example:
 
 ```xml
-<lkTableOfContents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"></lkTableOfContents>
+<lk-table-of-contents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"></lk-table-of-contents>
 ```
 
 Limitations:
@@ -154,7 +154,7 @@ Second-level item Example (the ID from its parent item is prepended and uses a d
 
 ### Display Styles tag
 
-The &lt;lkDisplayStyles&gt; tag renders the values of a set of specified styles for a set of specified elements.
+The &lt;displayStyles&gt; tag renders the values of a set of specified styles for a set of specified elements.
 It has several forms, each of which are described below:
 
 ##### Compact unordered list
@@ -162,9 +162,9 @@ It has several forms, each of which are described below:
 The style name is the same for each item in the list. The list items are defined in the tag body:
 
 ```xml
-<lkDisplayStyles styleName="position">
+<displayStyles styleName="position">
   outermost, middleGrid, innerBox
-</lkDisplayStyles>
+</displayStyles>
 ```
 
 ##### Verbose unordered list
@@ -172,9 +172,9 @@ The style name is the same for each item in the list. The list items are defined
 The style name is unique for each item in the list. The style name and list items are defined in the tag body:
 
 ```xml
-<lkDisplayStyles>
+<displayStyles>
   { "outerMost": "position", "middleGrid": "margin", "innerMost": "padding" }
-</lkDisplayStyles>
+</displayStyles>
 ```
 
 ##### Matrix
@@ -182,19 +182,19 @@ The style name is unique for each item in the list. The style name and list item
 The styles are displayed in a table. The rows and columns are defined in the tag body along with optional legend images:
 
 ```xml
-<lkDisplayStyles>
+<displayStyles>
   <styleNames>padding, margin</styleNames>
   <legendImages>./img/outermost.png, ./img/middleGrid.png, ./img/innerBox.png</legendImages>
  <elementIds>outermost, middleGrid, innerBox</elementIds>
-</lkDisplayStyles>
+</displayStyles>
 ```
 
 ### Bullet Point tag
 
-The &lt;lkBulletPoint&gt; tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right:
+The &lt;lk-bullet-point&gt; tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right:
 
 ```xml
-<lkBulletPoint iconClass="success">This experiment successfully shows that...</lkBulletPoint>
+<lk-bullet-point iconClass="success">This experiment successfully shows that...</lk-bullet-point>
 ```
 
 Tag attributes:
@@ -210,15 +210,15 @@ Tag attributes:
 
 ### Ancestor Styles tag
 
-The &lt;lkAncestorStyles&gt; tag renders a set of styles for all ancestors of a given element.
+The &lt;lk-ancestor-styles&gt; tag renders a set of styles for all ancestors of a given element.
 The ancestor styles are displayed in a table. The startElementId attribute specifies where to the start the traversal.
 The styleNames tag specifies the list of styles to be rendered in the table.
 
 ```xml
-<lkAncestorStyles title="Genealogy of innermost" startElementId="innermost">
+<lk-ancestor-styles title="Genealogy of innermost" startElementId="innermost">
   <comment>A comment rendered beneath the Ancestors header</comment>
   <styleNames>position, display</styleNames>
-</lkAncestorStyles>
+</lk-ancestor-styles>
 ```
 
 ## License

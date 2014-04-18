@@ -4,18 +4,18 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkHtmlBlock> tags - sharable among all projects.
+ ~ Renders <lk-html-block> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /*
- * The <lkHtmlBlock> tag renders a heading, followed by a <code> block with the XML escaped text from the element of the given templateId.
+ * The <lk-html-block> tag renders a heading, followed by a <code> block with the XML escaped text from the element of the given templateId.
  *
- * The tag attributes are read from the lkCodeExample element, as shown in the example below:
+ * The tag attributes are read from the lk-html-block element, as shown in the example below:
  *
- *    <lkHtmlBlock templateId="basicBoxModelHtml" heading="Rendered Result">
+ *    <lk-html-block templateId="basicBoxModelHtml" heading="Rendered Result">
  *      <comment>Optional Comment</comment>
- *    </lkHtmlBlock>
+ *    </lk-html-block>
  *
  * @attribute templateId - ID of the element containing the raw HTML code to render.
  * @attribute heading - heading text [optional]
@@ -27,18 +27,18 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkHtmlBlock";
+      return "lk-html-block";
     },
 
     /**
-     * Render all <lkHtmlBlock> tags on the page.
+     * Render all <lk-html-block> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkHtmlBlock> tag identified by the given tagId.
+     * Render the <lk-html-block> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */

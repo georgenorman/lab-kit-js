@@ -360,7 +360,7 @@ var tzCodeHighlighterModule = (function() {
 
       if (lang === '*ml') {
         // simple tags
-        result = result.replace(/(&lt;\w+&gt;|&lt;\w+|&lt;\/\w+&gt;)/gm, "[[tag-name]]$1[[/tag-name]]"); // matches tag: e.g., <div ...> or </div>
+        result = result.replace(/(&lt;[-\w]+|&lt;\w+|&lt;\/[-\w]+&gt;)/gm, "[[tag-name]]$1[[/tag-name]]"); // matches tag: e.g., <div ...> or </div>
 
         // simple xml attributes
         result = result.replace(/([-\w]+=)/gm, "[[attribute-name]]$1[[/attribute-name]]"); // matches attribute name: e.g., foo=
@@ -405,13 +405,13 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
 
   return {
     /**
-     * Return a generated template ID, by concatenating "TagTemplate" to the tagModule's tag name.
-     * Example: tagModule.getTagName() + "TagTemplate" => "lkBulletPointTagTemplate".
+     * Return a generated template ID, by concatenating "-tag-template" to the tagModule's tag name.
+     * Example: tagModule.getTagName() + "-tag-template" => "lk-bullet-point-tag-template".
      *
      * @param tagModule the module that's responsible for rendering a particular custom tag.
      */
     getTemplateId: function( tagModule ) {
-      return tagModule.getTagName() + "TagTemplate";
+      return tagModule.getTagName() + "-tag-template";
     },
 
     /**
@@ -515,16 +515,16 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkBulletPoint> tags - sharable among all projects.
+ ~ Renders <lk-bullet-point> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /*
- * The <lkBulletPoint> tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right.
+ * The <lk-bullet-point> tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right.
  *
- * The tag attributes are read from the lkBulletPoint element, as shown in the example below:
+ * The tag attributes are read from the lk-bullet-point element, as shown in the example below:
  *
- *    <lkBulletPoint iconClass="success" widthLeft="25px">This experiment successfully shows that...</lkBulletPoint>
+ *    <lk-bullet-point iconClass="success" widthLeft="25px">This experiment successfully shows that...</lk-bullet-point>
  *
  * @attribute iconClass class name used to style the <i> element used as a placeholder for the icon.
  *      The following icons are predefined: "lk-bullet-point-pass", "lk-bullet-point-fail" (see css/lkBulletPoint.css).
@@ -543,18 +543,18 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkBulletPoint";
+      return "lk-bullet-point";
     },
 
     /**
-     * Render all <lkBulletPoint> tags on the page.
+     * Render all <lk-bullet-point> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkBulletPoint> tag identified by the given tagId.
+     * Render the <lk-bullet-point> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -585,7 +585,7 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the <lkBulletPoint> tag into the given containerNode.
+     * Render the <lk-bullet-point> tag into the given containerNode.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
@@ -607,12 +607,12 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkTableOfContents> tags - sharable among all projects.
+ ~ Renders <lk-table-of-contents> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /**
- * The &lt;lkTableOfContents&gt; tag auto-generates a simple two-level Table of Contents.
+ * The &lt;lk-table-of-contents&gt; tag auto-generates a simple two-level Table of Contents.
  * A default title of "Table of Contents" will be used if the title is not provided.
  * The title is rendered as an h2 element.
  *
@@ -622,7 +622,7 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
  *
  * The tag attributes are read from the lkTableOfContents element, as shown in the example below:
  *
- *    &lt;lkTableOfContents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"&gt;&lt;/lkTableOfContents&gt;
+ *    &lt;lk-table-of-contents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"&gt;&lt;/lk-table-of-contents&gt;
  *
  * @attribute class - the CSS class to apply to the rendered Table of Contents
  * @attribute level1ItemsTagName - tag name used to identify the level-1 headers to be included in the Table of Contents
@@ -636,7 +636,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkTableOfContents";
+      return "lk-table-of-contents";
     },
 
     /**
@@ -772,18 +772,18 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkHtmlBlock> tags - sharable among all projects.
+ ~ Renders <lk-html-block> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /*
- * The <lkHtmlBlock> tag renders a heading, followed by a <code> block with the XML escaped text from the element of the given templateId.
+ * The <lk-html-block> tag renders a heading, followed by a <code> block with the XML escaped text from the element of the given templateId.
  *
- * The tag attributes are read from the lkCodeExample element, as shown in the example below:
+ * The tag attributes are read from the lk-html-block element, as shown in the example below:
  *
- *    <lkHtmlBlock templateId="basicBoxModelHtml" heading="Rendered Result">
+ *    <lk-html-block templateId="basicBoxModelHtml" heading="Rendered Result">
  *      <comment>Optional Comment</comment>
- *    </lkHtmlBlock>
+ *    </lk-html-block>
  *
  * @attribute templateId - ID of the element containing the raw HTML code to render.
  * @attribute heading - heading text [optional]
@@ -795,18 +795,18 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkHtmlBlock";
+      return "lk-html-block";
     },
 
     /**
-     * Render all <lkHtmlBlock> tags on the page.
+     * Render all <lk-html-block> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkHtmlBlock> tag identified by the given tagId.
+     * Render the <lk-html-block> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -874,17 +874,17 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkCssBlock> tags - sharable among all projects.
+ ~ Renders <lk-css-block> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /*
- * The <lkCssBlock> tag renders a <style> block, with the text extracted from the element
+ * The <lk-css-block> tag renders a <style> block, with the text extracted from the element
  * with the specified templateId.
  *
- * The tag attributes are read from the lkCssBlock element, as shown in the example below:
+ * The tag attributes are read from the lk-css-block element, as shown in the example below:
  *
- *    <lkCssBlock templateId="basicBoxModelCss"></lkCssBlock>
+ *    <lk-css-block templateId="basicBoxModelCss"></lk-css-block>
  *
  * @attribute templateId - ID of the element containing the CSS code to insert.
  */
@@ -893,18 +893,18 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkCssBlock";
+      return "lk-css-block";
     },
 
     /**
-     * Render all <lkCssBlock> tags on the page.
+     * Render all <lk-css-block> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkCssBlock> tag identified by the given tagId.
+     * Render the <lk-css-block> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -950,23 +950,23 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkCodeExample> tags - sharable among all projects.
+ ~ Renders <lk-code-example> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /**
- * The <lkCodeExample> tag renders an optional heading and comment, followed by a <code> block with the XML escaped text
+ * The <lk-code-example> tag renders an optional heading and comment, followed by a <code> block with the XML escaped text
  * extracted from the element with the specified templateId.
  *
- * The tag attributes are read from the lkCodeExample element, as shown in the examples below:
+ * The tag attributes are read from the lk-code-example element, as shown in the examples below:
  *
- *   <lkCodeExample templateId="lkCodeExampleHtmlTemplate" heading="HTML" lang="*ml" width="350px">
- *     <comment>HTML lkCodeExample comment.</comment>
- *   </lkCodeExample>
+ *   <lk-code-example templateId="myHtmlTemplate" heading="HTML" lang="*ml" width="350px">
+ *     <comment>HTML code example comment.</comment>
+ *   </lk-code-example>
  *
- *   <lkCodeExample templateId="lkCodeExampleCssTemplate" heading="CSS" lang="css" width="300px">
- *     <comment>CSS lkCodeExample comment.</comment>
- *   </lkCodeExample>
+ *   <lk-code-example templateId="myCssTemplate" heading="CSS" lang="css" width="300px">
+ *     <comment>CSS code example comment.</comment>
+ *   </lk-code-example>
  *
  * @attribute templateId - ID of the element containing the HTML or JavaScript code to render.
  * @attribute heading - heading text [optional]
@@ -980,18 +980,18 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
 
   return {
     getTagName: function() {
-      return "lkCodeExample";
+      return "lk-code-example";
     },
 
     /**
-     * Render all <lkCodeExample> tags on the page.
+     * Render all <lk-code-example> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkCodeExample> tag identified by the given tagId.
+     * Render the <lk-code-example> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -1093,19 +1093,19 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkCssHtmlExample> tags - sharable among all projects.
+ ~ Renders <lk-css-html-example> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /*
- * The <lkCssHtmlExample> tag renders the CSS style, CSS style code-example, HTML code-example
+ * The <lk-css-html-example> tag renders the CSS style, CSS style code-example, HTML code-example
  * and then the live HTML, for the result, using the code templates identified by the
  * cssTemplateId and htmlTemplateId attributes.
  *
- * The tag attributes are read from the lkCssHtmlExample element, as shown in the examples below:
+ * The tag attributes are read from the lk-css-html-example element, as shown in the examples below:
  *
- *   <lkCssHtmlExample cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml"></lkCssHtmlExample>
- *   <lkCssHtmlExample htmlTemplateId="tmplExampleRelInStaticNoMarginHtml"></lkCssHtmlExample>
+ *   <lk-css-html-example cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml"></lk-css-html-example>
+ *   <lk-css-html-example htmlTemplateId="tmplExampleRelInStaticNoMarginHtml"></lk-css-html-example>
  *
  * @attribute cssTemplateId - ID of the element containing the CSS code to insert.
  * @attribute htmlTemplateId - ID of the element containing the HTML code to insert.
@@ -1122,11 +1122,11 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
  *   <span class="foo">This is red</span>
  * </script>
  *
- * <lkCssHtmlExample templateId="simpleTemplate" width="750px">
+ * <lk-css-html-example templateId="simpleTemplate" width="750px">
  *   <cssComment>A comment rendered beneath the CSS header.</cssComment>
  *   <htmlComment>A comment rendered beneath the HTML header.</htmlComment>
  *   <resultComment>A comment rendered beneath the Result header.</resultComment>
- * </lkCssHtmlExample>
+ * </lk-css-html-example>
  *
  */
 var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, lkHtmlBlock, lkCodeExample) {
@@ -1138,18 +1138,18 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
 
   return {
     getTagName: function() {
-      return "lkCssHtmlExample";
+      return "lk-css-html-example";
     },
 
     /**
-     * Render all <lkCssHtmlExample> tags on the page.
+     * Render all <lk-css-html-example> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkCssHtmlExample> tag identified by the given tagId.
+     * Render the <lk-css-html-example> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -1262,32 +1262,32 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkDisplayStyles> tags - sharable among all projects.
+ ~ Renders <lk-display-styles> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  ~
  */
 
 /*
- * The <lkDisplayStyles> tag renders one or more styles from one or more elements.
+ * The <lk-display-styles> tag renders one or more styles from one or more elements.
  * It has several forms, each of which are described below:
  *
  * 1. Compact unordered list: The style name is the same for each item in the list. The list items are defined in the tag body.
  *
- *      <lkDisplayStyles styleName="position">outermost, middleGrid, innerBox</lkDisplayStyles>
+ *      <lk-display-styles styleName="position">outermost, middleGrid, innerBox</lk-display-styles>
  *
  * 2. Verbose unordered list: The style name is unique for each item in the list. The list items are defined in the tag body
  *
- *      <lkDisplayStyles>
+ *      <lk-display-styles>
  *        { "outerMost": "position", "middleGrid": "margin", "innerMost": "padding" }
- *      </lkDisplayStyles>
+ *      </lk-display-styles>
  *
  * 3. Matrix: The styles are displayed in a table. The rows and columns are defined in the tag body.
  *
- *      <lkDisplayStyles>
+ *      <lk-display-styles>
  *        <styleNames>padding, margin</styleNames>
  *        <legendImages>./img/outermost.png, ./img/middleGrid.png, ./img/innerBox.png</legendImages>
  *        <elementIds>outermost, middleGrid, innerBox</elementIds>
- *      </lkDisplayStyles>
+ *      </lk-display-styles>
  *
  */
 var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
@@ -1303,16 +1303,16 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
   // --------------------------------------------------------------
 
   var variantMgr = {
-    handleCompactListVariant: function(displayStylesTagNode, context) {
+    handleCompactListVariant: function(displayStylesTagNode, context, styleName) {
       // variant: compact unordered list, where the styleName is the same for each item
       context["useCompactUnorderedList"] = "true"; // all property names are the same
 
       if (tzDomHelper.isEmpty(context["title"])) {
-        context["title"] = "Rendered '" + context["styleName"] + " styles:";
+        context["title"] = "Rendered '" + styleName + "' styles:";
       }
       var itemIds = displayStylesTagNode.innerHTML.replace(/\s+/g, '');
 
-      context["unorderedListItems"] = listItemsToMap(itemIds, context["styleName"]); // e.g., {"id1": "margin", "id2": "margin"}
+      context["unorderedListItems"] = listItemsToMap(itemIds, styleName); // e.g., {"id1": "margin", "id2": "margin"}
     },
 
     handleVerboseListVariant: function(displayStylesTagNode, context) {
@@ -1360,18 +1360,18 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkDisplayStyles";
+      return "lk-display-styles";
     },
 
     /**
-     * Render all <lkDisplayStyles> tags on the page.
+     * Render all <lk-display-styles> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkDisplayStyles> tag identified by the given tagId.
+     * Render the <lk-display-styles> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -1418,7 +1418,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
           }
         } else {
           // all styles use the same styleName (making a compact list)
-          variantMgr.handleCompactListVariant(displayStylesTagNode, context);
+          variantMgr.handleCompactListVariant(displayStylesTagNode, context, styleName);
         }
       }
 
@@ -1602,21 +1602,21 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkDisplayStyles> tags - sharable among all projects.
+ ~ Renders <lk-ancestor-styles> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  ~
  */
 
 /*
- * The <lkAncestorStyles> tag renders a set of styles for all ancestors of a given element.
+ * The <lk-ancestor-styles> tag renders a set of styles for all ancestors of a given element.
  * The ancestor styles are displayed in a table. The startElementId attribute specifies
  * where to the start the traversal. The styleNames tag specifies the list of styles to
  * be rendered in the table
  *
- *  <lkAncestorStyles title="Genealogy of innermost" startElementId="innermost">
+ *  <lk-ancestor-styles title="Genealogy of innermost" startElementId="innermost">
  *    <comment>A comment rendered beneath the Ancestors header</comment>
  *    <styleNames>position, display</styleNames>
- *  </lkAncestorStyles>
+ *  </lk-ancestor-styles>
  */
 var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
   "use strict";
@@ -1626,18 +1626,18 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
 
   return {
     getTagName: function() {
-      return "lkAncestorStyles";
+      return "lk-ancestor-styles";
     },
 
     /**
-     * Render all <lkAncestorStyles> tags on the page.
+     * Render all <lk-ancestor-styles> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkAncestorStyles> tag identified by the given tagId.
+     * Render the <lk-ancestor-styles> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */

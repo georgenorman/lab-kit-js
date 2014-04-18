@@ -4,17 +4,17 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkCssBlock> tags - sharable among all projects.
+ ~ Renders <lk-css-block> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /*
- * The <lkCssBlock> tag renders a <style> block, with the text extracted from the element
+ * The <lk-css-block> tag renders a <style> block, with the text extracted from the element
  * with the specified templateId.
  *
- * The tag attributes are read from the lkCssBlock element, as shown in the example below:
+ * The tag attributes are read from the lk-css-block element, as shown in the example below:
  *
- *    <lkCssBlock templateId="basicBoxModelCss"></lkCssBlock>
+ *    <lk-css-block templateId="basicBoxModelCss"></lk-css-block>
  *
  * @attribute templateId - ID of the element containing the CSS code to insert.
  */
@@ -23,18 +23,18 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
 
   return {
     getTagName: function() {
-      return "lkCssBlock";
+      return "lk-css-block";
     },
 
     /**
-     * Render all <lkCssBlock> tags on the page.
+     * Render all <lk-css-block> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkCssBlock> tag identified by the given tagId.
+     * Render the <lk-css-block> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */

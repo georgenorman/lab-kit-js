@@ -4,21 +4,21 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lkDisplayStyles> tags - sharable among all projects.
+ ~ Renders <lk-ancestor-styles> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  ~
  */
 
 /*
- * The <lkAncestorStyles> tag renders a set of styles for all ancestors of a given element.
+ * The <lk-ancestor-styles> tag renders a set of styles for all ancestors of a given element.
  * The ancestor styles are displayed in a table. The startElementId attribute specifies
  * where to the start the traversal. The styleNames tag specifies the list of styles to
  * be rendered in the table
  *
- *  <lkAncestorStyles title="Genealogy of innermost" startElementId="innermost">
+ *  <lk-ancestor-styles title="Genealogy of innermost" startElementId="innermost">
  *    <comment>A comment rendered beneath the Ancestors header</comment>
  *    <styleNames>position, display</styleNames>
- *  </lkAncestorStyles>
+ *  </lk-ancestor-styles>
  */
 var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
   "use strict";
@@ -28,18 +28,18 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
 
   return {
     getTagName: function() {
-      return "lkAncestorStyles";
+      return "lk-ancestor-styles";
     },
 
     /**
-     * Render all <lkAncestorStyles> tags on the page.
+     * Render all <lk-ancestor-styles> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lkAncestorStyles> tag identified by the given tagId.
+     * Render the <lk-ancestor-styles> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
