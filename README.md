@@ -226,7 +226,7 @@ The styleNames tag specifies the list of styles to be rendered in the table.
 </lk-ancestor-styles>
 ```
 
-**[⬆ back to top](#LabKit-JS)**
+**[⬆ back to top](#readme)**
 
 ## License
 
@@ -244,4 +244,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-**[⬆ back to top](#LabKit-JS)**
+**[⬆ back to top](#readme)**
