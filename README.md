@@ -2,18 +2,18 @@
 
 LabKit is a simple JavaScript library that helps build web pages with live CSS and HTML examples.
 The main functionality is provided by a set of tags that can be added to any HTML page.
-For example, the &lt;lk-css-html-example&gt; tag renders the given CSS and HTML code-examples and then inserts them into the document, for a live rendering of the example.
-To help organize the experiments, the &lt;lk-table-of-contents&gt; tag can be used to automatically generate a Table of Contents for the page.
+For example, the `<lk-css-html-example>` tag renders the given CSS and HTML code-examples and then inserts them into the document, for a live rendering of the example.
+To help organize the experiments, the `<lk-table-of-contents>` tag can be used to automatically generate a Table of Contents for the page.
 
 ## Demo
 
-[CSS Lab](http://www.thruzero.com/pages/jcat3/css-lab/index.html).
+[CSS Lab](http://www.thruzero.com/pages/jcat3/css-lab/index.html)
 
-## Features
+## Tags
 
-### CSS and HTML Example tag
+### ▶ CSS and HTML Example tag
 
-The &lt;lk-css-html-example&gt; tag renders the CSS and HTML code as examples, and then injects them into the DOM, so they will be rendered live.
+The `<lk-css-html-example>` tag renders the CSS and HTML code as examples, and then injects them into the DOM, so they will be rendered live.
 The code examples use code templates, identified by the cssTemplateId and htmlTemplateId attributes.
 
 The following example uses separate IDs for the CSS and HTML code templates:
@@ -36,9 +36,9 @@ Tag attributes:
 * **htmlTemplateId** - Required ID of the element containing the HTML code to use as example code and live HTML.
 * **templateId** - Optional form for defining the CSS and HTML template IDs. It combines the cssTemplateId and htmlTemplateId into a single templateId, where "Css" and "Html" are appended to the given templateId.
 
-Complete Example:
+##### Complete Example:
 
-CSS Template:
+◖CSS Template:
 
 ```xml
 <script type="multiline-template" id="simpleTemplateCss">
@@ -46,7 +46,7 @@ CSS Template:
 </script>
 ```
 
-HTML Template:
+◖HTML Template:
 
 ```xml
 <script type="multiline-template" id="simpleTemplateHtml">
@@ -54,7 +54,7 @@ HTML Template:
 </script>
 ```
 
-CSS and HTML Example plus live rendered Result (plus comments):
+◖CSS and HTML Example plus live rendered Result (plus comments):
 
 ```xml
 <lk-css-html-example templateId="simpleTemplate" width="750px">
@@ -64,9 +64,9 @@ CSS and HTML Example plus live rendered Result (plus comments):
 </lk-css-html-example>
 ```
 
-### CSS Block tag
+### ▶ CSS Block tag
 
-The &lt;lk-css-block&gt; tag renders a &lt;style&gt; block, with the text extracted from the element with the specified templateId.
+The `<lk-css-block>` tag renders a &lt;style&gt; block, with the text extracted from the element with the specified templateId.
 
 Example:
 
@@ -78,9 +78,9 @@ Tag attributes:
 
 * **templateId** - ID of the element containing the CSS code to insert.
 
-### HTML Block tag
+### ▶ HTML Block tag
 
-The &lt;lk-html-block&gt; tag renders an optional heading and comment, followed by the raw text from the element of the given templateId.
+The `<lk-html-block>` tag renders an optional heading and comment, followed by the raw text from the element of the given templateId.
 
 Example:
 
@@ -95,9 +95,9 @@ Tag attributes:
 * **templateId** - ID of the element containing the raw HTML code to render.
 * **heading** - Optional heading text
 
-### Code Example tag
+### ▶ Code Example tag
 
-The &lt;lk-code-example&gt; tag renders an optional heading and comment, followed by a &lt;code&gt; block with the XML escaped text extracted from the element with the specified templateId.
+The `<lk-code-example>` tag renders an optional heading and comment, followed by a &lt;code&gt; block with the XML escaped text extracted from the element with the specified templateId.
 The code block used to render the example also uses a primitive syntax highlighter (which is a bit buggy).
 
 CSS example:
@@ -123,9 +123,9 @@ Tag attributes:
 * **lang** - Language ID for the code syntax highlighter (e.g., "css", "*ml").
 * **width** - Optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
 
-### Table Of Contents tag
+### ▶ Table Of Contents tag
 
-The &lt;lk-table-of-contents&gt; tag auto-generates a simple two-level Table of Contents.
+The `<lk-table-of-contents>` tag auto-generates a simple two-level Table of Contents.
 
 Example:
 
@@ -157,12 +157,12 @@ Second-level item Example (the ID from its parent item is prepended and uses a d
 <h3 id="basicFloats.floatLeftNoFrills">Float Left No Frills</h3>
 ```
 
-### Display Styles tag
+### ▶ Display Styles tag
 
-The &lt;tz-display-styles&gt; tag renders the values of a specified set of styles for a specified set of elements.
+The `<tz-display-styles>` tag renders the values of a specified set of styles for a specified set of elements.
 It has several forms, each of which are described below:
 
-##### Compact unordered list
+##### ◖Compact unordered list
 
 The style name is the same for each item in the list. The list items are defined in the tag body:
 
@@ -172,7 +172,7 @@ The style name is the same for each item in the list. The list items are defined
 </tz-display-styles>
 ```
 
-##### Verbose unordered list
+##### ◖Verbose unordered list
 
 The style name is unique for each item in the list. The style name and list items are defined in the tag body:
 
@@ -182,7 +182,7 @@ The style name is unique for each item in the list. The style name and list item
 </tz-display-styles>
 ```
 
-##### Matrix
+##### ◖Matrix
 
 The styles are displayed in a table. The rows and columns are defined in the tag body along with optional legend images:
 
@@ -194,9 +194,9 @@ The styles are displayed in a table. The rows and columns are defined in the tag
 </tz-display-styles>
 ```
 
-### Bullet Point tag
+### ▶ Bullet Point tag
 
-The &lt;lk-bullet-point&gt; tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right:
+The `<lk-bullet-point>` tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right:
 
 ```xml
 <lk-bullet-point iconClass="success">This experiment successfully shows that...</lk-bullet-point>
@@ -213,9 +213,9 @@ Tag attributes:
 * **style** - Optional style for the wrapper div.
 
 
-### Ancestor Styles tag
+### ▶ Ancestor Styles tag
 
-The &lt;lk-ancestor-styles&gt; tag renders a set of styles for all ancestors of a given element.
+The `<lk-ancestor-styles>` tag renders a set of styles for all ancestors of a given element.
 The ancestor styles are displayed in a table. The startElementId attribute specifies where to the start the traversal.
 The styleNames tag specifies the list of styles to be rendered in the table.
 
@@ -225,6 +225,8 @@ The styleNames tag specifies the list of styles to be rendered in the table.
   <styleNames>position, display</styleNames>
 </lk-ancestor-styles>
 ```
+
+**[⬆ back to top](#LabKit-JS)**
 
 ## License
 
@@ -241,3 +243,5 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+**[⬆ back to top](#LabKit-JS)**
