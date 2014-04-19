@@ -11,7 +11,7 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 
 ## Tags
 
-### ▶ CSS and HTML Example tag
+### ‣ CSS and HTML Example tag
 
 The `<lk-css-html-example>` tag renders the CSS and HTML code as examples, and then injects them into the DOM, so they will be rendered live.
 The code examples use code templates, identified by the cssTemplateId and htmlTemplateId attributes.
@@ -64,7 +64,7 @@ Tag attributes:
 </lk-css-html-example>
 ```
 
-### ▶ CSS Block tag
+### ▸ CSS Block tag
 
 The `<lk-css-block>` tag renders a &lt;style&gt; block, with the text extracted from the element with the specified templateId.
 
@@ -78,7 +78,7 @@ Tag attributes:
 
 * **templateId** - ID of the element containing the CSS code to insert.
 
-### ▶ HTML Block tag
+### ▸ HTML Block tag
 
 The `<lk-html-block>` tag renders an optional heading and comment, followed by the raw text from the element of the given templateId.
 
@@ -95,7 +95,7 @@ Tag attributes:
 * **templateId** - ID of the element containing the raw HTML code to render.
 * **heading** - Optional heading text
 
-### ▶ Code Example tag
+### ▸ Code Example tag
 
 The `<lk-code-example>` tag renders an optional heading and comment, followed by a &lt;code&gt; block with the XML escaped text extracted from the element with the specified templateId.
 The code block used to render the example also uses a primitive syntax highlighter (which is a bit buggy).
@@ -123,7 +123,7 @@ Tag attributes:
 * **lang** - Language ID for the code syntax highlighter (e.g., "css", "*ml").
 * **width** - Optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
 
-### ▶ Table Of Contents tag
+### ▸ Table Of Contents tag
 
 The `<lk-table-of-contents>` tag auto-generates a simple two-level Table of Contents.
 
@@ -157,7 +157,7 @@ Second-level item Example (the ID from its parent item is prepended and uses a d
 <h3 id="basicFloats.floatLeftNoFrills">Float Left No Frills</h3>
 ```
 
-### ▶ Display Styles tag
+### ▸ Display Styles tag
 
 The `<tz-display-styles>` tag renders the values of a specified set of styles for a specified set of elements.
 It has several forms, each of which are described below:
@@ -194,7 +194,7 @@ The styles are displayed in a table. The rows and columns are defined in the tag
 </tz-display-styles>
 ```
 
-### ▶ Bullet Point tag
+### ▸ Bullet Point tag
 
 The `<lk-bullet-point>` tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right:
 
@@ -213,7 +213,7 @@ Tag attributes:
 * **style** - Optional style for the wrapper div.
 
 
-### ▶ Ancestor Styles tag
+### ▸ Ancestor Styles tag
 
 The `<lk-ancestor-styles>` tag renders a set of styles for all ancestors of a given element.
 The ancestor styles are displayed in a table. The startElementId attribute specifies where to the start the traversal.
