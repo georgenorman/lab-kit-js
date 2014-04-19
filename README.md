@@ -7,13 +7,13 @@ To help organize the experiments, the &lt;lk-table-of-contents&gt; tag can be us
 
 ## Demo
 
-[CSS Lab demo](http://www.thruzero.com/pages/jcat3/css-lab/index.html).
+[CSS Lab](http://www.thruzero.com/pages/jcat3/css-lab/index.html).
 
 ## Features
 
 ### CSS and HTML Example tag
 
-The &lt;lk-css-html-example&gt; tag renders the CSS and HTML code-examples, followed by the live CSS and HTML.
+The &lt;lk-css-html-example&gt; tag renders the CSS and HTML code as examples, and then injects them into the DOM, so they will be rendered live.
 The code examples use code templates, identified by the cssTemplateId and htmlTemplateId attributes.
 
 The following example uses separate IDs for the CSS and HTML code templates:
@@ -23,7 +23,7 @@ The following example uses separate IDs for the CSS and HTML code templates:
 </lk-css-html-example>
 ```
 
-This example renders only an HTML code example with live HTML:
+This example renders only the HTML portion (since the CSS ID is missing):
 
 ```xml
 <lk-css-html-example htmlTemplateId="tmplExampleRelInStaticNoMarginHtml">
@@ -34,10 +34,11 @@ Tag attributes:
 
 * **cssTemplateId** - Optional ID of the element containing the CSS code to use as example code and live CSS.
 * **htmlTemplateId** - Required ID of the element containing the HTML code to use as example code and live HTML.
-* **templateId** - Optional form for defining the CSS and HTML template IDs. It combines the cssTemplateId and htmlTemplateId into a single templateId, where the "Css" and "Html" are appended to the given templateId.
+* **templateId** - Optional form for defining the CSS and HTML template IDs. It combines the cssTemplateId and htmlTemplateId into a single templateId, where "Css" and "Html" are appended to the given templateId.
 
 Complete Example:
 
+CSS Template:
 
 ```xml
 <script type="multiline-template" id="simpleTemplateCss">
@@ -45,11 +46,15 @@ Complete Example:
 </script>
 ```
 
+HTML Template:
+
 ```xml
 <script type="multiline-template" id="simpleTemplateHtml">
   <span class="foo">This is red</span>
 </script>
 ```
+
+CSS and HTML Example plus live rendered Result (plus comments):
 
 ```xml
 <lk-css-html-example templateId="simpleTemplate" width="750px">
@@ -75,7 +80,7 @@ Tag attributes:
 
 ### HTML Block tag
 
-The &lt;lk-html-block&gt; tag renders a heading, followed by a &lt;code&gt; block with the XML escaped text from the element of the given templateId.
+The &lt;lk-html-block&gt; tag renders an optional heading and comment, followed by the raw text from the element of the given templateId.
 
 Example:
 
@@ -93,7 +98,7 @@ Tag attributes:
 ### Code Example tag
 
 The &lt;lk-code-example&gt; tag renders an optional heading and comment, followed by a &lt;code&gt; block with the XML escaped text extracted from the element with the specified templateId.
-The code block used to render the example also has a primitive syntax highlighter (which is a bit buggy).
+The code block used to render the example also uses a primitive syntax highlighter (which is a bit buggy).
 
 CSS example:
 
@@ -131,7 +136,7 @@ Example:
 Limitations:
 
 1. There can be only one Table of Contents section per page.
-2. Maximum levels is two.
+2. Maximum levels is two (e.g., h2 and h3 headings).
 
 Tag attributes:
 
@@ -154,7 +159,7 @@ Second-level item Example (the ID from its parent item is prepended and uses a d
 
 ### Display Styles tag
 
-The &lt;displayStyles&gt; tag renders the values of a set of specified styles for a set of specified elements.
+The &lt;tz-display-styles&gt; tag renders the values of a specified set of styles for a specified set of elements.
 It has several forms, each of which are described below:
 
 ##### Compact unordered list
@@ -162,9 +167,9 @@ It has several forms, each of which are described below:
 The style name is the same for each item in the list. The list items are defined in the tag body:
 
 ```xml
-<displayStyles styleName="position">
+<tz-display-styles styleName="position">
   outermost, middleGrid, innerBox
-</displayStyles>
+</tz-display-styles>
 ```
 
 ##### Verbose unordered list
@@ -172,9 +177,9 @@ The style name is the same for each item in the list. The list items are defined
 The style name is unique for each item in the list. The style name and list items are defined in the tag body:
 
 ```xml
-<displayStyles>
+<tz-display-styles>
   { "outerMost": "position", "middleGrid": "margin", "innerMost": "padding" }
-</displayStyles>
+</tz-display-styles>
 ```
 
 ##### Matrix
@@ -182,11 +187,11 @@ The style name is unique for each item in the list. The style name and list item
 The styles are displayed in a table. The rows and columns are defined in the tag body along with optional legend images:
 
 ```xml
-<displayStyles>
+<tz-display-styles>
   <styleNames>padding, margin</styleNames>
   <legendImages>./img/outermost.png, ./img/middleGrid.png, ./img/innerBox.png</legendImages>
  <elementIds>outermost, middleGrid, innerBox</elementIds>
-</displayStyles>
+</tz-display-styles>
 ```
 
 ### Bullet Point tag

@@ -9,7 +9,7 @@
  */
 
 /*
- * The <lk-html-block> tag renders a heading, followed by a <code> block with the XML escaped text from the element of the given templateId.
+ * The <lk-html-block> tag renders an optional heading and comment, followed by the raw text from the element of the given templateId.
  *
  * The tag attributes are read from the lk-html-block element, as shown in the example below:
  *
