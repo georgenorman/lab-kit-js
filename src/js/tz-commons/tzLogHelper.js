@@ -20,19 +20,35 @@
 var tzLogHelperModule = (function() {
   "use strict";
 
+  var loggingEnabled = false;
+
   return {
+    enableLogging: function() {
+      loggingEnabled = true;
+    },
+
+    disableLogging: function() {
+      loggingEnabled = false;
+    },
+
     debug: function(message) {
-      return new Date().toJSON() + " DEBUG: " + message;
+      if (loggingEnabled) {
+        console.log( new Date().toJSON() + " DEBUG: " + message );
+      }
     },
 
     warning: function(message) {
-      return new Date().toJSON() + "  WARN: " + message;
+      if (loggingEnabled) {
+        console.log( new Date().toJSON() + " WARN: " + message );
+      }
     },
 
     error: function(message) {
-      var tracer = new Error();
+      if (loggingEnabled) {
+        var tracer = new Error();
 
-      return new Date().toJSON() + " ERROR: " + message + " - " + tracer.stack;
-    }
+        console.log( new Date().toJSON() + " ERROR: " + message + " - " + tracer.stack );
+      }
+     }
   }
 }());

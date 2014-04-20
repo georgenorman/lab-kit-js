@@ -64,7 +64,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       var elementList = document.querySelectorAll( "[" + attributeName + "]" );
 
       if (elementList === null || elementList.length === 0) {
-        console.log( tzLogHelper.warning( "getFirstElementByAttributeName didn't find an element with an attribute named: " + attributeName ) );
+        tzLogHelper.warning( "getFirstElementByAttributeName didn't find an element with an attribute named: " + attributeName );
       } else {
         result = elementList[0];
       }
@@ -77,7 +77,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       var elementList = document.getElementsByTagName( tagName );
 
       if (elementList === null || elementList.length === 0) {
-        console.log( tzLogHelper.warning( "getFirstElementByTagName didn't find an element named: " + tagName ) );
+        tzLogHelper.warning( "getFirstElementByTagName didn't find an element named: " + tagName );
       } else {
         result = elementList[0];
       }
