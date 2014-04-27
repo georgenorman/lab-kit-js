@@ -25,6 +25,21 @@ var baseKitModule = (function(tzDomHelper) {
       lkDisplayStylesTag.renderAll();
       lkAncestorStylesTag.renderAll();
       lkBulletPointTag.renderAll();
+      lkBackToTag.renderAll();
+    },
+
+    /**
+     * Hide the progress bar and show the main content.
+     * @param pageLoadProgressClassName class name used to style the progress bar. If no
+     *   class name is provided, then uses the first <progress> element.
+     */
+    handlePageLoadCompleted: function( pageLoadProgressClassName ) {
+      var progressBar = tzDomHelper.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);
+
+      if (progressBar != null) {
+        progressBar.style.display = "none";
+        tzDomHelper.getFirstElementByTagName("main").style.display = "block";
+      }
     }
   };
 

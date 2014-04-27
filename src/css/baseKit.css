@@ -1,4 +1,4 @@
-/*
+/* ==================================================================
   ~ baseKit.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -6,7 +6,7 @@
   ~
   ~ CSS common to all ThruZero Labs
   ~
-*/
+  ================================================================== */
 
 /* ---------------------------------
  * Anchors
@@ -148,7 +148,7 @@ footer:after {
  * --------------------------------- */
 
 .special-note {
-  color: #f83;;
+  color: #f83;
 }
 
 /* ---------------------------------
@@ -191,4 +191,26 @@ footer:after {
 
 .green-bg {
   background: #339933;
+}
+
+/* ---------------------------------
+ * Display
+ * --------------------------------- */
+
+.hide {
+  display: none;
+}
+
+.show-block {
+  display: block;
+}
+
+/* ---------------------------------
+ * Page load progress bar
+ * --------------------------------- */
+
+.page-load-progress {
+  margin-left: 40%;
+  margin-right: 40%;
+  margin-top: 20px;
 }

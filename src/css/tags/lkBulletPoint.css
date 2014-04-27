@@ -1,9 +1,9 @@
-/*
-  ~ lkTableOfContents.css v1.0.0
+/* ==================================================================
+  ~ lkBulletPoint.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
-*/
+  ================================================================== */
 
 /* ---------------------------------
  * Layout
@@ -31,7 +31,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
 .lk-bullet-point-pass {
   color: green;
   border: 1px solid green;
-  padding: 1px 3px 1px 3px;
+  padding: 2px 4px 1px 4px;
   border-radius: 50%;
   font-size: 11px;
 }
@@ -39,6 +39,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
 .lk-bullet-point-pass::after {
   content: "\2714";
   font-style: normal;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* FAIL */
@@ -51,6 +52,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   font-style: normal;
   font-weight: bold;
   font-size: 22px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* STAR */
@@ -62,6 +64,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   content: "\2605";
   font-style: normal;
   font-size: 18px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* INFO */
@@ -74,4 +77,5 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   font-style: normal;
   font-weight: bold;
   font-size: 15px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }

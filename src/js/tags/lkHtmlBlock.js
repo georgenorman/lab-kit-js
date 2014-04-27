@@ -77,9 +77,9 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - heading optional heading to display for the live code block.
-     *            - resultComment optional comment to render above the live result.
-     *            - rawHtml the code that will be rendered into the given containerNode.
+     *            - heading: optional heading to display for the live code block.
+     *            - resultComment: optional comment to render above the live result.
+     *            - rawHtml: the code that will be rendered into the given containerNode.
      */
     render: function(containerNode, context) {
       // render optional heading, if present

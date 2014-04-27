@@ -54,24 +54,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    /*
-     * Return the first element that has an attribute with the given attributeName.
-     *
-     * @param attributeName - name of the attribute of targeted element.
-     */
-    getFirstElementByAttributeName: function( attributeName ) {
-      var result = null;
-      var elementList = document.querySelectorAll( "[" + attributeName + "]" );
-
-      if (elementList === null || elementList.length === 0) {
-        tzLogHelper.warning( "getFirstElementByAttributeName didn't find an element with an attribute named: " + attributeName );
-      } else {
-        result = elementList[0];
-      }
-
-      return result;
-    },
-
     getFirstElementByTagName: function( tagName ) {
       var result = null;
       var elementList = document.getElementsByTagName( tagName );
@@ -80,19 +62,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
         tzLogHelper.warning( "getFirstElementByTagName didn't find an element named: " + tagName );
       } else {
         result = elementList[0];
-      }
-
-      return result;
-    },
-
-    getFirstChildElementByTagName: function( parentNode, tagName ) {
-      var result = null;
-
-      for (var i = 0; i < parentNode.children.length; ++i) {
-        if (parentNode.children[i].nodeName === tagName.toUpperCase()) {
-          result = parentNode.children[i];
-          break;
-        }
       }
 
       return result;
@@ -204,7 +173,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
 
     // @-@:p0 move to general utils
     xmlEscape: function( rawString ) {
-      var result = rawString.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
+      var result = rawString.replace( /&/g, "&amp;" ).replace( /</g, "&lt;" ).replace( />/g, "&gt;" );
 
       return result;
     },
@@ -262,13 +231,13 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     show: function( elementId ) {
       var element = document.getElementById( elementId );
 
-      element.style.display = 'block';
+      element.style.display = "block";
     },
 
     hide: function( elementId ) {
       var element = document.getElementById( elementId );
 
-      element.style.display = 'none';
+      element.style.display = "none";
     }
   };
 

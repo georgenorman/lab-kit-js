@@ -76,10 +76,10 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - cssClassName css class name to use for the Table of Contents.
-     *            - level1ItemsTagName tag name used to identify the level-1 headers to be included in the Table of Contents.
-     *            - level2ItemsTagName tag name used to identify the level-2 headers to be included under each level-1 header.
-     *            - title optional title (default is "Table of Contents").
+     *            - cssClassName: css class name to use for the Table of Contents.
+     *            - level1ItemsTagName: tag name used to identify the level-1 headers to be included in the Table of Contents.
+     *            - level2ItemsTagName: tag name used to identify the level-2 headers to be included under each level-1 header.
+     *            - title: optional title (default is "Table of Contents").
      */
     render: function(containerNode, context) {
       // find all level-1 nodes
@@ -116,7 +116,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
 
       // add heading
       context.title = tzDomHelper.coalesce(context.title, "Table of Contents");
-      tzDomHelper.createElementWithAdjacentHtml(containerNode,"h2", null, "<b>" + context.title + "</b>");
+      tzDomHelper.createElementWithAdjacentHtml(containerNode,"h2", '{"id":"tableOfContents"}', "<b>" + context.title + "</b>");
 
       // add all items to ToC element
       containerNode.appendChild(toc);

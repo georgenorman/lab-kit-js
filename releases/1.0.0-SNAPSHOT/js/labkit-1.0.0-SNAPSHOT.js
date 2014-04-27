@@ -116,24 +116,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    /*
-     * Return the first element that has an attribute with the given attributeName.
-     *
-     * @param attributeName - name of the attribute of targeted element.
-     */
-    getFirstElementByAttributeName: function( attributeName ) {
-      var result = null;
-      var elementList = document.querySelectorAll( "[" + attributeName + "]" );
-
-      if (elementList === null || elementList.length === 0) {
-        tzLogHelper.warning( "getFirstElementByAttributeName didn't find an element with an attribute named: " + attributeName );
-      } else {
-        result = elementList[0];
-      }
-
-      return result;
-    },
-
     getFirstElementByTagName: function( tagName ) {
       var result = null;
       var elementList = document.getElementsByTagName( tagName );
@@ -142,19 +124,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
         tzLogHelper.warning( "getFirstElementByTagName didn't find an element named: " + tagName );
       } else {
         result = elementList[0];
-      }
-
-      return result;
-    },
-
-    getFirstChildElementByTagName: function( parentNode, tagName ) {
-      var result = null;
-
-      for (var i = 0; i < parentNode.children.length; ++i) {
-        if (parentNode.children[i].nodeName === tagName.toUpperCase()) {
-          result = parentNode.children[i];
-          break;
-        }
       }
 
       return result;
@@ -266,7 +235,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
 
     // @-@:p0 move to general utils
     xmlEscape: function( rawString ) {
-      var result = rawString.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
+      var result = rawString.replace( /&/g, "&amp;" ).replace( /</g, "&lt;" ).replace( />/g, "&gt;" );
 
       return result;
     },
@@ -324,13 +293,13 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     show: function( elementId ) {
       var element = document.getElementById( elementId );
 
-      element.style.display = 'block';
+      element.style.display = "block";
     },
 
     hide: function( elementId ) {
       var element = document.getElementById( elementId );
 
-      element.style.display = 'none';
+      element.style.display = "none";
     }
   };
 
@@ -605,9 +574,9 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - iconClass css used to render an icon in the left column.
-     *            - leftColumnWidth width of the left column.
-     *            - rawRightColumnHtml the raw HTML to render into the right column.
+     *            - iconClass: css used to render an icon in the left column.
+     *            - leftColumnWidth: width of the left column.
+     *            - rawRightColumnHtml: the raw HTML to render into the right column.
      */
     render: function(containerNode, context) {
       //var template = tzCustomTagHelper.getTemplate(this.getTagName() + "Template"); // @-@:p1(geo) Experimental
@@ -615,6 +584,102 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
       tzCustomTagHelper.renderTagFromTemplate(containerNode, template, context);
     }
   };
+
+}(tzDomHelperModule, tzCustomTagHelperModule));
+/*
+ ~ Copyright (c) 2014 George Norman.
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ --------------------------------------------------------------
+ ~ Renders <lk-back-to> tags - sharable among all projects.
+ ~ --------------------------------------------------------------
+ */
+
+/*
+ * The <lk-back-to> tag renders back-to links: "Back to Index" and "Back to Table of Contents".
+ *
+ * The tag can be configured globally, via an init function, or individually via attributes read from the lk-back-to element:
+ *
+ * - Globally:
+ *
+ *    lkBackToTag.setGlobalLinks({"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"});
+ *
+ * - Locally:
+ *
+ *    <lk-back-to links='{"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"}'></lk-back-to>
+ *
+ * @attribute links - Series of links to render.
+ */
+var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
+  "use strict";
+
+  var globalLinks = null;
+
+  return {
+    getTagName: function() {
+      return "lk-back-to";
+    },
+
+    /**
+     * Render all <lk-back-to> tags on the page.
+     */
+    renderAll: function() {
+      tzCustomTagHelper.renderAll(this);
+    },
+
+    /**
+     * Render the <lk-back-to> tag identified by the given tagId.
+     *
+     * @param tagId ID of the tag to render.
+     */
+    renderTagById: function(tagId) {
+      tzCustomTagHelper.renderTagById(this, tagId);
+    },
+
+    /**
+     * Render the given lkBackToTagNode.
+     *
+     * @param lkBackToTagNode the node to retrieve the attributes from and then render the result to.
+     */
+    renderTag: function(lkBackToTagNode) {
+      // build the context
+      var localLinksText = lkBackToTagNode.getAttribute("links");
+
+      var context = {
+        "links": tzDomHelper.isEmpty(localLinksText) ? null : JSON.parse(localLinksText)
+      };
+
+      // render the result
+      this.render(lkBackToTagNode, context);
+    },
+
+    /**
+     * Render the result into the given containerNode.
+     *
+     * @param containerNode where to render the result.
+     * @param context object containing the values needed to render the result:
+     *            - links: the links to render. If null, then uses globalLinks.
+     */
+    render: function(containerNode, context) {
+      if (tzDomHelper.isEmpty(context.links)) {
+        // use global links, if none provided by the tag's link attribute
+        if (this.globalLinks == null) {
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkBackToTag.");
+        } else {
+          for (var key in this.globalLinks) {
+            tzDomHelper.createElementWithAdjacentHtml(containerNode, "a", '{"href":"'+this.globalLinks[key]+'", "style.margin-right":"12px"}', key);
+          }
+        }
+      } else {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.links);
+      }
+    },
+
+    setGlobalLinks: function(globalLinks) {
+      this.globalLinks = globalLinks;
+    }
+  }
 
 }(tzDomHelperModule, tzCustomTagHelperModule));
 /*
@@ -695,10 +760,10 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - cssClassName css class name to use for the Table of Contents.
-     *            - level1ItemsTagName tag name used to identify the level-1 headers to be included in the Table of Contents.
-     *            - level2ItemsTagName tag name used to identify the level-2 headers to be included under each level-1 header.
-     *            - title optional title (default is "Table of Contents").
+     *            - cssClassName: css class name to use for the Table of Contents.
+     *            - level1ItemsTagName: tag name used to identify the level-1 headers to be included in the Table of Contents.
+     *            - level2ItemsTagName: tag name used to identify the level-2 headers to be included under each level-1 header.
+     *            - title: optional title (default is "Table of Contents").
      */
     render: function(containerNode, context) {
       // find all level-1 nodes
@@ -735,7 +800,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
 
       // add heading
       context.title = tzDomHelper.coalesce(context.title, "Table of Contents");
-      tzDomHelper.createElementWithAdjacentHtml(containerNode,"h2", null, "<b>" + context.title + "</b>");
+      tzDomHelper.createElementWithAdjacentHtml(containerNode,"h2", '{"id":"tableOfContents"}', "<b>" + context.title + "</b>");
 
       // add all items to ToC element
       containerNode.appendChild(toc);
@@ -861,9 +926,9 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - heading optional heading to display for the live code block.
-     *            - resultComment optional comment to render above the live result.
-     *            - rawHtml the code that will be rendered into the given containerNode.
+     *            - heading: optional heading to display for the live code block.
+     *            - resultComment: optional comment to render above the live result.
+     *            - rawHtml: the code that will be rendered into the given containerNode.
      */
     render: function(containerNode, context) {
       // render optional heading, if present
@@ -948,7 +1013,7 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - rawCss the raw styles to render into the given containerNode.
+     *            - rawCss: the raw styles to render into the given containerNode.
      */
     render: function(containerNode, context) {
       if (tzDomHelper.isEmpty(context.rawCss)) {
@@ -1044,11 +1109,11 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - heading optional heading to use.
-     *            - codeBlockComment optional comment to render above the code block.
-     *            - lang language ID for the code syntax highlighter (e.g., "css", "*ml").
-     *            - width optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            - rawCode the code that will be XML escaped and rendered into the given containerNode.
+     *            - heading: optional heading to use.
+     *            - codeBlockComment: optional comment to render above the code block.
+     *            - lang: language ID for the code syntax highlighter (e.g., "css", "*ml").
+     *            - width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            - rawCode: the code that will be XML escaped and rendered into the given containerNode.
      */
     render: function(containerNode, context) {
       // render optional heading, if present
@@ -1231,13 +1296,13 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - cssComment optional comment to render above the CSS code block.
-     *            - rawCss the CSS code to insert.
-     *            - htmlComment optional comment to render above the HTML code block.
-     *            - rawHtml the HTML code to insert.
-     *            - resultComment optional comment to render above the live result.
-     *            - width optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            - height optional height.
+     *            - cssComment: optional comment to render above the CSS code block.
+     *            - rawCss: the CSS code to insert.
+     *            - htmlComment: optional comment to render above the HTML code block.
+     *            - rawHtml: the HTML code to insert.
+     *            - resultComment: optional comment to render above the live result.
+     *            - width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            - height: optional height.
      */
     render: function(containerNode, context) {
       // render the live CSS, if present
@@ -1450,10 +1515,10 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - title optional heading for the style list.
-     *            - unorderedListItems list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
+     *            - title: optional heading for the style list.
+     *            - unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
      *              element and the css-property-name is used to read and display its property value.
-     *            - useCompactUnorderedList if true, then all property names are the same, so displays a list of property/value pairs without the property name;
+     *            - useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
      *              otherwise, displays the same list, but includes the property name for each item in the list.
      */
     render: function(containerNode, context) {
@@ -1713,10 +1778,10 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - title optional heading for the style list.
-     *            - unorderedListItems list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
+     *            - title: optional heading for the style list.
+     *            - unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
      *              element and the css-property-name is used to read and display its property value.
-     *            - useCompactUnorderedList if true, then all property names are the same, so displays a list of property/value pairs without the property name;
+     *            - useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
      *              otherwise, displays the same list, but includes the property name for each item in the list.
      */
     render: function(containerNode, context) {
@@ -1753,6 +1818,21 @@ var baseKitModule = (function(tzDomHelper) {
       lkDisplayStylesTag.renderAll();
       lkAncestorStylesTag.renderAll();
       lkBulletPointTag.renderAll();
+      lkBackToTag.renderAll();
+    },
+
+    /**
+     * Hide the progress bar and show the main content.
+     * @param pageLoadProgressClassName class name used to style the progress bar. If no
+     *   class name is provided, then uses the first <progress> element.
+     */
+    handlePageLoadCompleted: function( pageLoadProgressClassName ) {
+      var progressBar = tzDomHelper.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);
+
+      if (progressBar != null) {
+        progressBar.style.display = "none";
+        tzDomHelper.getFirstElementByTagName("main").style.display = "block";
+      }
     }
   };
 

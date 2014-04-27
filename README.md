@@ -130,7 +130,8 @@ The `<lk-table-of-contents>` tag auto-generates a simple two-level Table of Cont
 Example:
 
 ```xml
-<lk-table-of-contents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"></lk-table-of-contents>
+<lk-table-of-contents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3">
+</lk-table-of-contents>
 ```
 
 Limitations:
@@ -199,7 +200,9 @@ The styles are displayed in a table. The rows and columns are defined in the tag
 The `<lk-bullet-point>` tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right:
 
 ```xml
-<lk-bullet-point iconClass="success">This experiment successfully shows that...</lk-bullet-point>
+<lk-bullet-point iconClass="success">
+  This experiment successfully shows that...
+</lk-bullet-point>
 ```
 
 Tag attributes:
@@ -224,6 +227,27 @@ The styleNames tag specifies the list of styles to be rendered in the table.
   <comment>A comment rendered beneath the Ancestors header</comment>
   <styleNames>position, display</styleNames>
 </lk-ancestor-styles>
+```
+
+**[⬆ back to top](#readme)**
+
+
+### ▸ Back To tag
+
+The `<lk-back-to>` tag renders back-to links (e.g., "Back to Index", "Back to Table of Contents", etc).
+The tag can be configured globally, via an init function, or individually via attributes read from the lk-back-to element:
+
+* Globally:
+
+```javascript
+lkBackToTag.setGlobalLinks({"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"});
+```
+
+* Locally:
+
+```xml
+<lk-back-to links='{"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"}'>
+</lk-back-to>
 ```
 
 **[⬆ back to top](#readme)**

@@ -5,12 +5,12 @@
   ~ Licensed under the Apache License, Version 2.0 (the License);
   ~     http://www.apache.org/licenses/LICENSE-2.0
 */
-/*
+/* ==================================================================
   ~ tzCommons.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
-*/
+  ================================================================== */
 
 html {
   -webkit-text-size-adjust: none; /* Prevent font scaling in landscape */
@@ -38,8 +38,9 @@ img {
   clear: both;
 }
 
-
-/* Code Highlighter */
+/* ---------------------------------
+ * Code Highlighter
+ * --------------------------------- */
 
 /* Generic */
 
@@ -71,7 +72,10 @@ img {
 .tz-highlight-css-property {
   color: #00c;
 }
-/*
+
+
+
+/* ==================================================================
   ~ baseKit.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -79,7 +83,7 @@ img {
   ~
   ~ CSS common to all ThruZero Labs
   ~
-*/
+  ================================================================== */
 
 /* ---------------------------------
  * Anchors
@@ -221,7 +225,7 @@ footer:after {
  * --------------------------------- */
 
 .special-note {
-  color: #f83;;
+  color: #f83;
 }
 
 /* ---------------------------------
@@ -266,12 +270,54 @@ footer:after {
   background: #339933;
 }
 
-/*
-  ~ lkTableOfContents.css v1.0.0
+/* ---------------------------------
+ * Display
+ * --------------------------------- */
+
+.hide {
+  display: none;
+}
+
+.show-block {
+  display: block;
+}
+
+/* ---------------------------------
+ * Page load progress bar
+ * --------------------------------- */
+
+.page-load-progress {
+  margin-left: 40%;
+  margin-right: 40%;
+  margin-top: 20px;
+}
+
+
+
+
+/* ==================================================================
+  ~ lkBackTo.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
-*/
+  ================================================================== */
+
+/* Create an empty shell to render the tag */
+lk-back-to {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 26px;
+  white-space: nowrap;
+}
+
+
+
+/* ==================================================================
+  ~ lkBulletPoint.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ================================================================== */
 
 /* ---------------------------------
  * Layout
@@ -299,7 +345,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
 .lk-bullet-point-pass {
   color: green;
   border: 1px solid green;
-  padding: 1px 3px 1px 3px;
+  padding: 2px 4px 1px 4px;
   border-radius: 50%;
   font-size: 11px;
 }
@@ -307,6 +353,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
 .lk-bullet-point-pass::after {
   content: "\2714";
   font-style: normal;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* FAIL */
@@ -319,6 +366,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   font-style: normal;
   font-weight: bold;
   font-size: 22px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* STAR */
@@ -330,6 +378,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   content: "\2605";
   font-style: normal;
   font-size: 18px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* INFO */
@@ -342,14 +391,23 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   font-style: normal;
   font-weight: bold;
   font-size: 15px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-/*
+
+
+
+/* ==================================================================
   ~ lkCodeExample.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
-*/
+  ================================================================== */
 
+/* Headings */
+
+lk-code-example > h4 {
+  margin-top: 12px;
+}
 
 /* ---------------------------------
  * Code block (with gutter and line numbers)
@@ -399,18 +457,41 @@ code.lk-code-example ol li:nth-child(even) {
   margin: 6px 0 10px 6px;
   color: #777;
 }
-/*
+
+
+
+/* ==================================================================
   ~ lkDisplayStyles.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
-*/
+  ================================================================== */
 
+/* Headings */
+
+lk-css-html-example > h4 {
+  margin-top: 12px;
+}
+
+
+
+/* ==================================================================
+  ~ lkDisplayStyles.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ================================================================== */
+
+/* Headings */
+
+lk-display-styles > h4 {
+  margin-top: 12px;
+}
 
 /* Matrix */
 
 div.lk-display-styles-matrix {
-  margin-bottom: 28px;
+  margin-bottom: 16px;
   width: 93%;
   overflow: auto;
 }
@@ -419,6 +500,8 @@ div.lk-display-styles-matrix > table {
   margin: 8px 0 0 6px;
   border-collapse:collapse;
   border: 1px solid #ccc;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
 }
 
 div.lk-display-styles-matrix > table tr > th {
@@ -441,17 +524,15 @@ div.lk-display-styles-matrix > table tr > td:first-child {
 div.lk-display-styles-matrix > table tr > td.center {
   text-align: center;
 }
-/*
-  ~ lkCssHtmlExample.css v1.0.0
+
+
+
+/* ==================================================================
+  ~ lkHtmlBlock.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
-*/
-
-
-/* ---------------------------------
- * Rendered Result block
- * --------------------------------- */
+  ================================================================== */
 
 /* Create an empty shell to render the HTML block */
 .lk-html-block {
@@ -466,12 +547,15 @@ div.lk-display-styles-matrix > table tr > td.center {
   margin: 6px 0 10px 6px;
   color: #777;
 }
-/*
+
+
+
+/* ==================================================================
   ~ lkTableOfContents.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
-*/
+  ================================================================== */
 
 /* TOC heading */
 lk-table-of-contents h2 {
@@ -498,6 +582,7 @@ lk-table-of-contents ul.toc li:before {
   content: "\2666";
   margin-right: 6px;
   color: #ccc;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 lk-table-of-contents ul.toc li.fail:before {
@@ -524,6 +609,7 @@ lk-table-of-contents ul.toc > li > ul > li {
 lk-table-of-contents ul.toc > li > ul > li:before {
   content: "\2022";
   margin: 6px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 lk-table-of-contents ul.toc > li > ul > li.fail:before {
@@ -533,3 +619,9 @@ lk-table-of-contents ul.toc > li > ul > li.fail:before {
 lk-table-of-contents ul.toc > li > ul > li.pass:before {
   color: #0d0;
 }
+
+
+
+
+
+

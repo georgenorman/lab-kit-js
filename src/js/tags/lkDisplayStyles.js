@@ -176,10 +176,10 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - title optional heading for the style list.
-     *            - unorderedListItems list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
+     *            - title: optional heading for the style list.
+     *            - unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
      *              element and the css-property-name is used to read and display its property value.
-     *            - useCompactUnorderedList if true, then all property names are the same, so displays a list of property/value pairs without the property name;
+     *            - useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
      *              otherwise, displays the same list, but includes the property name for each item in the list.
      */
     render: function(containerNode, context) {

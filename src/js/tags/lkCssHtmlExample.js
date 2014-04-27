@@ -126,13 +126,13 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - cssComment optional comment to render above the CSS code block.
-     *            - rawCss the CSS code to insert.
-     *            - htmlComment optional comment to render above the HTML code block.
-     *            - rawHtml the HTML code to insert.
-     *            - resultComment optional comment to render above the live result.
-     *            - width optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            - height optional height.
+     *            - cssComment: optional comment to render above the CSS code block.
+     *            - rawCss: the CSS code to insert.
+     *            - htmlComment: optional comment to render above the HTML code block.
+     *            - rawHtml: the HTML code to insert.
+     *            - resultComment: optional comment to render above the live result.
+     *            - width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            - height: optional height.
      */
     render: function(containerNode, context) {
       // render the live CSS, if present

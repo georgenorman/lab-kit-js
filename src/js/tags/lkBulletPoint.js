@@ -78,9 +78,9 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - iconClass css used to render an icon in the left column.
-     *            - leftColumnWidth width of the left column.
-     *            - rawRightColumnHtml the raw HTML to render into the right column.
+     *            - iconClass: css used to render an icon in the left column.
+     *            - leftColumnWidth: width of the left column.
+     *            - rawRightColumnHtml: the raw HTML to render into the right column.
      */
     render: function(containerNode, context) {
       //var template = tzCustomTagHelper.getTemplate(this.getTagName() + "Template"); // @-@:p1(geo) Experimental

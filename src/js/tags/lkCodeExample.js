@@ -82,11 +82,11 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - heading optional heading to use.
-     *            - codeBlockComment optional comment to render above the code block.
-     *            - lang language ID for the code syntax highlighter (e.g., "css", "*ml").
-     *            - width optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            - rawCode the code that will be XML escaped and rendered into the given containerNode.
+     *            - heading: optional heading to use.
+     *            - codeBlockComment: optional comment to render above the code block.
+     *            - lang: language ID for the code syntax highlighter (e.g., "css", "*ml").
+     *            - width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            - rawCode: the code that will be XML escaped and rendered into the given containerNode.
      */
     render: function(containerNode, context) {
       // render optional heading, if present

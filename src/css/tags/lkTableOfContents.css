@@ -1,9 +1,9 @@
-/*
+/* ==================================================================
   ~ lkTableOfContents.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
-*/
+  ================================================================== */
 
 /* TOC heading */
 lk-table-of-contents h2 {
@@ -30,6 +30,7 @@ lk-table-of-contents ul.toc li:before {
   content: "\2666";
   margin-right: 6px;
   color: #ccc;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 lk-table-of-contents ul.toc li.fail:before {
@@ -56,6 +57,7 @@ lk-table-of-contents ul.toc > li > ul > li {
 lk-table-of-contents ul.toc > li > ul > li:before {
   content: "\2022";
   margin: 6px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 lk-table-of-contents ul.toc > li > ul > li.fail:before {

@@ -62,7 +62,7 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - rawCss the raw styles to render into the given containerNode.
+     *            - rawCss: the raw styles to render into the given containerNode.
      */
     render: function(containerNode, context) {
       if (tzDomHelper.isEmpty(context.rawCss)) {
