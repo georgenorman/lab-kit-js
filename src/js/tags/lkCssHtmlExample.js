@@ -43,9 +43,9 @@
 var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, lkHtmlBlock, lkCodeExample) {
   "use strict";
 
-  var cssCommentExpression = new RegExp("<cssComment>(.+?)<\/cssComment>", "ig");
-  var htmlCommentExpression = new RegExp("<htmlComment>(.+?)<\/htmlComment>", "ig");
-  var resultCommentExpression = new RegExp("<resultComment>(.+?)<\/resultComment>", "ig");
+  var cssCommentExpression = new RegExp("<cssComment>((.|\n)*)<\/cssComment>", "ig");
+  var htmlCommentExpression = new RegExp("<htmlComment>((.|\n)*)<\/htmlComment>", "ig");
+  var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
 
   return {
     getTagName: function() {

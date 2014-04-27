@@ -30,7 +30,7 @@
 var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
-  var commentExpression = new RegExp("<comment>(.+?)<\/comment>", "ig");
+  var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
 
   return {
     getTagName: function() {

@@ -872,7 +872,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
 var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
-  var commentExpression = new RegExp("<comment>(.+?)</comment>", "ig");
+  var commentExpression = new RegExp("<comment>((.|\n)*)</comment>", "ig");
 
   return {
     getTagName: function() {
@@ -1057,7 +1057,7 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
 var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
-  var commentExpression = new RegExp("<comment>(.+?)<\/comment>", "ig");
+  var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
 
   return {
     getTagName: function() {
@@ -1213,9 +1213,9 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
 var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, lkHtmlBlock, lkCodeExample) {
   "use strict";
 
-  var cssCommentExpression = new RegExp("<cssComment>(.+?)<\/cssComment>", "ig");
-  var htmlCommentExpression = new RegExp("<htmlComment>(.+?)<\/htmlComment>", "ig");
-  var resultCommentExpression = new RegExp("<resultComment>(.+?)<\/resultComment>", "ig");
+  var cssCommentExpression = new RegExp("<cssComment>((.|\n)*)<\/cssComment>", "ig");
+  var htmlCommentExpression = new RegExp("<htmlComment>((.|\n)*)<\/htmlComment>", "ig");
+  var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
 
   return {
     getTagName: function() {
@@ -1374,7 +1374,7 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
 var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
-  var commentExpression = new RegExp("<comment>(.+?)</comment>", "ig");
+  var commentExpression = new RegExp("<comment>((.|\n)*)</comment>", "ig");
   var legendImagesExpression = new RegExp("<legendImages>(.+?)</legendImages>", "ig");
   var elementIdsExpression = new RegExp("<elementIds>(.+?)</elementIds>", "ig");
   var styleNamesExpression = new RegExp("<styleNames>(.+?)</styleNames>", "ig");

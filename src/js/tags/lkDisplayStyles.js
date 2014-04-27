@@ -35,7 +35,7 @@
 var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
-  var commentExpression = new RegExp("<comment>(.+?)</comment>", "ig");
+  var commentExpression = new RegExp("<comment>((.|\n)*)</comment>", "ig");
   var legendImagesExpression = new RegExp("<legendImages>(.+?)</legendImages>", "ig");
   var elementIdsExpression = new RegExp("<elementIds>(.+?)</elementIds>", "ig");
   var styleNamesExpression = new RegExp("<styleNames>(.+?)</styleNames>", "ig");
