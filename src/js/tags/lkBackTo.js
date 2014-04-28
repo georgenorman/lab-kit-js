@@ -80,7 +80,7 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkBackToTag.");
         } else {
           for (var key in this.globalLinks) {
-            tzDomHelper.createElementWithAdjacentHtml(containerNode, "a", '{"href":"'+this.globalLinks[key]+'", "style.margin-right":"12px"}', key);
+            tzDomHelper.createElementWithAdjacentHtml(containerNode, "a", '{"href":"'+this.globalLinks[key]+'"}', key);
           }
         }
       } else {

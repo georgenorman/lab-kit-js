@@ -12,3 +12,7 @@ lk-back-to {
   margin-bottom: 26px;
   white-space: nowrap;
 }
+
+lk-back-to > a {
+  margin-right: 12px;
+}
