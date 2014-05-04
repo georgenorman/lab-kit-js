@@ -1,0 +1,71 @@
+{
+  "name": "lab-kit-js",
+  "version": "1.0.0-SNAPSHOT",
+  "title": "LabKit JS",
+  "description": "A simple JavaScript library that helps build web pages with live CSS and HTML examples.",
+  "keywords": ["javascript", "css", "html"],
+  "homepage": "https://github.com/georgenorman/lab-kit-js",
+  "author": {
+    "name": "George Norman",
+    "url": "http://www.thruzero.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/georgenorman/lab-kit-js.git"
+  },
+  "bugs": "https://github.com/georgenorman/lab-kit-js/issues",
+  "license":
+    {
+      "type": "Apache License, Version 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-cssmin": "^0.8.0",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-autoprefixer": "^0.7.3",
+    "grunt-contrib-copy": "^0.5.0"
+  },
+  "_comment_": "** ------------------------------------------------------------- **",
+  "_comment_": "** For now, manually manage the order of all files [REVISIT]     **",
+  "_comment_": "** ------------------------------------------------------------- **",
+  "labKitFiles": {
+    "tzCommonsJs": [
+      "src/js/tz-commons/tzLogHelper.js",
+      "src/js/tz-commons/tzDomHelper.js",
+      "src/js/tz-commons/tzCodeHighlighter.js",
+      "src/js/tz-commons/tzCustomTagHelper.js"
+    ],
+    "tzCommonsCss": [
+      "src/css/tz-commons/tzCommons.css"
+    ],
+    "baseKitJs": [
+      "src/js/baseKit.js"
+    ],
+    "baseKitCss": [
+      "src/css/baseKit.css"
+    ],
+    "labKitTagsJs": [
+      "src/js/tags/lkBulletPoint.js",
+      "src/js/tags/lkBackTo.js",
+      "src/js/tags/lkTableOfContents.js",
+      "src/js/tags/lkHtmlBlock.js",
+      "src/js/tags/lkCssBlock.js",
+      "src/js/tags/lkCodeExample.js",
+      "src/js/tags/lkCssHtmlExample.js",
+      "src/js/tags/lkDisplayStyles.js",
+      "src/js/tags/lkAncestorStyles.js"
+    ],
+    "labKitTagsCss": [
+      "src/css/tags/lkBulletPoint.css",
+      "src/css/tags/lkBackTo.css",
+      "src/css/tags/lkTableOfContents.css",
+      "src/css/tags/lkHtmlBlock.css",
+      "src/css/tags/lkCodeExample.css",
+      "src/css/tags/lkCssHtmlExample.css",
+      "src/css/tags/lkDisplayStyles.css"
+    ]
+  }
+}

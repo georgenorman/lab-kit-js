@@ -6,11 +6,11 @@
   ================================================================== */
 
 html {
-  -webkit-text-size-adjust: none; /* Prevent font scaling in landscape */
+  text-size-adjust: none; /* Prevent font scaling in landscape */
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 18px;
   color: #555;
@@ -18,6 +18,10 @@ body {
   margin: 0;
   height: 100%;
   padding: 0 1px 2px 0;
+}
+
+b {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 img {

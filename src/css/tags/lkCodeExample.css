@@ -34,7 +34,6 @@ code.lk-code-example {
   font-size: 11px;
 
   /* hack to shade gutter, without also shading the code area. */
-  background-image: -webkit-gradient(linear, 0% 0%, 40% 0%, from(#efefef), to(#fff) );
   background: linear-gradient(to right, #efefef, #fff 40%);
 }
 

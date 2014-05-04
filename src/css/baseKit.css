@@ -214,3 +214,81 @@ footer:after {
   margin-right: 40%;
   margin-top: 20px;
 }
+
+/* ---------------------------------
+ * LabKit Banner
+ * --------------------------------- */
+
+/* Provide a box that clips the ribbon (to prevent scrollbars) and allows click-thru */
+.ribbon-box {
+  position: absolute;
+  top: 0;
+  width: 76px;
+  height: 76px;
+  overflow: hidden; /* clip to prevent scroll bar */
+}
+
+/* Position box to the right */
+.ribbon-box.right {
+  right: 0;
+}
+
+/* Position box to the left */
+.ribbon-box.left {
+  left: 0;
+}
+
+/* Provide 2px padding for two horizontal stripes */
+.ribbon {
+  padding: 2px 0;
+  width: 120px;
+}
+
+/*
+ * Display <em> as block (so text-align, padding, etc will work);
+ * set stripe color to #fff; provide some padding; center the text.
+ */
+.ribbon a {
+  display: block;
+  border: 1px solid #eee;
+  padding: 3px;
+  text-align: center;
+  font-family: 'Gudea', sans-serif;
+  color: #fff;
+}
+.ribbon a:hover {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Position ribbon on right and rotate-right by 45-deg */
+.ribbon-box.right .ribbon {
+  position: absolute;
+  top: 12px;
+  right: -32px;
+  transform: rotate(45deg);
+}
+
+/* Position ribbon on left and rotate-left by 45-deg */
+.ribbon-box.left .ribbon {
+  position: absolute;
+  top: 12px;
+  left: -32px;
+  transform: rotate(-45deg);
+}
+
+/* Red ribbon */
+.ribbon.red {
+  background-color: #900;
+}
+
+/* Green ribbon */
+.ribbon.green {
+  background-color: #090;
+}
+
+/* Blue ribbon */
+.ribbon.blue {
+  background-color: #009;
+}
+

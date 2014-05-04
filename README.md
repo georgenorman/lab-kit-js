@@ -64,6 +64,8 @@ Tag attributes:
 </lk-css-html-example>
 ```
 
+**[⬆ back to top](#readme)**
+
 ### ▸ CSS Block tag
 
 The `<lk-css-block>` tag renders a &lt;style&gt; block, with the text extracted from the element with the specified templateId.
@@ -77,6 +79,8 @@ Example:
 Tag attributes:
 
 * **templateId** - ID of the element containing the CSS code to insert.
+
+**[⬆ back to top](#readme)**
 
 ### ▸ HTML Block tag
 
@@ -94,6 +98,8 @@ Tag attributes:
 
 * **templateId** - ID of the element containing the raw HTML code to render.
 * **heading** - Optional heading text
+
+**[⬆ back to top](#readme)**
 
 ### ▸ Code Example tag
 
@@ -122,6 +128,8 @@ Tag attributes:
 * **heading** - Optional heading (h4).
 * **lang** - Language ID for the code syntax highlighter (e.g., "css", "*ml").
 * **width** - Optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+
+**[⬆ back to top](#readme)**
 
 ### ▸ Table Of Contents tag
 
@@ -157,6 +165,8 @@ Second-level item Example (the ID from its parent item is prepended and uses a d
 ```xml
 <h3 id="basicFloats.floatLeftNoFrills">Float Left No Frills</h3>
 ```
+
+**[⬆ back to top](#readme)**
 
 ### ▸ Display Styles tag
 
@@ -195,6 +205,8 @@ The styles are displayed in a table. The rows and columns are defined in the tag
 </tz-display-styles>
 ```
 
+**[⬆ back to top](#readme)**
+
 ### ▸ Bullet Point tag
 
 The `<lk-bullet-point>` tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right:
@@ -215,6 +227,8 @@ Tag attributes:
 * **leftColumnWidth** - Optional width of the left column.
 * **style** - Optional style for the wrapper div.
 
+
+**[⬆ back to top](#readme)**
 
 ### ▸ Ancestor Styles tag
 
@@ -248,6 +262,28 @@ lkBackToTag.setGlobalLinks({"⬅ Back to Index":"./index.html", "⬆ Back to Tab
 ```xml
 <lk-back-to links='{"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"}'>
 </lk-back-to>
+```
+
+**[⬆ back to top](#readme)**
+
+## Building a Release
+
+### Setup
+
+The project's build process uses Node.js and Grunt.
+If you don't have Grunt, you can follow the [Getting Started](http://gruntjs.com/getting-started) guide.
+Next, just do an `npm install` which will install Grunt locally as well as all of the project dependencies:
+
+```bash
+npm install
+```
+
+### Default Build
+
+The default build cleans the target directory and generates the current release.
+
+```bash
+grunt
 ```
 
 **[⬆ back to top](#readme)**
