@@ -68,7 +68,7 @@ module.exports = function(grunt) {
         }
       },
       options: {
-        banner: bannerTemplate.replace(/\${EXT}/g, "js"),
+        preserveComments: 'some',
         sourceMap: true
       }
     },
