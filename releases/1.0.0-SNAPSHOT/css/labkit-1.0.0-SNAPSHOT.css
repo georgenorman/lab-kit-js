@@ -1,10 +1,9 @@
-
 /*!
   ~ labKit-1.0.0-SNAPSHOT.css
-  ~ Copyright (c) 2014 George Norman.
-  ~ Licensed under the Apache License, Version 2.0 (the License);
-  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~ Copyright (c) 2014 George Norman
+  ~ Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
 */
+
 /* ==================================================================
   ~ tzCommons.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
@@ -13,11 +12,11 @@
   ================================================================== */
 
 html {
-  -webkit-text-size-adjust: none; /* Prevent font scaling in landscape */
+  text-size-adjust: none; /* Prevent font scaling in landscape */
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 18px;
   color: #555;
@@ -25,6 +24,10 @@ body {
   margin: 0;
   height: 100%;
   padding: 0 1px 2px 0;
+}
+
+b {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 img {
@@ -73,8 +76,6 @@ img {
   color: #00c;
 }
 
-
-
 /* ==================================================================
   ~ baseKit.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
@@ -112,6 +113,7 @@ ul, ol {
 
 /* Create an empty shell for the header content */
 header {
+  background: -webkit-linear-gradient(45deg, #777, #fcfcfc);
   background: linear-gradient(45deg, #777, #fcfcfc);
   color: #fff;
   padding: 8px;
@@ -190,6 +192,7 @@ footer {
   margin-top: 48px;
   padding: 6px;
   color: #fff;
+  background: -webkit-linear-gradient(45deg, #fcfcfc, #777);
   background: linear-gradient(45deg, #fcfcfc, #777);
   text-align: right;
 }
@@ -216,6 +219,7 @@ footer:after {
   margin-top: 16px;
   border: 2px solid #ccc;
   padding: 8px;
+  -webkit-box-shadow: 3px 3px 4px #000;
   box-shadow: 3px 3px 4px #000;
   max-width: 96%;
 }
@@ -292,24 +296,86 @@ footer:after {
   margin-top: 20px;
 }
 
+/* ---------------------------------
+ * LabKit Banner
+ * --------------------------------- */
 
-
-
-/* ==================================================================
-  ~ lkBackTo.css v1.0.0
-  ~ Copyright (c) 2014 George Norman.
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ================================================================== */
-
-/* Create an empty shell to render the tag */
-lk-back-to {
-  display: block;
-  margin-top: 16px;
-  margin-bottom: 26px;
-  white-space: nowrap;
+/* Provide a box that clips the ribbon (to prevent scrollbars) and allows click-thru */
+.ribbon-box {
+  position: absolute;
+  top: 0;
+  width: 76px;
+  height: 76px;
+  overflow: hidden; /* clip to prevent scroll bar */
 }
 
+/* Position box to the right */
+.ribbon-box.right {
+  right: 0;
+}
+
+/* Position box to the left */
+.ribbon-box.left {
+  left: 0;
+}
+
+/* Provide 2px padding for two horizontal stripes */
+.ribbon {
+  padding: 2px 0;
+  width: 120px;
+}
+
+/*
+ * Display <em> as block (so text-align, padding, etc will work);
+ * set stripe color to #fff; provide some padding; center the text.
+ */
+.ribbon a {
+  display: block;
+  border: 1px solid #eee;
+  padding: 3px;
+  text-align: center;
+  font-family: 'Gudea', sans-serif;
+  color: #fff;
+}
+.ribbon a:hover {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Position ribbon on right and rotate-right by 45-deg */
+.ribbon-box.right .ribbon {
+  position: absolute;
+  top: 12px;
+  right: -32px;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+/* Position ribbon on left and rotate-left by 45-deg */
+.ribbon-box.left .ribbon {
+  position: absolute;
+  top: 12px;
+  left: -32px;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+/* Red ribbon */
+.ribbon.red {
+  background-color: #900;
+}
+
+/* Green ribbon */
+.ribbon.green {
+  background-color: #090;
+}
+
+/* Blue ribbon */
+.ribbon.blue {
+  background-color: #009;
+}
 
 
 /* ==================================================================
@@ -394,161 +460,24 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-
-
 /* ==================================================================
-  ~ lkCodeExample.css v1.0.0
+  ~ lkBackTo.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
   ================================================================== */
 
-/* Headings */
-
-lk-code-example > h4 {
-  margin-top: 12px;
-}
-
-/* ---------------------------------
- * Code block (with gutter and line numbers)
- * --------------------------------- */
-
-/*
-  Format example code blocks (CSS, JS, HTML, etc).
-    - border color: #ccc
-    - zebra stripe color: #efefef
-    - gutter color: #efefef
-    - gutter-divider color: #0c0
-*/
-code.lk-code-example {
+/* Create an empty shell to render the tag */
+lk-back-to {
   display: block;
-  white-space: pre;
-  color: initial;
-  margin: 8px 6px;
-  padding: 0;
-  border-left: thin solid #ccc;
-  width: 93%;
-  overflow: auto;
-  font-size: 11px;
-
-  /* hack to shade gutter, without also shading the code area. */
-  background-image: -webkit-gradient(linear, 0% 0%, 40% 0%, from(#efefef), to(#fff) );
-  background: linear-gradient(to right, #efefef, #fff 40%);
+  margin-top: 16px;
+  margin-bottom: 26px;
+  white-space: nowrap;
 }
 
-code.lk-code-example ol {
-  margin: 0 0 0 36px;
-  padding: 0;
-  list-style-type: decimal-leading-zero;
-  border-left: 2px solid #0c0;
-  border-top: thin solid #ccc;
-  border-bottom: thin solid #ccc;
+lk-back-to > a {
+  margin-right: 12px;
 }
-
-code.lk-code-example ol li:nth-child(odd) {
-  background-color: #fff;
-}
-
-code.lk-code-example ol li:nth-child(even) {
-  background-color: #efefef;
-}
-
-.lk-code-example-comment {
-  margin: 6px 0 10px 6px;
-  color: #777;
-}
-
-
-
-/* ==================================================================
-  ~ lkDisplayStyles.css v1.0.0
-  ~ Copyright (c) 2014 George Norman.
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ================================================================== */
-
-/* Headings */
-
-lk-css-html-example > h4 {
-  margin-top: 12px;
-}
-
-
-
-/* ==================================================================
-  ~ lkDisplayStyles.css v1.0.0
-  ~ Copyright (c) 2014 George Norman.
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ================================================================== */
-
-/* Headings */
-
-lk-display-styles > h4 {
-  margin-top: 12px;
-}
-
-/* Matrix */
-
-div.lk-display-styles-matrix {
-  margin-bottom: 16px;
-  width: 93%;
-  overflow: auto;
-}
-
-div.lk-display-styles-matrix > table {
-  margin: 8px 0 0 6px;
-  border-collapse:collapse;
-  border: 1px solid #ccc;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
-}
-
-div.lk-display-styles-matrix > table tr > th {
-  padding: 4px;
-  color: #555;
-  background-color: #ececec;
-  border-left: 1px solid #ccc;
-}
-
-div.lk-display-styles-matrix > table tr > td {
-  padding: 4px;
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-}
-
-div.lk-display-styles-matrix > table tr > td:first-child {
-  border-left: none;
-}
-
-div.lk-display-styles-matrix > table tr > td.center {
-  text-align: center;
-}
-
-
-
-/* ==================================================================
-  ~ lkHtmlBlock.css v1.0.0
-  ~ Copyright (c) 2014 George Norman.
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ================================================================== */
-
-/* Create an empty shell to render the HTML block */
-.lk-html-block {
-  margin: 8px 6px;
-  border: thin dashed #ccc;
-  padding: 3px;
-  width: 93%;
-  overflow: auto;
-}
-
-.lk-html-block-comment {
-  margin: 6px 0 10px 6px;
-  color: #777;
-}
-
-
 
 /* ==================================================================
   ~ lkTableOfContents.css v1.0.0
@@ -620,8 +549,149 @@ lk-table-of-contents ul.toc > li > ul > li.pass:before {
   color: #0d0;
 }
 
+/* ==================================================================
+  ~ lkHtmlBlock.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ================================================================== */
 
+/* Create an empty shell to render the HTML block */
+.lk-html-block {
+  margin: 8px 6px;
+  border: thin dashed #ccc;
+  padding: 3px;
+  width: 93%;
+  overflow: auto;
+}
 
+.lk-html-block-comment {
+  margin: 6px 0 10px 6px;
+  color: #777;
+}
 
+/* ==================================================================
+  ~ lkCodeExample.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ================================================================== */
 
+/* Headings */
 
+lk-code-example > h4 {
+  margin-top: 12px;
+}
+
+/* ---------------------------------
+ * Code block (with gutter and line numbers)
+ * --------------------------------- */
+
+/*
+  Format example code blocks (CSS, JS, HTML, etc).
+    - border color: #ccc
+    - zebra stripe color: #efefef
+    - gutter color: #efefef
+    - gutter-divider color: #0c0
+*/
+code.lk-code-example {
+  display: block;
+  white-space: pre;
+  color: initial;
+  margin: 8px 6px;
+  padding: 0;
+  border-left: thin solid #ccc;
+  width: 93%;
+  overflow: auto;
+  font-size: 11px;
+
+  /* hack to shade gutter, without also shading the code area. */
+  background: -webkit-gradient(linear, left top, right top, from(#efefef), color-stop(40%, #fff));
+  background: -webkit-linear-gradient(left, #efefef, #fff 40%);
+  background: linear-gradient(to right, #efefef, #fff 40%);
+}
+
+code.lk-code-example ol {
+  margin: 0 0 0 36px;
+  padding: 0;
+  list-style-type: decimal-leading-zero;
+  border-left: 2px solid #0c0;
+  border-top: thin solid #ccc;
+  border-bottom: thin solid #ccc;
+}
+
+code.lk-code-example ol li:nth-child(odd) {
+  background-color: #fff;
+}
+
+code.lk-code-example ol li:nth-child(even) {
+  background-color: #efefef;
+}
+
+.lk-code-example-comment {
+  margin: 6px 0 10px 6px;
+  color: #777;
+}
+
+/* ==================================================================
+  ~ lkDisplayStyles.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ================================================================== */
+
+/* Headings */
+
+lk-css-html-example > h4 {
+  margin-top: 12px;
+}
+
+/* ==================================================================
+  ~ lkDisplayStyles.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ================================================================== */
+
+/* Headings */
+
+lk-display-styles > h4 {
+  margin-top: 12px;
+}
+
+/* Matrix */
+
+div.lk-display-styles-matrix {
+  margin-bottom: 16px;
+  width: 93%;
+  overflow: auto;
+}
+
+div.lk-display-styles-matrix > table {
+  margin: 8px 0 0 6px;
+  border-collapse:collapse;
+  border: 1px solid #ccc;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}
+
+div.lk-display-styles-matrix > table tr > th {
+  padding: 4px;
+  color: #555;
+  background-color: #ececec;
+  border-left: 1px solid #ccc;
+}
+
+div.lk-display-styles-matrix > table tr > td {
+  padding: 4px;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+div.lk-display-styles-matrix > table tr > td:first-child {
+  border-left: none;
+}
+
+div.lk-display-styles-matrix > table tr > td.center {
+  text-align: center;
+}

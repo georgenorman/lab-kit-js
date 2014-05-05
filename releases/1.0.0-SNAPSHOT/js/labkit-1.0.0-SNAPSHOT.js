@@ -1,9 +1,7 @@
-
 /*!
   ~ labKit-1.0.0-SNAPSHOT.js
-  ~ Copyright (c) 2014 George Norman.
-  ~ Licensed under the Apache License, Version 2.0 (the License);
-  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~ Copyright (c) 2014 George Norman
+  ~ Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
 */
 
 /*
@@ -60,6 +58,7 @@ var tzLogHelperModule = (function() {
      }
   }
 }());
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -316,6 +315,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     document.writeln( text );
   }
 }( tzLogHelperModule ));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -373,6 +373,7 @@ var tzCodeHighlighterModule = (function() {
     }
   }
 }());
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -495,6 +496,53 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
 }( tzDomHelperModule ));
 
 /*
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ --------------------------------------------------------------
+  ~ Base Lab Kit module.
+  ~ --------------------------------------------------------------
+ */
+
+var baseKitModule = (function(tzDomHelper) {
+  "use strict";
+
+  return {
+    /**
+     * Do page setup (e.g., render all tags).
+     */
+    handleOnLoad: function() {
+      // Tags common to all Labs
+      lkTableOfContentsTag.renderAll();
+      lkCssBlockTag.renderAll();
+      lkCodeExampleTag.renderAll();
+      lkHtmlBlockTag.renderAll();
+      lkCssHtmlExampleTag.renderAll();
+      lkDisplayStylesTag.renderAll();
+      lkAncestorStylesTag.renderAll();
+      lkBulletPointTag.renderAll();
+      lkBackToTag.renderAll();
+    },
+
+    /**
+     * Hide the progress bar and show the main content.
+     * @param pageLoadProgressClassName class name used to style the progress bar. If no
+     *   class name is provided, then uses the first <progress> element.
+     */
+    handlePageLoadCompleted: function( pageLoadProgressClassName ) {
+      var progressBar = tzDomHelper.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);
+
+      if (progressBar != null) {
+        progressBar.style.display = "none";
+        tzDomHelper.getFirstElementByTagName("main").style.display = "block";
+      }
+    }
+  };
+
+}(tzDomHelperModule));
+
+/*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~     http://www.apache.org/licenses/LICENSE-2.0
@@ -586,6 +634,7 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
   };
 
 }(tzDomHelperModule, tzCustomTagHelperModule));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -668,7 +717,7 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkBackToTag.");
         } else {
           for (var key in this.globalLinks) {
-            tzDomHelper.createElementWithAdjacentHtml(containerNode, "a", '{"href":"'+this.globalLinks[key]+'", "style.margin-right":"12px"}', key);
+            tzDomHelper.createElementWithAdjacentHtml(containerNode, "a", '{"href":"'+this.globalLinks[key]+'"}', key);
           }
         }
       } else {
@@ -682,6 +731,7 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
   }
 
 }(tzDomHelperModule, tzCustomTagHelperModule));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -847,6 +897,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
   }
 
 }(tzDomHelperModule, tzCustomTagHelperModule));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -949,6 +1000,7 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
     }
   }
 }(tzDomHelperModule, tzCustomTagHelperModule));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -1025,6 +1077,7 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
   }
 
 }(tzDomHelperModule, tzCustomTagHelperModule));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -1168,6 +1221,7 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
   }
 
 }(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -1337,6 +1391,7 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
   }
 
 }(tzDomHelperModule, tzCustomTagHelperModule, lkCssBlockTag, lkHtmlBlockTag, lkCodeExampleTag));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -1677,6 +1732,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
   }
 
 }(tzDomHelperModule, tzCustomTagHelperModule));
+
 /*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -1791,49 +1847,3 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
   }
 
 }(tzDomHelperModule, tzCustomTagHelperModule, lkDisplayStylesTag));
-/*
-  ~ Copyright (c) 2014 George Norman.
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ --------------------------------------------------------------
-  ~ Base Lab Kit module.
-  ~ --------------------------------------------------------------
- */
-
-var baseKitModule = (function(tzDomHelper) {
-  "use strict";
-
-  return {
-    /**
-     * Do page setup (e.g., render all tags).
-     */
-    handleOnLoad: function() {
-      // Tags common to all Labs
-      lkTableOfContentsTag.renderAll();
-      lkCssBlockTag.renderAll();
-      lkCodeExampleTag.renderAll();
-      lkHtmlBlockTag.renderAll();
-      lkCssHtmlExampleTag.renderAll();
-      lkDisplayStylesTag.renderAll();
-      lkAncestorStylesTag.renderAll();
-      lkBulletPointTag.renderAll();
-      lkBackToTag.renderAll();
-    },
-
-    /**
-     * Hide the progress bar and show the main content.
-     * @param pageLoadProgressClassName class name used to style the progress bar. If no
-     *   class name is provided, then uses the first <progress> element.
-     */
-    handlePageLoadCompleted: function( pageLoadProgressClassName ) {
-      var progressBar = tzDomHelper.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);
-
-      if (progressBar != null) {
-        progressBar.style.display = "none";
-        tzDomHelper.getFirstElementByTagName("main").style.display = "block";
-      }
-    }
-  };
-
-}(tzDomHelperModule));
