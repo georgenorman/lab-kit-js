@@ -28,9 +28,9 @@
     "grunt-autoprefixer": "^0.7.3",
     "grunt-contrib-copy": "^0.5.0"
   },
-  "_comment_": "** ------------------------------------------------------------- **",
-  "_comment_": "** For now, manually manage the order of all files [REVISIT]     **",
-  "_comment_": "** ------------------------------------------------------------- **",
+  "_comment1": "** ---------------------------------------------------------- **",
+  "_comment2": "** For now, manually manage the order of all files [REVISIT]  **",
+  "_comment3": "** ---------------------------------------------------------- **",
   "labKitFiles": {
     "tzCommonsJs": [
       "src/js/tz-commons/tzLogHelper.js",
