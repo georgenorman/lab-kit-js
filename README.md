@@ -251,13 +251,13 @@ The styleNames tag specifies the list of styles to be rendered in the table.
 The `<lk-back-to>` tag renders back-to links (e.g., "Back to Index", "Back to Table of Contents", etc).
 The tag can be configured globally, via an init function, or individually via attributes read from the lk-back-to element:
 
-* Globally:
+Globally:
 
 ```javascript
 lkBackToTag.setGlobalLinks({"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"});
 ```
 
-* Locally:
+Locally:
 
 ```xml
 <lk-back-to links='{"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"}'>
