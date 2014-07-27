@@ -3,7 +3,11 @@
   "version": "1.0.0-SNAPSHOT",
   "title": "LabKit JS",
   "description": "A simple JavaScript library that helps build web pages with live CSS and HTML examples.",
-  "keywords": ["javascript", "css", "html"],
+  "keywords": [
+    "javascript",
+    "css",
+    "html"
+  ],
   "homepage": "https://github.com/georgenorman/lab-kit-js",
   "author": {
     "name": "George Norman",
@@ -14,19 +18,21 @@
     "url": "git://github.com/georgenorman/lab-kit-js.git"
   },
   "bugs": "https://github.com/georgenorman/lab-kit-js/issues",
-  "license":
-    {
-      "type": "Apache License, Version 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0"
-    },
+  "license": {
+    "type": "Apache License, Version 2.0",
+    "url": "http://www.apache.org/licenses/LICENSE-2.0"
+  },
   "devDependencies": {
+    "connect": "^2.19.3",
     "grunt": "^0.4.4",
-    "grunt-contrib-concat": "^0.4.0",
-    "grunt-contrib-uglify": "^0.4.0",
-    "grunt-contrib-cssmin": "^0.8.0",
-    "grunt-contrib-clean": "^0.5.0",
     "grunt-autoprefixer": "^0.7.3",
-    "grunt-contrib-copy": "^0.5.0"
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-cssmin": "^0.8.0",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-jsdoc": "^0.5.6",
+    "jsdoc": "^3.3.0-alpha8"
   },
   "_comment1": "** ---------------------------------------------------------- **",
   "_comment2": "** For now, manually manage the order of all files [REVISIT]  **",

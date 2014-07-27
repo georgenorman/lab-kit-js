@@ -8,6 +8,11 @@
   ~ --------------------------------------------------------------
  */
 
+/**
+ * Manages LabKit (e.g., causes all tags to be rendered).
+ *
+ * @module baseKitModule
+ */
 var baseKitModule = (function(tzDomHelper) {
   "use strict";
 
@@ -30,8 +35,9 @@ var baseKitModule = (function(tzDomHelper) {
 
     /**
      * Hide the progress bar and show the main content.
+     *
      * @param pageLoadProgressClassName class name used to style the progress bar. If no
-     *   class name is provided, then uses the first <progress> element.
+     *   class name is provided, then uses the first &lt;progress&gt; element.
      */
     handlePageLoadCompleted: function( pageLoadProgressClassName ) {
       var progressBar = tzDomHelper.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);

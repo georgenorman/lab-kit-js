@@ -9,16 +9,20 @@
  ~
  */
 
-/*
- * The <lk-ancestor-styles> tag renders a set of styles for all ancestors of a given element.
- * The ancestor styles are displayed in a table. The startElementId attribute specifies
- * where to the start the traversal. The styleNames tag specifies the list of styles to
- * be rendered in the table
+/**
+ * The <code>&lt;lk-ancestor-styles&gt;</code> tag renders a requested set of styles, for all ancestors of a given element.
+ * The ancestor styles are displayed in a table. The <code>startElementId</code> attribute specifies
+ * where to the start the traversal. The <code>styleNames</code> tag specifies the list of styles to
+ * be rendered in the table.
  *
- *  <lk-ancestor-styles title="Genealogy of innermost" startElementId="innermost">
- *    <comment>A comment rendered beneath the Ancestors header</comment>
- *    <styleNames>position, display</styleNames>
- *  </lk-ancestor-styles>
+ * <pre style="background:#eee; padding:6px;">
+ *  &lt;lk-ancestor-styles title="Genealogy of innermost" startElementId="innermost"&gt;
+ *    &lt;comment&gt;A comment rendered beneath the Ancestors header&lt;/comment&gt;
+ *    &lt;styleNames&gt;position, display&lt;/styleNames&gt;
+ *  &lt;/lk-ancestor-styles&gt;
+ * </pre>
+ *
+ * @module lkAncestorStylesTag
  */
 var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
   "use strict";
@@ -27,19 +31,24 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
   var styleNamesExpression = new RegExp("<styleNames>(.+?)<\/styleNames>", "ig");
 
   return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
     getTagName: function() {
       return "lk-ancestor-styles";
     },
 
     /**
-     * Render all <lk-ancestor-styles> tags on the page.
+     * Render all &lt;lk-ancestor-styles&gt; tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lk-ancestor-styles> tag identified by the given tagId.
+     * Render the &lt;lk-ancestor-styles&gt; tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -48,7 +57,7 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
     },
 
     /**
-     * Render the given AncestorStylesTagNode.
+     * Render the given <code>AncestorStylesTagNode</code>.
      *
      * @param ancestorStylesTagNode the node to retrieve the attributes from and then render the result to.
      */
@@ -87,7 +96,7 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
         "matrix": matrix
       };
 
-      // remove child nodes (e.g., rawRightColumnHtml retrieved for use by the right column)
+      // remove child nodes (e.g., <code>rawRightColumnHtml</code> retrieved for use by the right column)
       tzDomHelper.removeAllChildNodes(ancestorStylesTagNode);
 
       // render the result
@@ -95,15 +104,17 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
     },
 
     /**
-     * Render into the given containerNode, the style property names and values, for the elements in the given unorderedListItems.
+     * Render into the given <code>containerNode</code>, the style property names and values, for the elements in the given <code>unorderedListItems</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - title: optional heading for the style list.
-     *            - unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
-     *              element and the css-property-name is used to read and display its property value.
-     *            - useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
-     *              otherwise, displays the same list, but includes the property name for each item in the list.
+     *            <ul>
+     *              <li>title: optional heading for the style list.
+     *              <li>unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
+     *                  element and the css-property-name is used to read and display its property value.
+     *              <li>useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
+     *                  otherwise, displays the same list, but includes the property name for each item in the list.
+     *            </ul>
      */
     render: function(containerNode, context) {
       // render the result using the lkDisplayStyles tag

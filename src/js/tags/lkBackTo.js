@@ -8,20 +8,36 @@
  ~ --------------------------------------------------------------
  */
 
-/*
- * The <lk-back-to> tag renders back-to links: "Back to Index" and "Back to Table of Contents".
+/**
+ * The <code>&lt;lk-back-to&gt;</code> tag renders a navigation bar, with the following links: "Back to Index" and "Back to Table of Contents".
+ *<p>
+ * The tag can be configured globally, via an init function, or individually via attributes read from the <code>lk-back-to</code> element:
  *
- * The tag can be configured globally, via an init function, or individually via attributes read from the lk-back-to element:
+ *<ul>
+ *  <li>Globally:
+ * <pre style="background:#eee; padding:6px;">
+ *  lkBackToTag.setGlobalLinks({
+ *      "⬅ Back to Index":"./index.html",
+ *      "⬆ Back to Table of Contents":"#tableOfContents"});
+ * </pre>
  *
- * - Globally:
+ *  <li>Locally:
+ * <pre style="background:#eee; padding:6px;">
+ *   &lt;lk-back-to
+ *     links='{"⬅ Back to Index":"./index.html", "⬆ Back to ToC":"#tableOfContents"}'
+ *   &gt;
+ *   &lt;/lk-back-to&gt;
+ * </pre>
+ * </ul>
  *
- *    lkBackToTag.setGlobalLinks({"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"});
+ * <p style="padding-left:24px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>links</code></td><td>Series of links to render</td><tr>
+ * </table>
  *
- * - Locally:
- *
- *    <lk-back-to links='{"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"}'></lk-back-to>
- *
- * @attribute links - Series of links to render.
+ * @module lkBackToTag
  */
 var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
@@ -29,19 +45,24 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
   var globalLinks = null;
 
   return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
     getTagName: function() {
       return "lk-back-to";
     },
 
     /**
-     * Render all <lk-back-to> tags on the page.
+     * Render all <code>&lt;lk-back-to&gt;</code> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lk-back-to> tag identified by the given tagId.
+     * Render the <code>&lt;lk-back-to&gt;</code> tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -50,7 +71,7 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the given lkBackToTagNode.
+     * Render the given <code>lkBackToTagNode</code>.
      *
      * @param lkBackToTagNode the node to retrieve the attributes from and then render the result to.
      */
@@ -67,11 +88,13 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the result into the given containerNode.
+     * Render the result into the given <code>containerNode</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - links: the links to render. If null, then uses globalLinks.
+     *            <ul>
+     *              <li>links: the links to render. If null, then uses <code>globalLinks</code>.
+     *            </ul>
      */
     render: function(containerNode, context) {
       if (tzDomHelper.isEmpty(context.links)) {

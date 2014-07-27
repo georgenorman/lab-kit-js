@@ -8,17 +8,31 @@
  ~ --------------------------------------------------------------
  */
 
-/*
- * The <lk-html-block> tag renders an optional heading and comment, followed by the raw text from the element of the given templateId.
+/**
+ * The <code>&lt;lk-html-block&gt;</code> tag extracts the raw HTML, specified by the given <code>templateId</code>, and then injects it
+ * into the DOM, so that the HTML is rendered live by the current document.
+ *<p>
+ * The <code>&lt;lk-html-block&gt;</code> tag is often accompanied by the <code>&lt;lk-code-example&gt;</code> tag, which renders the same HTML,
+ * but for presentation purposes only (with syntax highlighting and line numbers). This enables the same
+ * code to be presented as an example and at the same time be live rendered into the DOM.
+ *<p>
+ * The tag attributes are read from the <code>lk-html-block</code> element, as shown in the example below:
  *
- * The tag attributes are read from the lk-html-block element, as shown in the example below:
+ * <pre style="background:#eee; padding:6px;">
+ *   &lt;lk-html-block templateId="basicBoxModelHtml" heading="Rendered Result"&gt;
+ *     &lt;comment&gt;Optional Comment&lt;/comment&gt;
+ *   &lt;/lk-html-block&gt;
+ * </pre>
  *
- *    <lk-html-block templateId="basicBoxModelHtml" heading="Rendered Result">
- *      <comment>Optional Comment</comment>
- *    </lk-html-block>
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>templateId</code></td><td>ID of the element containing the raw HTML code to render.</td><tr>
+ *   <tr><td class="name"><code>heading</code></td><td>heading text [optional]</td><tr>
+ * </table>
  *
- * @attribute templateId - ID of the element containing the raw HTML code to render.
- * @attribute heading - heading text [optional]
+ * @module lkHtmlBlockTag
  */
 var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
@@ -26,19 +40,24 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
   var commentExpression = new RegExp("<comment>((.|\n)*)</comment>", "ig");
 
   return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
     getTagName: function() {
       return "lk-html-block";
     },
 
     /**
-     * Render all <lk-html-block> tags on the page.
+     * Render all <code>&lt;lk-html-block&gt;</code> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lk-html-block> tag identified by the given tagId.
+     * Render the <code>&lt;lk-html-block&gt;</code> tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -47,7 +66,7 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the given lkHtmlTagNode.
+     * Render the given <code>lkHtmlTagNode</code>.
      *
      * @param lkHtmlTagNode the node to retrieve the attributes from and then render the result to.
      */
@@ -73,13 +92,15 @@ var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the HTML code block into the given containerNode.
+     * Render the HTML code block into the given <code>containerNode</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - heading: optional heading to display for the live code block.
-     *            - resultComment: optional comment to render above the live result.
-     *            - rawHtml: the code that will be rendered into the given containerNode.
+     *           <ul>
+     *             <li>heading: optional heading to display for the live code block.
+     *             <li>resultComment: optional comment to render above the live result.
+     *             <li>rawHtml: the code that will be rendered into the given containerNode.
+     *           <ul>
      */
     render: function(containerNode, context) {
       // render optional heading, if present

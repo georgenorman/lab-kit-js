@@ -8,6 +8,11 @@
  ~ --------------------------------------------------------------
  */
 
+/**
+ * A module that provides helper methods for custom tags.
+ *
+ * @module tzCustomTagHelperModule
+ */
 var tzCustomTagHelperModule = (function( tzDomHelper ) {
   "use strict";
 
@@ -16,7 +21,8 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
   return {
     /**
      * Return a generated template ID, by concatenating "-tag-template" to the tagModule's tag name.
-     * Example: tagModule.getTagName() + "-tag-template" => "lk-bullet-point-tag-template".
+     * <p>
+     * Example: <code>tagModule.getTagName() + "-tag-template" =&gt; "lk-bullet-point-tag-template"</code>.
      *
      * @param tagModule the module that's responsible for rendering a particular custom tag.
      */
@@ -25,7 +31,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
     },
 
     /**
-     * Render all custom tags, represented by the given tagModule, that appear on the current page.
+     * Render all custom tags, represented by the given <code>tagModule</code>, that appear on the current page.
      *
      * @param tagModule the module that's responsible for rendering a particular custom tag.
      */
@@ -42,7 +48,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
     },
 
     /**
-     * Render the first custom tag found in the DOM, represented by the given tagModule.
+     * Render the first custom tag found in the DOM, represented by the given <code>tagModule</code>.
      * Typically called when there can be only one instance of a particular tag on a page (e.g., Table of Contents).
      *
      * @param tagModule the module that's responsible for rendering a particular custom tag.
@@ -56,7 +62,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
     },
 
     /**
-     * Render the single custom tag identified by the given tagId.
+     * Render the single custom tag identified by the given <code>tagId</code>.
      *
      * @param tagModule the module that's responsible for rendering a particular custom tag.
      * @param tagId ID of the tag to render.
@@ -70,8 +76,8 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
     },
 
     /**
-     * Render the custom tag, into the given containerNode, using an HTML template
-     * that may have variables needing transliteration using the given context.
+     * Render the custom tag, into the given <code>containerNode</code>, using an HTML <code>template</code>
+     * that may have variables needing transliteration using the given <code>context</code>.
      *
      * @param containerNode where to render the result.
      * @param template the HTML template used to render the tag.
@@ -88,7 +94,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
     },
 
     /**
-     * Return the template text from the node identified by the given templateId.
+     * Return the template text from the node identified by the given <code>templateId</code>.
      *
      * @param templateId ID of the node that contains the template text.
      */
@@ -103,7 +109,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
     },
 
     /**
-     * Return the first group, from the given tagNode, matching the given innerTagExpression.
+     * Return the first group, from the given <code>tagNode</code>, matching the given <code>innerTagExpression</code>.
      *
      * @param tagNode
      * @param innerTagExpression

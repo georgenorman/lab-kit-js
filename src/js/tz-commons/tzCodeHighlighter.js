@@ -5,14 +5,23 @@
  ~
  */
 
-/*
+/**
  * A crude (hack), SINGLE-LINE code highlighter, that only highlights basic code elements (e.g., some c-style comments, etc).
  * Has many, many bugs - borderline suitable for the simple code examples in these labs.
+ *
+ * @module tzCodeHighlighterModule
  */
 var tzCodeHighlighterModule = (function() {
   "use strict";
 
   return {
+    /**
+     * Highlight the single line of code for the given language.
+     *
+     * @param code line of code to highlight.
+     * @param lang language syntax used to highlight.
+     * @returns {*}
+     */
     highlight: function(code, lang) {
       var result = code;
 

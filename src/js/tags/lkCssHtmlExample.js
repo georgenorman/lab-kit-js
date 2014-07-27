@@ -8,37 +8,54 @@
  ~ --------------------------------------------------------------
  */
 
-/*
- * The <lk-css-html-example> tag renders the CSS style, CSS style code-example, HTML code-example
- * and then the live HTML, for the result, using the code templates identified by the
- * cssTemplateId and htmlTemplateId attributes.
+/**
+ * The <code>&lt;lk-css-html-example&gt;</code> tag combines the features of the <code>&lt;lk-code-example&gt;</code>,
+ * <code>&lt;lk-css-block&gt;</code> and <code>&lt;lk-html-block&gt;</code> tags.
+ * This single tag can be used to render syntax-highlighted CSS and HTML code examples and then inject the raw CSS and HTML
+ * into the DOM so the browser will render the examples live.
+ *<p>
+ * The tag attributes are read from the <code>lk-css-html-example</code> element, as shown in the examples below:
  *
- * The tag attributes are read from the lk-css-html-example element, as shown in the examples below:
+ * <pre style="background:#eee; padding:6px;">
+ *   &lt;lk-css-html-example cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml"&gt;
+ *   &lt;/lk-css-html-example&gt;
  *
- *   <lk-css-html-example cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml"></lk-css-html-example>
- *   <lk-css-html-example htmlTemplateId="tmplExampleRelInStaticNoMarginHtml"></lk-css-html-example>
+ *   &lt;lk-css-html-example htmlTemplateId="tmplExampleRelInStaticNoMarginHtml"&gt;
+ *   &lt;/lk-css-html-example&gt;
+ * </pre>
  *
- * @attribute cssTemplateId - ID of the element containing the CSS code to insert.
- * @attribute htmlTemplateId - ID of the element containing the HTML code to insert.
- * @attribute templateId - optional; use this instead of cssTemplateId and htmlTemplateId to simplify the code.
- *     "Css" and "Html" will be appended to the given templateId, to form the IDs to the CSS and HTML templates.
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>cssTemplateId</code></td><td>ID of the element containing the CSS code to insert</td><tr>
+ *   <tr><td class="name"><code>htmlTemplateId</code></td><td>ID of the element containing the HTML code to insert</td><tr>
+ *   <tr><td class="name"><code>templateId</code></td>
+ *       <td>
+ *         optional; use this instead of cssTemplateId and htmlTemplateId to simplify the code.
+ *         "Css" and "Html" will be appended to the given templateId, to form the IDs to the CSS and HTML templates.
+ *       </td><tr>
+ * </table>
+ *<p>
+ * Complete Example:
  *
- * Example:
- *
- * <script type="multiline-template" id="simpleTemplateCss">
+ * <pre style="background:#eee; padding:6px;">
+ * &lt;script type="multiline-template" id="simpleTemplateCss"&gt;
  *   .foo {color: red;}
- * </script>
+ * &lt;/script&gt;
  *
- * <script type="multiline-template" id="simpleTemplateHtml">
- *   <span class="foo">This is red</span>
- * </script>
+ * &lt;script type="multiline-template" id="simpleTemplateHtml"&gt;
+ *   &lt;span class="foo"&gt;This is red&lt;/span&gt;
+ * &lt;/script&gt;
  *
- * <lk-css-html-example templateId="simpleTemplate" width="750px">
- *   <cssComment>A comment rendered beneath the CSS header.</cssComment>
- *   <htmlComment>A comment rendered beneath the HTML header.</htmlComment>
- *   <resultComment>A comment rendered beneath the Result header.</resultComment>
- * </lk-css-html-example>
+ * &lt;lk-css-html-example templateId="simpleTemplate" width="750px"&gt;
+ *   &lt;cssComment&gt;A comment rendered beneath the CSS header.&lt;/cssComment&gt;
+ *   &lt;htmlComment&gt;A comment rendered beneath the HTML header.&lt;/htmlComment&gt;
+ *   &lt;resultComment&gt;A comment rendered beneath the Result header.&lt;/resultComment&gt;
+ * &lt;/lk-css-html-example&gt;
+ * </pre>
  *
+ * @module lkCssHtmlExampleTag
  */
 var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, lkHtmlBlock, lkCodeExample) {
   "use strict";
@@ -48,19 +65,24 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
   var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
 
   return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
     getTagName: function() {
       return "lk-css-html-example";
     },
 
     /**
-     * Render all <lk-css-html-example> tags on the page.
+     * Render all <code>&lt;lk-css-html-example&gt;</code> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lk-css-html-example> tag identified by the given tagId.
+     * Render the <code>&lt;lk-css-html-example&gt;</code> tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -69,7 +91,7 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
     },
 
     /**
-     * Render the given lkHtmlCssExampleTagNode.
+     * Render the given <code>lkHtmlCssExampleTagNode</code>.
      *
      * @param lkHtmlCssExampleTagNode the node to retrieve the attributes from and then render the result to.
      */
@@ -122,17 +144,19 @@ var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, 
     },
 
     /**
-     * Render the code examples and live code block, into the given containerNode.
+     * Render the code examples and live code block, into the given <code>containerNode</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - cssComment: optional comment to render above the CSS code block.
-     *            - rawCss: the CSS code to insert.
-     *            - htmlComment: optional comment to render above the HTML code block.
-     *            - rawHtml: the HTML code to insert.
-     *            - resultComment: optional comment to render above the live result.
-     *            - width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            - height: optional height.
+     *          <ul>
+     *            <li>cssComment: optional comment to render above the CSS code block.
+     *            <li>rawCss: the CSS code to insert.
+     *            <li>htmlComment: optional comment to render above the HTML code block.
+     *            <li>rawHtml: the HTML code to insert.
+     *            <li>resultComment: optional comment to render above the live result.
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            <li>height: optional height.
+     *          </ul>
      */
     render: function(containerNode, context) {
       // render the live CSS, if present

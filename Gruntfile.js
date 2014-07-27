@@ -41,7 +41,6 @@ module.exports = function(grunt) {
           'target/css/labKitTags-fragment.css': '<%= pkg.labKitFiles.labKitTagsCss %>'
         }
       },
-
       labKitCssFinal: {
         files: {
           'target/css/labKit-<%= pkg.version %>.css': ['target/css/tzCommons-fragment.css', 'target/css/baseKit-fragment.css', 'target/css/labKitTags-fragment.css']
@@ -99,6 +98,15 @@ module.exports = function(grunt) {
           {expand: true, flatten: true, src: ['target/css/labkit-<%= pkg.version %>.css', 'target/css/labkit-<%= pkg.version %>-min.css'], dest: 'releases/<%= pkg.version %>/css/'}
         ]
       }
+    },
+
+    jsdoc : {
+      dist : {
+        src: ['src/js/*.js', 'src/js/*/*.js', 'test/*.js', 'src/js/README.md'],
+        options: {
+          destination: 'releases/<%= pkg.version %>/jsdoc'
+        }
+      }
     }
   });
 
@@ -110,13 +118,17 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.loadNpmTasks('grunt-autoprefixer');
+  grunt.loadNpmTasks('grunt-jsdoc');
 
-  // register sub-tasks
+  // register custom sub-tasks
   grunt.registerTask('assemble-fragments', ['concat:tzCommons', 'concat:baseKit', 'concat:labKitTags']);
   grunt.registerTask('assemble-final', ['concat:labKitCssFinal', 'concat:labKitJsFinal']);
 
-  // register main task(s)
-  grunt.registerTask('release', ['assemble-fragments', 'assemble-final', 'uglify:labKit', 'autoprefixer:labKit', 'cssmin:labKit', 'copy:release']);
+  // register main custom task(s)
+  grunt.registerTask('build', ['assemble-fragments', 'assemble-final', 'uglify:labKit', 'autoprefixer:labKit', 'cssmin:labKit', 'copy:release']);
+  grunt.registerTask('docs', ['jsdoc']);
+
+  grunt.registerTask('release', ['build', 'docs']);
 
   // register default task
   grunt.registerTask('default', ['clean', 'release']);

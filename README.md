@@ -1,6 +1,6 @@
 # LabKit JS
 
-LabKit is a simple JavaScript library that helps build web pages with live CSS and HTML examples.
+LabKit is a simple JavaScript library that helps build web pages with live CSS and HTML examples (a DSL for web experiments).
 The main functionality is provided by a set of tags that can be added to any HTML page.
 For example, the `<lk-css-html-example>` tag renders the given CSS and HTML code-examples and then inserts them into the document, for a live rendering of the example.
 To help organize the experiments, the `<lk-table-of-contents>` tag can be used to automatically generate a Table of Contents for the page.

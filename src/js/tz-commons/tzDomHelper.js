@@ -8,12 +8,17 @@
  ~ --------------------------------------------------------------
  */
 
+/**
+ * A module that provides helper methods for DOM manipulation and node retrieval.
+ *
+ * @module tzDomHelperModule
+ */
 var tzDomHelperModule = (function( tzLogHelper ) {
   "use strict";
 
   return {
-    /*
-     * Return the inner HTML from an element with the given elementId.
+    /**
+     * Return the inner HTML from an element with the given <code>elementId</code>.
      * Useful for returning multi-line strings from template blocks.
      *
      * @param elementId - ID of the element with the desired HTML.
@@ -31,8 +36,8 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    /*
-     * Return the inner HTML from an element with the given elementId.
+    /**
+     * Return the inner HTML from an element with the given <code>elementId</code>.
      * Useful for returning multi-line strings from template blocks.
      *
      * @param elementId - ID of the element with the desired HTML.
@@ -43,8 +48,8 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return this.isEmpty( result ) ? '<span style="color:red;">No element found for ID: ' + elementId : result;
     },
 
-    /*
-     * Return the inner HTML as an array of lines, from an element with the given elementId.
+    /**
+     * Return the inner HTML as an array of lines, from an element with the given <code>elementId</code>.
      *
      * @param elementId - ID of the element with the desired HTML.
      */
@@ -67,8 +72,8 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    /*
-     * Return the value of the style property, for the element with the given elementId.
+    /**
+     * Return the value of the style property, for the element with the given <code>elementId</code>.
      *
      * @param elementId - ID of the target element.
      * @param stylePropertyName - name of the style property to retrieve the value for.
@@ -86,8 +91,8 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    /*
-     * Return the value of the style property, for the given element.
+    /**
+     * Return the value of the style property, for the given <code>element</code>.
      *
      * @param element - target element.
      * @param stylePropertyName - name of the style property to retrieve the value for.
@@ -104,21 +109,21 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    /*
-     * Inserts a tag, with the given tagName, and inserts the given innerHtml inside the element.
+    /**
+     * Inserts a tag, with the given <code>tagName</code>, and inserts the given <code>innerHtml</code> inside the element.
      *
-     * @param tagName - name of tag (e.g., h4 => <h4>).
+     * @param tagName - name of tag (e.g., h4 =&gt; &lt;h4&gt;).
      * @param innerHtml - HTML to write inside of element.
      */
     insertElement: function( tagName, innerHtml ) {
       insertLine( "<" + tagName + ">" + innerHtml + "</" + tagName + ">" );
     },
 
-    /*
-     * Inserts a tag, with the given tagName and tagAttributes, and inserts the given innerHtml inside the element.
+    /**
+     * Inserts a tag, with the given <code>tagName</code> and <code>tagAttributes</code>, and then inserts the given <code>innerHtml</code> inside the element.
      *
-     * @param tagName - name of tag (e.g., h4 => <h4>).
-     * @param tagAttributes - attributes of tag element (e.g., class="foo" => <someTag class="foo">).
+     * @param tagName - name of tag (e.g., h4 =&gt; &lt;h4&gt;).
+     * @param tagAttributes - attributes of tag element (e.g., class="foo" =&gt; &lt;someTag class="foo"&gt;).
      * @param innerHtml - HTML to write inside of element.
      */
     insertElementWithTagAttributes: function( tagName, tagAttributes, innerHtml ) {
@@ -127,7 +132,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     },
 
     /**
-     * Return a new element of type elementName, with optional parent and attributes.
+     * Return a new element of type <code>elementName</code>, with optional <code>parent</code> and <code>attributes</code>.
      *
      * @param parent optional parent node for the new element.
      * @param elementName type of element to create
@@ -201,11 +206,11 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    /*
-     * Returns the given value if not null, otherwise returns the given defaultValue.
+    /**
+     * Returns the given <code>value</code> if not <code>null</code>, otherwise returns the given <code>defaultValue</code>.
      *
-     * @param value - value to return if not null.
-     * @param defaultValue - defaultValue to return if value is null.
+     * @param value - value to return if not <code>null</code>.
+     * @param defaultValue - defaultValue to return if value is <code>null</code>.
      */
     // @-@:p0 move to general utils
     coalesce: function( value, defaultValue ) {
@@ -245,7 +250,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
   // Private functions
   // ------------------------------------------------------------------
 
-  /*
+  /**
    * Inlines given text into document (equivalent to document.writeln).
    *
    * @param text - text to write.

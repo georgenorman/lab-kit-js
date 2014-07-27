@@ -9,23 +9,31 @@
  */
 
 /**
- * The <lk-code-example> tag renders an optional heading and comment, followed by a <code> block with the XML escaped text
- * extracted from the element with the specified templateId.
+ * The <code>&lt;lk-code-example&gt;</code> tag renders the specified code with syntax highlighting and line numbers.
+ *<p>
+ * The tag attributes are read from the <code>lk-code-example</code> element, as shown in the examples below:
  *
- * The tag attributes are read from the lk-code-example element, as shown in the examples below:
+ * <pre style="background:#eee; padding:6px;">
+ *   &lt;lk-code-example templateId="myHtmlTemplate" heading="HTML" lang="*ml" width="350px"&gt;
+ *     &lt;comment&gt;HTML code example comment.&lt;/comment&gt;
+ *   &lt;/lk-code-example&gt;
  *
- *   <lk-code-example templateId="myHtmlTemplate" heading="HTML" lang="*ml" width="350px">
- *     <comment>HTML code example comment.</comment>
- *   </lk-code-example>
+ *   &lt;lk-code-example templateId="myCssTemplate" heading="CSS" lang="css" width="300px"&gt;
+ *     &lt;comment&gt;CSS code example comment.&lt;/comment&gt;
+ *   &lt;/lk-code-example&gt;
+ * </pre>
  *
- *   <lk-code-example templateId="myCssTemplate" heading="CSS" lang="css" width="300px">
- *     <comment>CSS code example comment.</comment>
- *   </lk-code-example>
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>templateId</code></td><td>ID of the element containing the HTML or JavaScript code to render.</td><tr>
+ *   <tr><td class="name"><code>heading</code></td><td>heading text [optional]</td><tr>
+ *   <tr><td class="name"><code>lang</code></td><td>language ID for the code syntax highlighter (e.g., "css", "*ml").</td><tr>
+ *   <tr><td class="name"><code>width</code></td><td>optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.</td><tr>
+ * </table>
  *
- * @attribute templateId - ID of the element containing the HTML or JavaScript code to render.
- * @attribute heading - heading text [optional]
- * @attribute lang - language ID for the code syntax highlighter (e.g., "css", "*ml").
- * @attribute width - optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+ * @module lkCodeExampleTag
  */
 var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
@@ -33,19 +41,24 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
   var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
 
   return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
     getTagName: function() {
       return "lk-code-example";
     },
 
     /**
-     * Render all <lk-code-example> tags on the page.
+     * Render all <code>&lt;lk-code-example&gt;</code> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lk-code-example> tag identified by the given tagId.
+     * Render the <code>&lt;lk-code-example&gt;</code> tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -54,7 +67,7 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
     },
 
     /**
-     * Render the given lkCodeExampleTagNode.
+     * Render the given <code>lkCodeExampleTagNode</code>.
      *
      * @param lkCodeExampleTagNode the node to retrieve the attributes from and then render the result to.
      */
@@ -78,15 +91,17 @@ var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
     },
 
     /**
-     * Render the code example into the given containerNode.
+     * Render the code example into the given <code>containerNode</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - heading: optional heading to use.
-     *            - codeBlockComment: optional comment to render above the code block.
-     *            - lang: language ID for the code syntax highlighter (e.g., "css", "*ml").
-     *            - width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            - rawCode: the code that will be XML escaped and rendered into the given containerNode.
+     *          <ul>
+     *            <li>heading: optional heading to use.
+     *            <li>codeBlockComment: optional comment to render above the code block.
+     *            <li>lang: language ID for the code syntax highlighter (e.g., "css", "*ml").
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            <li>rawCode: the code that will be XML escaped and rendered into the given containerNode.
+     *          </ul>
      */
     render: function(containerNode, context) {
       // render optional heading, if present

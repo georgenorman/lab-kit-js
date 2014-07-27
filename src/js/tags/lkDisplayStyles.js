@@ -9,28 +9,35 @@
  ~
  */
 
-/*
- * The <lk-display-styles> tag renders one or more styles from one or more elements.
+/**
+ * The <code>&lt;lk-display-styles&gt;</code> tag renders one or more styles from one or more elements.
  * It has several forms, each of which are described below:
+ *<ol>
+ *  <li>Compact unordered list: The style name is the same for each item in the list. The list items are defined in the tag body.
+ * <pre style="background:#eee; padding:6px;">
+ *   &lt;lk-display-styles styleName="position"&gt;
+ *     outermost, middleGrid, innerBox
+ *   &lt;/lk-display-styles&gt;
+ * </pre>
  *
- * 1. Compact unordered list: The style name is the same for each item in the list. The list items are defined in the tag body.
+ *  <li>Verbose unordered list: The style name is unique for each item in the list. The list items are defined in the tag body
+ * <pre style="background:#eee; padding:6px;">
+ *   &lt;lk-display-styles&gt;
+ *     { "outerMost": "position", "middleGrid": "margin", "innerMost": "padding" }
+ *   &lt;/lk-display-styles&gt;
+ * </pre>
  *
- *      <lk-display-styles styleName="position">outermost, middleGrid, innerBox</lk-display-styles>
+ *  <li>Matrix: The styles are displayed in a table. The rows and columns are defined in the tag body.
+ * <pre style="background:#eee; padding:6px;">
+ *   &lt;lk-display-styles&gt;
+ *     &lt;styleNames&gt;padding, margin&lt;/styleNames&gt;
+ *     &lt;legendImages&gt;./img/outermost.png, ./img/middleGrid.png, ./img/innerBox.png&lt;/legendImages&gt;
+ *     &lt;elementIds&gt;outermost, middleGrid, innerBox&lt;/elementIds&gt;
+ *   &lt;/lk-display-styles&gt;
+ * </pre>
+ *</ol>
  *
- * 2. Verbose unordered list: The style name is unique for each item in the list. The list items are defined in the tag body
- *
- *      <lk-display-styles>
- *        { "outerMost": "position", "middleGrid": "margin", "innerMost": "padding" }
- *      </lk-display-styles>
- *
- * 3. Matrix: The styles are displayed in a table. The rows and columns are defined in the tag body.
- *
- *      <lk-display-styles>
- *        <styleNames>padding, margin</styleNames>
- *        <legendImages>./img/outermost.png, ./img/middleGrid.png, ./img/innerBox.png</legendImages>
- *        <elementIds>outermost, middleGrid, innerBox</elementIds>
- *      </lk-display-styles>
- *
+ * @module lkDisplayStylesTag
  */
 var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
@@ -44,6 +51,11 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
   // variantMgr
   // --------------------------------------------------------------
 
+  /**
+   * Manage the display variants (e.g., compact list display, matrix display, etc).
+   *
+   * @type {{handleCompactListVariant: handleCompactListVariant, handleVerboseListVariant: handleVerboseListVariant, handleMatrixVariant: handleMatrixVariant}}
+   */
   var variantMgr = {
     handleCompactListVariant: function(displayStylesTagNode, context, styleName) {
       // variant: compact unordered list, where the styleName is the same for each item
@@ -101,19 +113,24 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
   // =================================================================
 
   return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
     getTagName: function() {
       return "lk-display-styles";
     },
 
     /**
-     * Render all <lk-display-styles> tags on the page.
+     * Render all <code>&lt;lk-display-styles&gt;</code> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <lk-display-styles> tag identified by the given tagId.
+     * Render the <code>&lt;lk-display-styles&gt;</code> tag identified by the given tagId.
      *
      * @param tagId ID of the tag to render.
      */
@@ -122,7 +139,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the given displayStylesTagNode.
+     * Render the given <code>displayStylesTagNode</code>.
      *
      * @param title optional heading for the style list.
      * @param displayStylesTagNode the node to retrieve the attributes from and then render the result to.
@@ -172,15 +189,17 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render into the given containerNode, the style property names and values, for the elements in the given unorderedListItems.
+     * Render into the given <code>containerNode</code>, the style property names and values, for the elements in the given <code>unorderedListItems</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - title: optional heading for the style list.
-     *            - unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
+     *          <ul>
+     *            <li>title: optional heading for the style list.
+     *            <li>unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
      *              element and the css-property-name is used to read and display its property value.
-     *            - useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
+     *            <li>useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
      *              otherwise, displays the same list, but includes the property name for each item in the list.
+     *          </ul>
      */
     render: function(containerNode, context) {
        // handle optional title

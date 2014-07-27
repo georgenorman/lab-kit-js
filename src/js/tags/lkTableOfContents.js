@@ -9,29 +9,53 @@
  */
 
 /**
- * The &lt;lk-table-of-contents&gt; tag auto-generates a simple two-level Table of Contents.
+ * The <code>&lt;lk-table-of-contents&gt;</code> tag auto-generates a simple two-level Table of Contents.
  * A default title of "Table of Contents" will be used if the title is not provided.
  * The title is rendered as an h2 element.
- *
+ *<p>
  * Limitations:
- *   1. There can be only one Table of Contents section per page.
- *   2. Maximum levels is two.
+ * <ol>
+ *   <li> There can be only one Table of Contents section per page.
+ *   <li> Maximum levels is two.
+ * </ol>
  *
  * The tag attributes are read from the lkTableOfContents element, as shown in the example below:
+ * <pre style="background:#eee; padding:6px;">
+ *    &lt;lk-table-of-contents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"&gt;
+ *    &lt;/lk-table-of-contents&gt;
+ * </pre>
  *
- *    &lt;lk-table-of-contents class="toc" level1ItemsTagName="h2" level2ItemsTagName="h3"&gt;&lt;/lk-table-of-contents&gt;
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>class</code></td><td>the CSS class to apply to the rendered Table of Contents</td><tr>
+ *   <tr><td class="name"><code>level1ItemsTagName</code></td>
+ *       <td>
+ *         tag name used to identify the level-1 headers to be included in the Table of Contents
+ *         (e.g., "h2" would cause all h2 elements on the page, to be used as items in the generated Table of Contents).
+ *       </td>
+ *   <tr>
+ *   <tr><td class="name"><code>level2ItemsTagName</code></td>
+ *       <td>
+ *         tag name used to identify the level-2 headers to be included under each level-1 header
+ *         (e.g., "h3" would cause all h3 elements on the page, to be used as sub-items in the generated Table of Contents).
+ *       </td>
+ *   <tr>
+ *   <tr><td class="name"><code>title</code></td><td>optional title (default is "Table of Contents").</td><tr>
+ * </table>
  *
- * @attribute class - the CSS class to apply to the rendered Table of Contents
- * @attribute level1ItemsTagName - tag name used to identify the level-1 headers to be included in the Table of Contents
- *        (e.g., "h2" would cause all h2 elements on the page, to be used as items in the generated Table of Contents).
- * @attribute level2ItemsTagName - tag name used to identify the level-2 headers to be included under each level-1 header
- *        (e.g., "h3" would cause all h3 elements on the page, to be used as sub-items in the generated Table of Contents).
- * @attribute title - optional title (default is "Table of Contents").
+ * @module lkTableOfContentsTag
  */
 var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
     getTagName: function() {
       return "lk-table-of-contents";
     },
@@ -45,7 +69,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the 'Table of Contents' tag identified by the given tagId.
+     * Render the 'Table of Contents' tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -54,7 +78,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the given lkHtmlTagNode.
+     * Render the given <code>lkHtmlTagNode</code>.
      *
      * @param tocNode the node to retrieve the attributes from and then render the result to.
      */
@@ -72,14 +96,16 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the 'Table of Contents' into the given containerNode.
+     * Render the 'Table of Contents' into the given <code>containerNode</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            - cssClassName: css class name to use for the Table of Contents.
-     *            - level1ItemsTagName: tag name used to identify the level-1 headers to be included in the Table of Contents.
-     *            - level2ItemsTagName: tag name used to identify the level-2 headers to be included under each level-1 header.
-     *            - title: optional title (default is "Table of Contents").
+     *           <ul>
+     *             <li>cssClassName: css class name to use for the Table of Contents.
+     *             <li>level1ItemsTagName: tag name used to identify the level-1 headers to be included in the Table of Contents.
+     *             <li>level2ItemsTagName: tag name used to identify the level-2 headers to be included under each level-1 header.
+     *             <li>title: optional title (default is "Table of Contents").
+     *           <ul>
      */
     render: function(containerNode, context) {
       // find all level-1 nodes
