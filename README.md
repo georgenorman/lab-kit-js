@@ -9,7 +9,11 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 
 [CSS Lab](http://www.thruzero.com/pages/jcat3/css-lab/index.html)
 
-## Tags
+## JSDoc
+
+[LabKit JSDocs](http://www.thruzero.com/pages/jcat3/css-lab-jsdoc/index.html)
+
+## Overview of LabKit Tags
 
 ### ‣ CSS and HTML Example tag
 
