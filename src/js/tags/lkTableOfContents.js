@@ -9,7 +9,7 @@
  */
 
 /**
- * The <code>&lt;lk-table-of-contents&gt;</code> tag auto-generates a simple two-level Table of Contents.
+ * Auto-generates a simple two-level Table of Contents.
  * A default title of "Table of Contents" will be used if the title is not provided.
  * The title is rendered as an h2 element.
  *<p>
@@ -29,20 +29,20 @@
  * <h6>Tag Attributes:</h6>
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>class</code></td><td>the CSS class to apply to the rendered Table of Contents</td><tr>
+ *   <tr><td class="name"><code>class</code></td><td>the CSS class to apply to the rendered Table of Contents</td></tr>
  *   <tr><td class="name"><code>level1ItemsTagName</code></td>
  *       <td>
  *         tag name used to identify the level-1 headers to be included in the Table of Contents
  *         (e.g., "h2" would cause all h2 elements on the page, to be used as items in the generated Table of Contents).
  *       </td>
- *   <tr>
+ *   </tr>
  *   <tr><td class="name"><code>level2ItemsTagName</code></td>
  *       <td>
  *         tag name used to identify the level-2 headers to be included under each level-1 header
  *         (e.g., "h3" would cause all h3 elements on the page, to be used as sub-items in the generated Table of Contents).
  *       </td>
- *   <tr>
- *   <tr><td class="name"><code>title</code></td><td>optional title (default is "Table of Contents").</td><tr>
+ *   </tr>
+ *   <tr><td class="name"><code>title</code></td><td>optional title (default is "Table of Contents").</td></tr>
  * </table>
  *
  * @module lkTableOfContentsTag

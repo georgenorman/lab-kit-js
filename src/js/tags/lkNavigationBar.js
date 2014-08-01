@@ -4,29 +4,29 @@
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lk-back-to> tags - sharable among all projects.
+ ~ Renders <lk-navigation-bar> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /**
- * The <code>&lt;lk-back-to&gt;</code> tag renders a navigation bar, with the following links: "Back to Index" and "Back to Table of Contents".
+ * Renders a navigation bar, typically configured with the following links: "Back to Index" and "Back to Table of Contents".
  *<p>
- * The tag can be configured globally, via an init function, or individually via attributes read from the <code>lk-back-to</code> element:
+ * The tag can be configured globally, via an init function, or individually via attributes read from the <code>lk-navigation-bar</code> element:
  *
  *<ul>
  *  <li>Globally:
  * <pre style="background:#eee; padding:6px;">
- *  lkBackToTag.setGlobalLinks({
+ *  lkNavigationBarTag.setGlobalLinks({
  *      "⬅ Back to Index":"./index.html",
  *      "⬆ Back to Table of Contents":"#tableOfContents"});
  * </pre>
  *
  *  <li>Locally:
  * <pre style="background:#eee; padding:6px;">
- *   &lt;lk-back-to
+ *   &lt;lk-navigation-bar
  *     links='{"⬅ Back to Index":"./index.html", "⬆ Back to ToC":"#tableOfContents"}'
  *   &gt;
- *   &lt;/lk-back-to&gt;
+ *   &lt;/lk-navigation-bar&gt;
  * </pre>
  * </ul>
  *
@@ -34,12 +34,12 @@
  * <h6>Tag Attributes:</h6>
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>links</code></td><td>Series of links to render</td><tr>
+ *   <tr><td class="name"><code>links</code></td><td>Series of links to render</td></tr>
  * </table>
  *
- * @module lkBackToTag
+ * @module lkNavigationBarTag
  */
-var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var globalLinks = null;
@@ -51,18 +51,18 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
      * @returns {string}
      */
     getTagName: function() {
-      return "lk-back-to";
+      return "lk-navigation-bar";
     },
 
     /**
-     * Render all <code>&lt;lk-back-to&gt;</code> tags on the page.
+     * Render all <code>&lt;lk-navigation-bar&gt;</code> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <code>&lt;lk-back-to&gt;</code> tag identified by the given <code>tagId</code>.
+     * Render the <code>&lt;lk-navigation-bar&gt;</code> tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -71,20 +71,20 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the given <code>lkBackToTagNode</code>.
+     * Render the given <code>lkNavigationBarTagNode</code>.
      *
-     * @param lkBackToTagNode the node to retrieve the attributes from and then render the result to.
+     * @param lkNavigationBarTagNode the node to retrieve the attributes from and then render the result to.
      */
-    renderTag: function(lkBackToTagNode) {
+    renderTag: function(lkNavigationBarTagNode) {
       // build the context
-      var localLinksText = lkBackToTagNode.getAttribute("links");
+      var localLinksText = lkNavigationBarTagNode.getAttribute("links");
 
       var context = {
         "links": tzDomHelper.isEmpty(localLinksText) ? null : JSON.parse(localLinksText)
       };
 
       // render the result
-      this.render(lkBackToTagNode, context);
+      this.render(lkNavigationBarTagNode, context);
     },
 
     /**
@@ -100,7 +100,7 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
       if (tzDomHelper.isEmpty(context.links)) {
         // use global links, if none provided by the tag's link attribute
         if (this.globalLinks == null) {
-          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkBackToTag.");
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkNavigationBarTag.");
         } else {
           for (var key in this.globalLinks) {
             tzDomHelper.createElementWithAdjacentHtml(containerNode, "a", '{"href":"'+this.globalLinks[key]+'"}', key);

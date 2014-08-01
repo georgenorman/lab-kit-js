@@ -152,16 +152,15 @@ header h1 a.labHome {
 
 h2 {
   margin-top: 20px;
-  border-bottom: 1px solid #999;
+  border-bottom: 3px double #669;
   padding-top: 6px;
-  padding-bottom: 6px;
+  padding-bottom: 0;
   color: #669;
 }
 
 h3 {
   margin: 18px 18px 0 0;
-  border-top: 1px dashed #bbb;
-  border-bottom: 1px dashed #bbb;
+  border-bottom: 1px solid #669;
   padding-top: 3px;
   padding-bottom: 3px;
   color: #669;
@@ -378,6 +377,56 @@ footer:after {
 
 
 /* ==================================================================
+  ~ lkDisplayStyles.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ================================================================== */
+
+/* Headings */
+
+lk-display-styles > h4 {
+  margin-top: 12px;
+}
+
+/* Matrix */
+
+div.lk-display-styles-matrix {
+  margin-bottom: 16px;
+  width: 93%;
+  overflow: auto;
+}
+
+div.lk-display-styles-matrix > table {
+  margin: 8px 0 0 6px;
+  border-collapse:collapse;
+  border: 1px solid #ccc;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}
+
+div.lk-display-styles-matrix > table tr > th {
+  padding: 4px;
+  color: #555;
+  background-color: #ececec;
+  border-left: 1px solid #ccc;
+}
+
+div.lk-display-styles-matrix > table tr > td {
+  padding: 4px;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+div.lk-display-styles-matrix > table tr > td:first-child {
+  border-left: none;
+}
+
+div.lk-display-styles-matrix > table tr > td.center {
+  text-align: center;
+}
+
+/* ==================================================================
   ~ lkBulletPoint.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -460,21 +509,21 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
 }
 
 /* ==================================================================
-  ~ lkBackTo.css v1.0.0
+  ~ lkNavigationBar.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
   ================================================================== */
 
 /* Create an empty shell to render the tag */
-lk-back-to {
+lk-navigation-bar {
   display: block;
   margin-top: 16px;
   margin-bottom: 26px;
   white-space: nowrap;
 }
 
-lk-back-to > a {
+lk-navigation-bar > a {
   margin-right: 12px;
 }
 
@@ -549,14 +598,14 @@ lk-table-of-contents ul.toc > li > ul > li.pass:before {
 }
 
 /* ==================================================================
-  ~ lkHtmlBlock.css v1.0.0
+  ~ lkHtmlExample.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
   ================================================================== */
 
-/* Create an empty shell to render the HTML block */
-.lk-html-block {
+/* Create an empty shell to render the live code */
+.lk-live-code-block {
   margin: 8px 6px;
   border: thin dashed #ccc;
   padding: 3px;
@@ -564,7 +613,7 @@ lk-table-of-contents ul.toc > li > ul > li.pass:before {
   overflow: auto;
 }
 
-.lk-html-block-comment {
+.lk-live-code-block-comment {
   margin: 6px 0 10px 6px;
   color: #777;
 }
@@ -633,7 +682,7 @@ code.lk-code-example ol li:nth-child(even) {
 }
 
 /* ==================================================================
-  ~ lkDisplayStyles.css v1.0.0
+  ~ lkCssExample.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
@@ -641,12 +690,12 @@ code.lk-code-example ol li:nth-child(even) {
 
 /* Headings */
 
-lk-css-html-example > h4 {
+lk-css-example > h4 {
   margin-top: 12px;
 }
 
 /* ==================================================================
-  ~ lkDisplayStyles.css v1.0.0
+  ~ lkHtmlExample.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
@@ -654,43 +703,6 @@ lk-css-html-example > h4 {
 
 /* Headings */
 
-lk-display-styles > h4 {
+lk-html-example > h4 {
   margin-top: 12px;
-}
-
-/* Matrix */
-
-div.lk-display-styles-matrix {
-  margin-bottom: 16px;
-  width: 93%;
-  overflow: auto;
-}
-
-div.lk-display-styles-matrix > table {
-  margin: 8px 0 0 6px;
-  border-collapse:collapse;
-  border: 1px solid #ccc;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 13px;
-}
-
-div.lk-display-styles-matrix > table tr > th {
-  padding: 4px;
-  color: #555;
-  background-color: #ececec;
-  border-left: 1px solid #ccc;
-}
-
-div.lk-display-styles-matrix > table tr > td {
-  padding: 4px;
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-}
-
-div.lk-display-styles-matrix > table tr > td:first-child {
-  border-left: none;
-}
-
-div.lk-display-styles-matrix > table tr > td.center {
-  text-align: center;
 }

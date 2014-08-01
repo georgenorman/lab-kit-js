@@ -113,7 +113,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       if (element) {
         result = element.innerHTML;
         // remove the leading and trailing newlines (side-effect of using template, the newline after the <script> tag is included).
-        result = result.trim();
+        result = result.replace(/^\n|\s+$/g, '');
       }
 
       return result;
@@ -150,6 +150,23 @@ var tzDomHelperModule = (function( tzLogHelper ) {
         tzLogHelper.warning( "getFirstElementByTagName didn't find an element named: " + tagName );
       } else {
         result = elementList[0];
+      }
+
+      return result;
+    },
+
+    /**
+     * Return the inner HTML, from the first child node of the given <code>parentNode</code>, that matches the given <code>tagName</code>.
+     *
+     * @param elementId - ID of the element with the desired HTML.
+     */
+    getFirstElementFromNodeByTagName: function(parentNode, tagName) {
+      // get the raw css info from the script tag
+      var result = "";
+      var nodeList = parentNode.getElementsByTagName(tagName);
+
+      if (nodeList !== null || nodeList.length !== 0) {
+        result = nodeList[0].innerHTML;
       }
 
       return result;
@@ -348,73 +365,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
- */
-
-/**
- * A crude (hack), SINGLE-LINE code highlighter, that only highlights basic code elements (e.g., some c-style comments, etc).
- * Has many, many bugs - borderline suitable for the simple code examples in these labs.
- *
- * @module tzCodeHighlighterModule
- */
-var tzCodeHighlighterModule = (function() {
-  "use strict";
-
-  return {
-    /**
-     * Highlight the single line of code for the given language.
-     *
-     * @param code line of code to highlight.
-     * @param lang language syntax used to highlight.
-     * @returns {*}
-     */
-    highlight: function(code, lang) {
-      var result = code;
-
-      // simple quoted strings
-      result = result.replace(/(["'])(.*?)\1/gm, "[[quoted-string]]$1$2$1[[/quoted-string]]"); // matches quoted string: e.g., "foo"
-
-      // simple comments
-      result = result.replace(/(\/\/.*$)/gm, "[[comment]]$1[[/comment]]"); // matches javascript comment: e.g., // comment
-      result = result.replace(/(\/\*[\s\S]+?\*\/)/gm, "[[comment]]$1[[/comment]]"); // matches css/javascript comment: e.g., /* comment */
-      result = result.replace(/(<!--[\s\S]*?-->)/gm, "[[comment]]$1[[/comment]]"); // matches *ml comment: e.g., <!-- comment -->
-      result = result.replace(/(&lt;!--[\s\S]*?--&gt;)/gm, "[[comment]]$1[[/comment]]"); // matches escaped *ml comment: e.g., <!-- comment -->
-
-      if (lang === '*ml') {
-        // simple tags
-        result = result.replace(/(&lt;[-\w]+|&lt;\w+|&lt;\/[-\w]+&gt;)/gm, "[[tag-name]]$1[[/tag-name]]"); // matches tag: e.g., <div ...> or </div>
-
-        // simple xml attributes
-        result = result.replace(/([-\w]+=)/gm, "[[attribute-name]]$1[[/attribute-name]]"); // matches attribute name: e.g., foo=
-
-        // un-escape
-        result = result.replace(/\[\[tag-name\]\]/gm, "<span class='tz-highlight-tag-name'>").replace(/\[\[\/tag-name\]\]/gm, "</span>");
-        result = result.replace(/\[\[attribute-name\]\]/gm, "<span class='tz-highlight-attribute-name'>").replace(/\[\[\/attribute-name\]\]/gm, "</span>");
-      } else if (lang === 'css') {
-        // selector
-        result = result.replace(/(.*\{|\})/gm, "[[css-selector]]$1[[/css-selector]]"); // matches css selector: e.g., .foo {
-
-        // property
-        result = result.replace(/(.*:)/gm, "[[css-property]]$1[[/css-property]]"); // matches css property: e.g., margin-top:
-
-        // un-escape
-        result = result.replace(/\[\[css-selector\]\]/gm, "<span class='tz-highlight-css-selector'>").replace(/\[\[\/css-selector\]\]/gm, "</span>");
-        result = result.replace(/\[\[css-property\]\]/gm, "<span class='tz-highlight-css-property'>").replace(/\[\[\/css-property\]\]/gm, "</span>");
-      }
-
-      // un-escape
-      result = result.replace(/\[\[quoted-string\]\]/gm, "<span class='tz-highlight-comment'>").replace(/\[\[\/quoted-string\]\]/gm, "</span>");
-      result = result.replace(/\[\[comment\]\]/gm, "<span class='tz-highlight-comment'>").replace(/\[\[\/comment\]\]/gm, "</span>");
-
-      return result;
-    }
-  }
-}());
-
-/*
- ~ Copyright (c) 2014 George Norman.
- ~ Licensed under the Apache License, Version 2.0 (the "License");
- ~     http://www.apache.org/licenses/LICENSE-2.0
- ~
  ~ --------------------------------------------------------------
  ~ Simple custom tag helper functions - sharable among all projects.
  ~ --------------------------------------------------------------
@@ -538,6 +488,134 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
 }( tzDomHelperModule ));
 
 /*
+ ~ Copyright (c) 2014 George Norman.
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ --------------------------------------------------------------
+ ~ Renders code with syntax highlighting and line numbers.
+ ~ --------------------------------------------------------------
+ */
+
+/**
+ * Renders code with syntax highlighting and line numbers.
+ *
+ * @module tzCodeHighlighterModule
+ */
+var tzCodeHighlighterModule = (function(tzDomHelper) {
+  "use strict";
+
+  var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
+
+  return {
+
+    /**
+     * Render a code example into the given <code>containerNode</code>.
+     *
+     * @param containerNode where to render the result.
+     * @param context object containing the values needed to render the result:
+     *          <ul>
+     *            <li>heading: optional heading to use.
+     *            <li>codeBlockComment: optional comment to render above the code block.
+     *            <li>lang: language ID for the code syntax highlighter (e.g., "css", "*ml").
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            <li>rawCode: the code that will be XML escaped and rendered into the given containerNode.
+     *          </ul>
+     */
+    render: function(containerNode, context) {
+      // render optional heading, if present
+      if (tzDomHelper.isNotEmpty(context.heading)) {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, context.heading);
+      }
+
+      // render optional comment, if present
+      if (tzDomHelper.isNotEmpty(context.codeBlockComment)) {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-code-example-comment"}', context.codeBlockComment);
+      }
+
+      // render raw code, with syntax highlighting
+      if (tzDomHelper.isEmpty(context.rawCode)) {
+        // error - missing rawCode
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw Code is missing");
+      } else {
+        // create <code> block for the code listing
+        var codeElement = tzDomHelper.createElement(null, "code", '{"className":"lk-code-example"}');
+        var olElement = tzDomHelper.createElement(codeElement, "ol");
+        if (tzDomHelper.isNotEmpty(context.width)) {
+          olElement.style.width = context.width;
+        }
+
+        // prepare to shift all lines left, by the amount of whitespace on first line (extra leading whitespace is a side-effect of template)
+        // @-@:p0 DANGEROUS if first line has more spaces than any line that follows
+        var leadingSpaces = context.rawCode.match(/^ +/);
+        var numLeadingSpaces = leadingSpaces == null ? 0 : leadingSpaces[0].length;
+
+        // create a list item for each line (to display line numbers).
+        var codeLines = context.rawCode.split("\n");
+        for (var i = 0; i < codeLines.length; i++) {
+          var shiftedStr = codeLines[i].substr(numLeadingSpaces); // shift left, to compensate for template padding
+          var escapedCodeLine = tzDomHelper.xmlEscape(shiftedStr);
+          // @-@:p0 Highlighter should be applied to the complete inner HTML, and not line-by-line as done here, but
+          //        the closing list-item (</li>) breaks the span with the style, so keeping it simple and broken, for now.
+          tzDomHelper.createElementWithAdjacentHtml(olElement, "li", null, " " + this.highlight(escapedCodeLine, context.lang));
+        }
+
+        containerNode.appendChild(codeElement);
+      }
+    },
+
+    /**
+     * Highlight the single line of code for the given language.
+     *
+     * @param code line of code to highlight.
+     * @param lang language syntax used to highlight.
+     * @returns {*}
+     */
+    highlight: function(code, lang) {
+      var result = code;
+
+      // simple quoted strings
+      result = result.replace(/(["'])(.*?)\1/gm, "[[quoted-string]]$1$2$1[[/quoted-string]]"); // matches quoted string: e.g., "foo"
+
+      // simple comments
+      result = result.replace(/(\/\/.*$)/gm, "[[comment]]$1[[/comment]]"); // matches javascript comment: e.g., // comment
+      result = result.replace(/(\/\*[\s\S]+?\*\/)/gm, "[[comment]]$1[[/comment]]"); // matches css/javascript comment: e.g., /* comment */
+      result = result.replace(/(<!--[\s\S]*?-->)/gm, "[[comment]]$1[[/comment]]"); // matches *ml comment: e.g., <!-- comment -->
+      result = result.replace(/(&lt;!--[\s\S]*?--&gt;)/gm, "[[comment]]$1[[/comment]]"); // matches escaped *ml comment: e.g., <!-- comment -->
+
+      if (lang === '*ml') {
+        // simple tags
+        result = result.replace(/(&lt;[-\w]+|&lt;\w+|&lt;\/[-\w]+&gt;)/gm, "[[tag-name]]$1[[/tag-name]]"); // matches tag: e.g., <div ...> or </div>
+
+        // simple xml attributes
+        result = result.replace(/([-\w]+=)/gm, "[[attribute-name]]$1[[/attribute-name]]"); // matches attribute name: e.g., foo=
+
+        // un-escape
+        result = result.replace(/\[\[tag-name\]\]/gm, "<span class='tz-highlight-tag-name'>").replace(/\[\[\/tag-name\]\]/gm, "</span>");
+        result = result.replace(/\[\[attribute-name\]\]/gm, "<span class='tz-highlight-attribute-name'>").replace(/\[\[\/attribute-name\]\]/gm, "</span>");
+      } else if (lang === 'css') {
+        // selector
+        result = result.replace(/(.*\{|\})/gm, "[[css-selector]]$1[[/css-selector]]"); // matches css selector: e.g., .foo {
+
+        // property
+        result = result.replace(/(.*:)/gm, "[[css-property]]$1[[/css-property]]"); // matches css property: e.g., margin-top:
+
+        // un-escape
+        result = result.replace(/\[\[css-selector\]\]/gm, "<span class='tz-highlight-css-selector'>").replace(/\[\[\/css-selector\]\]/gm, "</span>");
+        result = result.replace(/\[\[css-property\]\]/gm, "<span class='tz-highlight-css-property'>").replace(/\[\[\/css-property\]\]/gm, "</span>");
+      }
+
+      // un-escape
+      result = result.replace(/\[\[quoted-string\]\]/gm, "<span class='tz-highlight-comment'>").replace(/\[\[\/quoted-string\]\]/gm, "</span>");
+      result = result.replace(/\[\[comment\]\]/gm, "<span class='tz-highlight-comment'>").replace(/\[\[\/comment\]\]/gm, "</span>");
+
+      return result;
+    }
+  }
+
+}(tzDomHelperModule));
+
+/*
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
@@ -548,7 +626,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
  */
 
 /**
- * Manages LabKit (e.g., causes all tags to be rendered).
+ * LabKit initialization module (e.g., causes all tags to be rendered).
  *
  * @module baseKitModule
  */
@@ -562,14 +640,18 @@ var baseKitModule = (function(tzDomHelper) {
     handleOnLoad: function() {
       // Tags common to all Labs
       lkTableOfContentsTag.renderAll();
-      lkCssBlockTag.renderAll();
-      lkCodeExampleTag.renderAll();
-      lkHtmlBlockTag.renderAll();
-      lkCssHtmlExampleTag.renderAll();
+
+      lkBulletPointTag.renderAll();
+      lkNavigationBarTag.renderAll();
+
+      lkCssExampleTag.renderAll();
+      lkHtmlExampleTag.renderAll();
+      lkJsExampleTag.renderAll();
+      lkJsEvalExampleTag.renderAll();
+
+      // these tags depend on the rendered output of the example tags (so they must be rendered after the examples).
       lkDisplayStylesTag.renderAll();
       lkAncestorStylesTag.renderAll();
-      lkBulletPointTag.renderAll();
-      lkBackToTag.renderAll();
     },
 
     /**
@@ -591,6 +673,66 @@ var baseKitModule = (function(tzDomHelper) {
 }(tzDomHelperModule));
 
 /*
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ --------------------------------------------------------------
+  ~ Lab Kit Logger module.
+  ~ --------------------------------------------------------------
+ */
+
+/**
+ * A simple message logger that caches items to a list, for future retrieval.
+ *
+ * @module lkResultLoggerModule
+ */
+var lkResultLoggerModule = (function(tzDomHelper) {
+  "use strict";
+
+  var loggedResultLines = [];
+
+  return {
+    /**
+     * Add the given <code>msg</code> to a list of results.
+     *
+     * @param msg
+     */
+    log: function( msg ) {
+      console.log(msg);
+      loggedResultLines[loggedResultLines.length++] = msg;
+    },
+
+    /**
+     * Return the current list of results and reset the logger so that future items are added to a new list.
+     *
+     * @returns {Array}
+     */
+    detachLoggedResultLines: function() {
+      var result = loggedResultLines;
+
+      loggedResultLines = [];
+
+      return result;
+    },
+
+    /**
+     * Return the current list of results, as a string, and reset the logger so that future items are added to a new list.
+     *
+     * @returns {string}
+     */
+    detachLoggedResultLinesAsString: function() {
+      var result = loggedResultLines.join("\n");
+
+      loggedResultLines = [];
+
+      return result;
+    }
+  };
+
+}(tzDomHelperModule));
+
+/*
  ~ Copyright (c) 2014 George Norman.
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~     http://www.apache.org/licenses/LICENSE-2.0
@@ -601,7 +743,7 @@ var baseKitModule = (function(tzDomHelper) {
  */
 
 /**
- * The <code>&lt;lk-bullet-point&gt;</code> tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right.
+ * Renders a status icon on the left followed by an HTML block on the right.
  *<p>
  * The tag attributes are read from the <code>lk-bullet-point</code> element, as shown in the example below:
  * <pre style="background:#eee; padding:6px;">
@@ -614,14 +756,14 @@ var baseKitModule = (function(tzDomHelper) {
  * <h6>Tag Attributes:</h6>
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>iconClass</code></td><td>class name used to style the &lt;i&gt; element used as a placeholder for the icon. </td><tr>
+ *   <tr><td class="name"><code>iconClass</code></td><td>class name used to style the &lt;i&gt; element used as a placeholder for the icon. </td></tr>
  *   <tr><td class="name"><code>leftColumnWidth</code></td>
  *       <td>
  *         optional width of the left column.
  *         The following icons are predefined: "lk-bullet-point-pass", "lk-bullet-point-fail" (see css/lkBulletPoint.css).
  *       </td>
- *   <tr>
- *   <tr><td class="name"><code>style</code></td><td>optional style for the wrapper div.</td><tr>
+ *   </tr>
+ *   <tr><td class="name"><code>style</code></td><td>optional style for the wrapper div.</td></tr>
  * </table>
  *
  * @module lkBulletPointTag
@@ -710,29 +852,29 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lk-back-to> tags - sharable among all projects.
+ ~ Renders <lk-navigation-bar> tags - sharable among all projects.
  ~ --------------------------------------------------------------
  */
 
 /**
- * The <code>&lt;lk-back-to&gt;</code> tag renders a navigation bar, with the following links: "Back to Index" and "Back to Table of Contents".
+ * Renders a navigation bar, typically configured with the following links: "Back to Index" and "Back to Table of Contents".
  *<p>
- * The tag can be configured globally, via an init function, or individually via attributes read from the <code>lk-back-to</code> element:
+ * The tag can be configured globally, via an init function, or individually via attributes read from the <code>lk-navigation-bar</code> element:
  *
  *<ul>
  *  <li>Globally:
  * <pre style="background:#eee; padding:6px;">
- *  lkBackToTag.setGlobalLinks({
+ *  lkNavigationBarTag.setGlobalLinks({
  *      "⬅ Back to Index":"./index.html",
  *      "⬆ Back to Table of Contents":"#tableOfContents"});
  * </pre>
  *
  *  <li>Locally:
  * <pre style="background:#eee; padding:6px;">
- *   &lt;lk-back-to
+ *   &lt;lk-navigation-bar
  *     links='{"⬅ Back to Index":"./index.html", "⬆ Back to ToC":"#tableOfContents"}'
  *   &gt;
- *   &lt;/lk-back-to&gt;
+ *   &lt;/lk-navigation-bar&gt;
  * </pre>
  * </ul>
  *
@@ -740,12 +882,12 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
  * <h6>Tag Attributes:</h6>
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>links</code></td><td>Series of links to render</td><tr>
+ *   <tr><td class="name"><code>links</code></td><td>Series of links to render</td></tr>
  * </table>
  *
- * @module lkBackToTag
+ * @module lkNavigationBarTag
  */
-var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var globalLinks = null;
@@ -757,18 +899,18 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
      * @returns {string}
      */
     getTagName: function() {
-      return "lk-back-to";
+      return "lk-navigation-bar";
     },
 
     /**
-     * Render all <code>&lt;lk-back-to&gt;</code> tags on the page.
+     * Render all <code>&lt;lk-navigation-bar&gt;</code> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <code>&lt;lk-back-to&gt;</code> tag identified by the given <code>tagId</code>.
+     * Render the <code>&lt;lk-navigation-bar&gt;</code> tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -777,20 +919,20 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the given <code>lkBackToTagNode</code>.
+     * Render the given <code>lkNavigationBarTagNode</code>.
      *
-     * @param lkBackToTagNode the node to retrieve the attributes from and then render the result to.
+     * @param lkNavigationBarTagNode the node to retrieve the attributes from and then render the result to.
      */
-    renderTag: function(lkBackToTagNode) {
+    renderTag: function(lkNavigationBarTagNode) {
       // build the context
-      var localLinksText = lkBackToTagNode.getAttribute("links");
+      var localLinksText = lkNavigationBarTagNode.getAttribute("links");
 
       var context = {
         "links": tzDomHelper.isEmpty(localLinksText) ? null : JSON.parse(localLinksText)
       };
 
       // render the result
-      this.render(lkBackToTagNode, context);
+      this.render(lkNavigationBarTagNode, context);
     },
 
     /**
@@ -806,7 +948,7 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
       if (tzDomHelper.isEmpty(context.links)) {
         // use global links, if none provided by the tag's link attribute
         if (this.globalLinks == null) {
-          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkBackToTag.");
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkNavigationBarTag.");
         } else {
           for (var key in this.globalLinks) {
             tzDomHelper.createElementWithAdjacentHtml(containerNode, "a", '{"href":"'+this.globalLinks[key]+'"}', key);
@@ -835,7 +977,7 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
  */
 
 /**
- * The <code>&lt;lk-table-of-contents&gt;</code> tag auto-generates a simple two-level Table of Contents.
+ * Auto-generates a simple two-level Table of Contents.
  * A default title of "Table of Contents" will be used if the title is not provided.
  * The title is rendered as an h2 element.
  *<p>
@@ -855,20 +997,20 @@ var lkBackToTag = (function(tzDomHelper, tzCustomTagHelper) {
  * <h6>Tag Attributes:</h6>
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>class</code></td><td>the CSS class to apply to the rendered Table of Contents</td><tr>
+ *   <tr><td class="name"><code>class</code></td><td>the CSS class to apply to the rendered Table of Contents</td></tr>
  *   <tr><td class="name"><code>level1ItemsTagName</code></td>
  *       <td>
  *         tag name used to identify the level-1 headers to be included in the Table of Contents
  *         (e.g., "h2" would cause all h2 elements on the page, to be used as items in the generated Table of Contents).
  *       </td>
- *   <tr>
+ *   </tr>
  *   <tr><td class="name"><code>level2ItemsTagName</code></td>
  *       <td>
  *         tag name used to identify the level-2 headers to be included under each level-1 header
  *         (e.g., "h3" would cause all h3 elements on the page, to be used as sub-items in the generated Table of Contents).
  *       </td>
- *   <tr>
- *   <tr><td class="name"><code>title</code></td><td>optional title (default is "Table of Contents").</td><tr>
+ *   </tr>
+ *   <tr><td class="name"><code>title</code></td><td>optional title (default is "Table of Contents").</td></tr>
  * </table>
  *
  * @module lkTableOfContentsTag
@@ -1022,160 +1164,32 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lk-html-block> tags - sharable among all projects.
+ ~ Renders <lk-ancestor-styles> tags - sharable among all projects.
  ~ --------------------------------------------------------------
- */
-
-/**
- * The <code>&lt;lk-html-block&gt;</code> tag extracts the raw HTML, specified by the given <code>templateId</code>, and then injects it
- * into the DOM, so that the HTML is rendered live by the current document.
- *<p>
- * The <code>&lt;lk-html-block&gt;</code> tag is often accompanied by the <code>&lt;lk-code-example&gt;</code> tag, which renders the same HTML,
- * but for presentation purposes only (with syntax highlighting and line numbers). This enables the same
- * code to be presented as an example and at the same time be live rendered into the DOM.
- *<p>
- * The tag attributes are read from the <code>lk-html-block</code> element, as shown in the example below:
- *
- * <pre style="background:#eee; padding:6px;">
- *   &lt;lk-html-block templateId="basicBoxModelHtml" heading="Rendered Result"&gt;
- *     &lt;comment&gt;Optional Comment&lt;/comment&gt;
- *   &lt;/lk-html-block&gt;
- * </pre>
- *
- * <p style="padding-left:12px;">
- * <h6>Tag Attributes:</h6>
- * <table class="params">
- *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>templateId</code></td><td>ID of the element containing the raw HTML code to render.</td><tr>
- *   <tr><td class="name"><code>heading</code></td><td>heading text [optional]</td><tr>
- * </table>
- *
- * @module lkHtmlBlockTag
- */
-var lkHtmlBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
-  "use strict";
-
-  var commentExpression = new RegExp("<comment>((.|\n)*)</comment>", "ig");
-
-  return {
-    /**
-     * Return the name of this tag.
-     *
-     * @returns {string}
-     */
-    getTagName: function() {
-      return "lk-html-block";
-    },
-
-    /**
-     * Render all <code>&lt;lk-html-block&gt;</code> tags on the page.
-     */
-    renderAll: function() {
-      tzCustomTagHelper.renderAll(this);
-    },
-
-    /**
-     * Render the <code>&lt;lk-html-block&gt;</code> tag identified by the given <code>tagId</code>.
-     *
-     * @param tagId ID of the tag to render.
-     */
-    renderTagById: function(tagId) {
-      tzCustomTagHelper.renderTagById(this, tagId);
-    },
-
-    /**
-     * Render the given <code>lkHtmlTagNode</code>.
-     *
-     * @param lkHtmlTagNode the node to retrieve the attributes from and then render the result to.
-     */
-    renderTag: function(lkHtmlTagNode) {
-      var templateId = lkHtmlTagNode.getAttribute("templateId");
-      var heading = lkHtmlTagNode.getAttribute("heading");
-      if (tzDomHelper.isEmpty(heading)) {
-        heading = "Rendered Result";
-      }
-
-      // build the context
-      var context = {
-        "heading": heading,
-        "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlTagNode, commentExpression),
-        "rawHtml": tzDomHelper.getInnerHtml(templateId)
-      };
-
-      // remove all child nodes, previously added from render (or renderAll).
-      tzDomHelper.removeAllChildNodes(lkHtmlTagNode);
-
-      // render the result
-      this.render(lkHtmlTagNode, context);
-    },
-
-    /**
-     * Render the HTML code block into the given <code>containerNode</code>.
-     *
-     * @param containerNode where to render the result.
-     * @param context object containing the values needed to render the result:
-     *           <ul>
-     *             <li>heading: optional heading to display for the live code block.
-     *             <li>resultComment: optional comment to render above the live result.
-     *             <li>rawHtml: the code that will be rendered into the given containerNode.
-     *           <ul>
-     */
-    render: function(containerNode, context) {
-      // render optional heading, if present
-      if (tzDomHelper.isNotEmpty(context.heading)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, context.heading);
-      }
-
-      // render optional result comment, if present
-      if (tzDomHelper.isNotEmpty(context.resultComment)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-html-block-comment"}', context.resultComment);
-      }
-
-      // render raw HTML from the template
-      var div = tzDomHelper.createElementWithAdjacentHtml(containerNode, "div", '{"className":"lk-html-block"}', context.rawHtml);
-      if (tzDomHelper.isNotEmpty(context.height)) {
-        div.style.height = context.height;
-      }
-    }
-  }
-}(tzDomHelperModule, tzCustomTagHelperModule));
-
-/*
- ~ Copyright (c) 2014 George Norman.
- ~ Licensed under the Apache License, Version 2.0 (the "License");
- ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
- ~ --------------------------------------------------------------
- ~ Renders <lk-css-block> tags - sharable among all projects.
- ~ --------------------------------------------------------------
  */
 
 /**
- * The <code>&lt;lk-css-block&gt;</code> tag extracts the raw CSS, specified by the given <code>templateId</code>, and then injects it
- * live into the DOM, so that the styles may be applied to the current document
- * (this is done by rendering the extracted CSS into a &lt;style&gt; block).
- *<p>
- * The <code>&lt;lk-css-block&gt;</code> tag is often accompanied by the <code>&lt;lk-code-example&gt;</code> tag, which renders the same CSS,
- * but for presentation purposes only (with syntax highlighting and line numbers). This enables the same
- * code to be presented as an example and at the same time be live rendered into the DOM.
- *<p>
- * The tag attributes are read from the <code>lk-css-block</code> element, as shown in the example below:
+ * Renders a set of styles, for all ancestors of a given element.
+ * The ancestor styles are displayed in a table. The <code>startElementId</code> attribute specifies
+ * where the traversal begins. The <code>styleNames</code> tag specifies the list of styles to
+ * be rendered in the table.
  *
  * <pre style="background:#eee; padding:6px;">
- *   &lt;lk-css-block templateId="basicBoxModelCss"&gt;&lt;/lk-css-block&gt;
+ *  &lt;!-- Render the position and display styles for all ancestors of the "innermost" element. --&gt;
+ *  &lt;lk-ancestor-styles title="Genealogy of innermost" startElementId="innermost"&gt;
+ *    &lt;comment&gt;A comment rendered beneath the Ancestors header&lt;/comment&gt;
+ *    &lt;styleNames&gt;position, display&lt;/styleNames&gt;
+ *  &lt;/lk-ancestor-styles&gt;
  * </pre>
  *
- * <p style="padding-left:12px;">
- * <h6>Tag Attributes:</h6>
- * <table class="params">
- *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>templateId</code></td><td>ID of the element containing the CSS code to insert.</td><tr>
- * </table>
- *
- * @module lkCssBlockTag
+ * @module lkAncestorStylesTag
  */
-var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
   "use strict";
+
+  var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
+  var styleNamesExpression = new RegExp("<styleNames>(.+?)<\/styleNames>", "ig");
 
   return {
     /**
@@ -1184,18 +1198,18 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
      * @returns {string}
      */
     getTagName: function() {
-      return "lk-css-block";
+      return "lk-ancestor-styles";
     },
 
     /**
-     * Render all <code>&lt;lk-css-block&gt;</code> tags on the page.
+     * Render all &lt;lk-ancestor-styles&gt; tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the <code>&lt;lk-css-block&gt;</code> tag identified by the given tagId.
+     * Render the &lt;lk-ancestor-styles&gt; tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -1204,392 +1218,72 @@ var lkCssBlockTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     /**
-     * Render the given <code>lkStyleTagNode</code>.
+     * Render the given <code>AncestorStylesTagNode</code>.
      *
-     * @param lkStyleTagNode the node to retrieve the attributes from and then render the result to.
+     * @param ancestorStylesTagNode the node to retrieve the attributes from and then render the result to.
      */
-    renderTag: function(lkStyleTagNode) {
-      // build the context
-      var context = {
-        "rawCss": tzDomHelper.getInnerHtml(lkStyleTagNode.getAttribute("templateId"))
+    renderTag: function(ancestorStylesTagNode) {
+      // get the title, width and startElementId from the tag
+      var title = ancestorStylesTagNode.getAttribute("title");
+      var width = ancestorStylesTagNode.getAttribute("width");
+      var startElementId = ancestorStylesTagNode.getAttribute("startElementId");
+
+      // get the child tags
+      var comment = tzCustomTagHelper.getFirstMatchedGroup(ancestorStylesTagNode, commentExpression);
+      var styleNames = ancestorStylesTagNode.innerHTML.match(styleNamesExpression)[0].replace(styleNamesExpression, "$1");
+
+      // traverse the ancestry
+      var elementArray = new Array();
+      var element = document.getElementById( startElementId );
+      while (element.parentNode != null) {
+        elementArray.push(element);
+        element = element.parentNode;
+      }
+
+      // create the matrix object
+      var matrix = {
+        "elements": elementArray,
+        "styleNames": tzDomHelper.splitWithTrim(styleNames),
+        "columnOptions": "[id][name]"
       };
 
+      // create the context object
+      var context = {
+        "title": title,
+        "comment": comment,
+        "width": width,
+        "useCompactUnorderedList": null,
+        "unorderedListItems": null,
+        "matrix": matrix
+      };
+
+      // remove child nodes (e.g., <code>rawRightColumnHtml</code> retrieved for use by the right column)
+      tzDomHelper.removeAllChildNodes(ancestorStylesTagNode);
+
       // render the result
-      this.render(lkStyleTagNode, context);
+      this.render(ancestorStylesTagNode, context);
     },
 
     /**
-     * Render the <code>&lt;style&gt;</code> block into the given <code>containerNode</code>.
+     * Render into the given <code>containerNode</code>, the style property names and values, for the elements in the given <code>unorderedListItems</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
      *            <ul>
-     *              <li>rawCss: the raw styles to render into the given containerNode.
+     *              <li>title: optional heading for the style list.
+     *              <li>unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
+     *                  element and the css-property-name is used to read and display its property value.
+     *              <li>useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
+     *                  otherwise, displays the same list, but includes the property name for each item in the list.
      *            </ul>
      */
     render: function(containerNode, context) {
-      if (tzDomHelper.isEmpty(context.rawCss)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw CSS is missing");
-      } else {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.rawCss);
-      }
+      // render the result using the lkDisplayStyles tag
+      lkDisplayStyles.render(containerNode, context);
     }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
-
-/*
- ~ Copyright (c) 2014 George Norman.
- ~ Licensed under the Apache License, Version 2.0 (the "License");
- ~     http://www.apache.org/licenses/LICENSE-2.0
- ~
- ~ --------------------------------------------------------------
- ~ Renders <lk-code-example> tags - sharable among all projects.
- ~ --------------------------------------------------------------
- */
-
-/**
- * The <code>&lt;lk-code-example&gt;</code> tag renders the specified code with syntax highlighting and line numbers.
- *<p>
- * The tag attributes are read from the <code>lk-code-example</code> element, as shown in the examples below:
- *
- * <pre style="background:#eee; padding:6px;">
- *   &lt;lk-code-example templateId="myHtmlTemplate" heading="HTML" lang="*ml" width="350px"&gt;
- *     &lt;comment&gt;HTML code example comment.&lt;/comment&gt;
- *   &lt;/lk-code-example&gt;
- *
- *   &lt;lk-code-example templateId="myCssTemplate" heading="CSS" lang="css" width="300px"&gt;
- *     &lt;comment&gt;CSS code example comment.&lt;/comment&gt;
- *   &lt;/lk-code-example&gt;
- * </pre>
- *
- * <p style="padding-left:12px;">
- * <h6>Tag Attributes:</h6>
- * <table class="params">
- *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>templateId</code></td><td>ID of the element containing the HTML or JavaScript code to render.</td><tr>
- *   <tr><td class="name"><code>heading</code></td><td>heading text [optional]</td><tr>
- *   <tr><td class="name"><code>lang</code></td><td>language ID for the code syntax highlighter (e.g., "css", "*ml").</td><tr>
- *   <tr><td class="name"><code>width</code></td><td>optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.</td><tr>
- * </table>
- *
- * @module lkCodeExampleTag
- */
-var lkCodeExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
-  "use strict";
-
-  var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
-
-  return {
-    /**
-     * Return the name of this tag.
-     *
-     * @returns {string}
-     */
-    getTagName: function() {
-      return "lk-code-example";
-    },
-
-    /**
-     * Render all <code>&lt;lk-code-example&gt;</code> tags on the page.
-     */
-    renderAll: function() {
-      tzCustomTagHelper.renderAll(this);
-    },
-
-    /**
-     * Render the <code>&lt;lk-code-example&gt;</code> tag identified by the given <code>tagId</code>.
-     *
-     * @param tagId ID of the tag to render.
-     */
-    renderTagById: function(tagId) {
-      tzCustomTagHelper.renderTagById(this, tagId);
-    },
-
-    /**
-     * Render the given <code>lkCodeExampleTagNode</code>.
-     *
-     * @param lkCodeExampleTagNode the node to retrieve the attributes from and then render the result to.
-     */
-    renderTag: function(lkCodeExampleTagNode) {
-      var templateId = lkCodeExampleTagNode.getAttribute("templateId");
-
-      // build the context
-      var context = {
-        "heading": lkCodeExampleTagNode.getAttribute("heading"),
-        "codeBlockComment": tzCustomTagHelper.getFirstMatchedGroup(lkCodeExampleTagNode, commentExpression),
-        "lang": lkCodeExampleTagNode.getAttribute("lang"),
-        "width": lkCodeExampleTagNode.getAttribute("width"),
-        "rawCode": tzDomHelper.getInnerHtml(templateId)
-      };
-
-      // remove the child nodes (e.g., optional codeBlockComment node)
-      tzDomHelper.removeAllChildNodes(lkCodeExampleTagNode);
-
-      // render the result
-      this.render(lkCodeExampleTagNode, context);
-    },
-
-    /**
-     * Render the code example into the given <code>containerNode</code>.
-     *
-     * @param containerNode where to render the result.
-     * @param context object containing the values needed to render the result:
-     *          <ul>
-     *            <li>heading: optional heading to use.
-     *            <li>codeBlockComment: optional comment to render above the code block.
-     *            <li>lang: language ID for the code syntax highlighter (e.g., "css", "*ml").
-     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            <li>rawCode: the code that will be XML escaped and rendered into the given containerNode.
-     *          </ul>
-     */
-    render: function(containerNode, context) {
-      // render optional heading, if present
-      if (tzDomHelper.isNotEmpty(context.heading)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, context.heading);
-      }
-
-      // render optional HTML comment, if present
-      if (tzDomHelper.isNotEmpty(context.codeBlockComment)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-code-example-comment"}', context.codeBlockComment);
-      }
-
-      // render raw code
-      if (tzDomHelper.isEmpty(context.rawCode)) {
-        // error - missing rawCode
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw Code is missing");
-      } else {
-        // create <code> block for the code listing
-        var codeElement = tzDomHelper.createElement(null, "code", '{"className":"lk-code-example"}');
-        var olElement = tzDomHelper.createElement(codeElement, "ol");
-        if (tzDomHelper.isNotEmpty(context.width)) {
-          olElement.style.width = context.width;
-        }
-
-        // create a list item for each line (to display line numbers).
-        var codeLines = context.rawCode.split("\n");
-        for (var i = 0; i < codeLines.length; i++) {
-          var escapedCodeLine = tzDomHelper.xmlEscape(codeLines[i]);
-          // @-@:p0 Highlighter should be applied to the complete inner HTML, and not line-by-line as done here, but
-          //        the closing list-item (</li>) breaks the span with the style, so keeping it simple and broken, for now.
-          tzDomHelper.createElementWithAdjacentHtml(olElement, "li", null, " " + tzCodeHighlighter.highlight(escapedCodeLine, context.lang));
-        }
-
-        containerNode.appendChild(codeElement);
-      }
-     },
-
-    /**
-     * Refresh the tag (by removing the child elements and re-rendering the code example).
-     *
-     * @param tagId ID of the tag to refresh.
-     */
-    refreshTagById: function(tagId) {
-      var lkCodeExampleTag = document.getElementById(tagId);
-
-      // first, remove all child nodes, previously added from render (or renderAll).
-      tzDomHelper.removeAllChildNodes(lkCodeExampleTag);
-
-      // re-render the tag
-      this.renderTag(lkCodeExampleTag);
-    }
-  }
-
-}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
-
-/*
- ~ Copyright (c) 2014 George Norman.
- ~ Licensed under the Apache License, Version 2.0 (the "License");
- ~     http://www.apache.org/licenses/LICENSE-2.0
- ~
- ~ --------------------------------------------------------------
- ~ Renders <lk-css-html-example> tags - sharable among all projects.
- ~ --------------------------------------------------------------
- */
-
-/**
- * The <code>&lt;lk-css-html-example&gt;</code> tag combines the features of the <code>&lt;lk-code-example&gt;</code>,
- * <code>&lt;lk-css-block&gt;</code> and <code>&lt;lk-html-block&gt;</code> tags.
- * This single tag can be used to render syntax-highlighted CSS and HTML code examples and then inject the raw CSS and HTML
- * into the DOM so the browser will render the examples live.
- *<p>
- * The tag attributes are read from the <code>lk-css-html-example</code> element, as shown in the examples below:
- *
- * <pre style="background:#eee; padding:6px;">
- *   &lt;lk-css-html-example cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml"&gt;
- *   &lt;/lk-css-html-example&gt;
- *
- *   &lt;lk-css-html-example htmlTemplateId="tmplExampleRelInStaticNoMarginHtml"&gt;
- *   &lt;/lk-css-html-example&gt;
- * </pre>
- *
- * <p style="padding-left:12px;">
- * <h6>Tag Attributes:</h6>
- * <table class="params">
- *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>cssTemplateId</code></td><td>ID of the element containing the CSS code to insert</td><tr>
- *   <tr><td class="name"><code>htmlTemplateId</code></td><td>ID of the element containing the HTML code to insert</td><tr>
- *   <tr><td class="name"><code>templateId</code></td>
- *       <td>
- *         optional; use this instead of cssTemplateId and htmlTemplateId to simplify the code.
- *         "Css" and "Html" will be appended to the given templateId, to form the IDs to the CSS and HTML templates.
- *       </td><tr>
- * </table>
- *<p>
- * Complete Example:
- *
- * <pre style="background:#eee; padding:6px;">
- * &lt;script type="multiline-template" id="simpleTemplateCss"&gt;
- *   .foo {color: red;}
- * &lt;/script&gt;
- *
- * &lt;script type="multiline-template" id="simpleTemplateHtml"&gt;
- *   &lt;span class="foo"&gt;This is red&lt;/span&gt;
- * &lt;/script&gt;
- *
- * &lt;lk-css-html-example templateId="simpleTemplate" width="750px"&gt;
- *   &lt;cssComment&gt;A comment rendered beneath the CSS header.&lt;/cssComment&gt;
- *   &lt;htmlComment&gt;A comment rendered beneath the HTML header.&lt;/htmlComment&gt;
- *   &lt;resultComment&gt;A comment rendered beneath the Result header.&lt;/resultComment&gt;
- * &lt;/lk-css-html-example&gt;
- * </pre>
- *
- * @module lkCssHtmlExampleTag
- */
-var lkCssHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, lkCssBlock, lkHtmlBlock, lkCodeExample) {
-  "use strict";
-
-  var cssCommentExpression = new RegExp("<cssComment>((.|\n)*)<\/cssComment>", "ig");
-  var htmlCommentExpression = new RegExp("<htmlComment>((.|\n)*)<\/htmlComment>", "ig");
-  var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
-
-  return {
-    /**
-     * Return the name of this tag.
-     *
-     * @returns {string}
-     */
-    getTagName: function() {
-      return "lk-css-html-example";
-    },
-
-    /**
-     * Render all <code>&lt;lk-css-html-example&gt;</code> tags on the page.
-     */
-    renderAll: function() {
-      tzCustomTagHelper.renderAll(this);
-    },
-
-    /**
-     * Render the <code>&lt;lk-css-html-example&gt;</code> tag identified by the given <code>tagId</code>.
-     *
-     * @param tagId ID of the tag to render.
-     */
-    renderTagById: function(tagId) {
-      tzCustomTagHelper.renderTagById(this, tagId);
-    },
-
-    /**
-     * Render the given <code>lkHtmlCssExampleTagNode</code>.
-     *
-     * @param lkHtmlCssExampleTagNode the node to retrieve the attributes from and then render the result to.
-     */
-    renderTag: function(lkHtmlCssExampleTagNode) {
-      // get the template IDs from the tag
-      var cssTemplateId;
-      var htmlTemplateId;
-      if (tzDomHelper.isNotEmpty(lkHtmlCssExampleTagNode.getAttribute("templateId"))) {
-        cssTemplateId = lkHtmlCssExampleTagNode.getAttribute("templateId") + "Css";
-        htmlTemplateId = lkHtmlCssExampleTagNode.getAttribute("templateId") + "Html";
-      } else {
-        cssTemplateId = lkHtmlCssExampleTagNode.getAttribute("cssTemplateId");
-        htmlTemplateId = lkHtmlCssExampleTagNode.getAttribute("htmlTemplateId");
-      }
-
-      // get css info from the tag
-      var cssError = "";
-      var cssComment = "";
-      var rawCss = "";
-      if (tzDomHelper.isNotEmpty(cssTemplateId)) {
-        cssComment = tzCustomTagHelper.getFirstMatchedGroup(lkHtmlCssExampleTagNode, cssCommentExpression);
-        rawCss = tzDomHelper.getInnerHtml(cssTemplateId);
-
-        if (tzDomHelper.isEmpty(rawCss)) {
-          cssError = "CSS Template was not found for given ID: " + cssTemplateId;
-        }
-      }
-
-      // build the context
-      var context = {
-        "cssComment": cssComment,
-        "rawCss": rawCss,
-        "htmlComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlCssExampleTagNode, htmlCommentExpression),
-        "rawHtml": tzDomHelper.getInnerHtml(htmlTemplateId),
-        "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlCssExampleTagNode, resultCommentExpression),
-        "width": lkHtmlCssExampleTagNode.getAttribute("width"),
-        "height": lkHtmlCssExampleTagNode.getAttribute("height")
-      };
-
-      // remove child nodes (e.g., optional comment nodes)
-      tzDomHelper.removeAllChildNodes(lkHtmlCssExampleTagNode);
-
-      // check for error
-      if (tzDomHelper.isNotEmpty(cssError)) {
-        tzDomHelper.createElementWithAdjacentHtml(lkHtmlCssExampleTagNode, "p", '{"style.color":"red"}', cssError);
-      }
-
-      // render the result (without CSS if error was encountered)
-      this.render(lkHtmlCssExampleTagNode, context);
-    },
-
-    /**
-     * Render the code examples and live code block, into the given <code>containerNode</code>.
-     *
-     * @param containerNode where to render the result.
-     * @param context object containing the values needed to render the result:
-     *          <ul>
-     *            <li>cssComment: optional comment to render above the CSS code block.
-     *            <li>rawCss: the CSS code to insert.
-     *            <li>htmlComment: optional comment to render above the HTML code block.
-     *            <li>rawHtml: the HTML code to insert.
-     *            <li>resultComment: optional comment to render above the live result.
-     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            <li>height: optional height.
-     *          </ul>
-     */
-    render: function(containerNode, context) {
-      // render the live CSS, if present
-      if (tzDomHelper.isNotEmpty(context.rawCss)) {
-        lkCssBlock.render(containerNode, context);
-
-        // render the CSS code example
-        lkCodeExample.render(containerNode, {
-          "heading": "CSS",
-          "codeBlockComment": context.cssComment,
-          "lang": "css",
-          "width": context.width,
-          "rawCode": context.rawCss});
-      }
-
-      // render the HTML code example
-      lkCodeExample.render(containerNode, {
-        "heading": "HTML",
-        "codeBlockComment": context.htmlComment,
-        "lang": "*ml",
-        "width": context.width,
-        "rawCode": context.rawHtml});
-
-      // render the live HTML code
-      lkHtmlBlock.render(containerNode, {
-        "heading": "Rendered Result",
-        "resultComment": context.resultComment,
-        "height": context.height,
-        "rawHtml": context.rawHtml});
-    }
-
-  }
-
-}(tzDomHelperModule, tzCustomTagHelperModule, lkCssBlockTag, lkHtmlBlockTag, lkCodeExampleTag));
+}(tzDomHelperModule, tzCustomTagHelperModule, lkDisplayStylesTag));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -1957,31 +1651,48 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
- ~ Renders <lk-ancestor-styles> tags - sharable among all projects.
+ ~ Renders <lk-js-example> tags - sharable among all projects.
  ~ --------------------------------------------------------------
- ~
  */
 
 /**
- * The <code>&lt;lk-ancestor-styles&gt;</code> tag renders a requested set of styles, for all ancestors of a given element.
- * The ancestor styles are displayed in a table. The <code>startElementId</code> attribute specifies
- * where to the start the traversal. The <code>styleNames</code> tag specifies the list of styles to
- * be rendered in the table.
+ * Combines the features of the <code>&lt;lk-code-example&gt;</code>,
+ * and <code>&lt;lk-js-block&gt;</code> tags.
+ * This single tag can be used to render syntax-highlighted JavaScript code examples and then inject the raw JavaScript
+ * into the DOM so the browser will render the examples live.
+ *<p>
+ * The tag attributes are read from the <code>lk-js-example</code> element, as shown in the examples below:
  *
  * <pre style="background:#eee; padding:6px;">
- *  &lt;lk-ancestor-styles title="Genealogy of innermost" startElementId="innermost"&gt;
- *    &lt;comment&gt;A comment rendered beneath the Ancestors header&lt;/comment&gt;
- *    &lt;styleNames&gt;position, display&lt;/styleNames&gt;
- *  &lt;/lk-ancestor-styles&gt;
+ * &lt;lk-js-example width="750px"&gt;
+ *   &lt;jsComment&gt;A comment rendered beneath the JavaScript code example.&lt;/cssComment&gt;
+ *   &lt;resultComment&gt;A comment rendered beneath the rendered Result header.&lt;/resultComment&gt;
+ *
+ *   &lt;script type="multiline-template" id="simpleTemplateJs"&gt;
+ *     var backBtn = document.getElementById( "back" );
+ *
+ *     backBtn.onclick = function() {
+ *       history.back();
+ *     }
+ *   &lt;/script&gt;
+ * &lt;/lk-js-example&gt;
  * </pre>
  *
- * @module lkAncestorStylesTag
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
+ * </table>
+ *<p>
+ *
+ * @module lkJsExampleTag
  */
-var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
+var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
-  var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
-  var styleNamesExpression = new RegExp("<styleNames>(.+?)<\/styleNames>", "ig");
+  var jsCommentExpression = new RegExp("<jsComment>((.|\n)*)<\/jsComment>", "ig");
+  var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
 
   return {
     /**
@@ -1990,18 +1701,18 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
      * @returns {string}
      */
     getTagName: function() {
-      return "lk-ancestor-styles";
+      return "lk-js-example";
     },
 
     /**
-     * Render all &lt;lk-ancestor-styles&gt; tags on the page.
+     * Render all <code>&lt;lk-js-example&gt;</code> tags on the page.
      */
     renderAll: function() {
       tzCustomTagHelper.renderAll(this);
     },
 
     /**
-     * Render the &lt;lk-ancestor-styles&gt; tag identified by the given <code>tagId</code>.
+     * Render the <code>&lt;lk-js-example&gt;</code> tag identified by the given <code>tagId</code>.
      *
      * @param tagId ID of the tag to render.
      */
@@ -2010,69 +1721,486 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
     },
 
     /**
-     * Render the given <code>AncestorStylesTagNode</code>.
+     * Render the given <code>lkJsExampleTagNode</code>.
      *
-     * @param ancestorStylesTagNode the node to retrieve the attributes from and then render the result to.
+     * @param lkJsExampleTagNode the node to retrieve the attributes from and then render the result to.
      */
-    renderTag: function(ancestorStylesTagNode) {
-      // get the title, width and startElementId from the tag
-      var title = ancestorStylesTagNode.getAttribute("title");
-      var width = ancestorStylesTagNode.getAttribute("width");
-      var startElementId = ancestorStylesTagNode.getAttribute("startElementId");
+    renderTag: function(lkJsExampleTagNode) {
+      // get the raw JavaScript from the script tag
+      var rawJs = tzDomHelper.getFirstElementFromNodeByTagName(lkJsExampleTagNode, "script");
 
-      // get the child tags
-      var comment = tzCustomTagHelper.getFirstMatchedGroup(ancestorStylesTagNode, commentExpression);
-      var styleNames = ancestorStylesTagNode.innerHTML.match(styleNamesExpression)[0].replace(styleNamesExpression, "$1");
+      // replace the leading newline and trailing white-space.
+      rawJs = rawJs.replace(/^[\n]|[\s]+$/g, "");
 
-      // traverse the ancestry
-      var elementArray = new Array();
-      var element = document.getElementById( startElementId );
-      while (element.parentNode != null) {
-        elementArray.push(element);
-        element = element.parentNode;
-      }
-
-      // create the matrix object
-      var matrix = {
-        "elements": elementArray,
-        "styleNames": tzDomHelper.splitWithTrim(styleNames),
-        "columnOptions": "[id][name]"
-      };
-
-      // create the context object
+      // build the context
       var context = {
-        "title": title,
-        "comment": comment,
-        "width": width,
-        "useCompactUnorderedList": null,
-        "unorderedListItems": null,
-        "matrix": matrix
+        "jsComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, jsCommentExpression),
+        "rawJs": rawJs,
+        "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, resultCommentExpression),
+        "width": lkJsExampleTagNode.getAttribute("width"),
+        "height": lkJsExampleTagNode.getAttribute("height")
       };
 
-      // remove child nodes (e.g., <code>rawRightColumnHtml</code> retrieved for use by the right column)
-      tzDomHelper.removeAllChildNodes(ancestorStylesTagNode);
+      // remove child nodes (e.g., optional comment nodes)
+      tzDomHelper.removeAllChildNodes(lkJsExampleTagNode);
 
       // render the result
-      this.render(ancestorStylesTagNode, context);
+      this.render(lkJsExampleTagNode, context);
     },
 
     /**
-     * Render into the given <code>containerNode</code>, the style property names and values, for the elements in the given <code>unorderedListItems</code>.
+     * Render the code examples and live code block, into the given <code>containerNode</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
-     *            <ul>
-     *              <li>title: optional heading for the style list.
-     *              <li>unorderedListItems: list of element-id/css-property-name pairs used to render the result. The element-id is used to lookup an
-     *                  element and the css-property-name is used to read and display its property value.
-     *              <li>useCompactUnorderedList: if true, then all property names are the same, so displays a list of property/value pairs without the property name;
-     *                  otherwise, displays the same list, but includes the property name for each item in the list.
-     *            </ul>
+     *          <ul>
+     *            <li>jsComment: optional comment to render above the JavaScript code block.
+     *            <li>rawJs: the JavaScript code to insert.
+     *            <li>resultComment: optional comment to render above the live result.
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            <li>height: optional height.
+     *          </ul>
      */
     render: function(containerNode, context) {
-      // render the result using the lkDisplayStyles tag
-      lkDisplayStyles.render(containerNode, context);
+      // render the JavaScript code example
+      tzCodeHighlighter.render(containerNode, {
+        "heading": "JavaScript",
+        "codeBlockComment": context.jsComment,
+        "lang": "js",
+        "width": context.width,
+        "rawCode": context.rawJs});
+
+      // render the live JavaScript code
+      tzDomHelper.createElementWithAdjacentHtml(containerNode, "script", '{"type":"text/javascript"}', context.rawJs);
+    }
+
+  }
+
+}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
+
+/*
+ ~ Copyright (c) 2014 George Norman.
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ --------------------------------------------------------------
+ ~ Renders <lk-js-eval-example> tags - sharable among all projects.
+ ~ --------------------------------------------------------------
+ */
+
+/**
+ * Combines the features of the <code>&lt;lk-code-example&gt;</code>,
+ * and <code>&lt;lk-js-block&gt;</code> tags.
+ * This single tag can be used to render syntax-highlighted JavaScript code examples and then inject the raw JavaScript
+ * into the DOM so the browser will render the examples live.
+ *<p>
+ * The tag attributes are read from the <code>lk-js-eval-example</code> element, as shown in the examples below:
+ *
+ * <pre style="background:#eee; padding:6px;">
+ * &lt;lk-js-eval-example width="750px"&gt;
+ *   &lt;jsComment&gt;A comment rendered beneath the JavaScript code example.&lt;/cssComment&gt;
+ *   &lt;resultComment&gt;A comment rendered beneath the rendered Result header.&lt;/resultComment&gt;
+ *
+ *   &lt;script type="multiline-template" id="simpleTemplateJs"&gt;
+ *     lkResultLoggerModule.log(navigator.appCodeName);
+ *   &lt;/script&gt;
+ * &lt;/lk-js-eval-example&gt;
+ * </pre>
+ *
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
+ * </table>
+ *<p>
+ *
+ * @module lkJsEvalExampleTag
+ */
+var lkJsEvalExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter, lkResultLogger) {
+  "use strict";
+
+  var jsCommentExpression = new RegExp("<jsComment>((.|\n)*)<\/jsComment>", "ig");
+  var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
+
+  return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
+    getTagName: function() {
+      return "lk-js-eval-example";
+    },
+
+    /**
+     * Render all <code>&lt;lk-js-eval-example&gt;</code> tags on the page.
+     */
+    renderAll: function() {
+      tzCustomTagHelper.renderAll(this);
+    },
+
+    /**
+     * Render the <code>&lt;lk-js-eval-example&gt;</code> tag identified by the given <code>tagId</code>.
+     *
+     * @param tagId ID of the tag to render.
+     */
+    renderTagById: function(tagId) {
+      tzCustomTagHelper.renderTagById(this, tagId);
+    },
+
+    /**
+     * Render the given <code>lkJsEvalExampleTagNode</code>.
+     *
+     * @param lkJsEvalExampleTagNode the node to retrieve the attributes from and then render the result to.
+     */
+    renderTag: function(lkJsEvalExampleTagNode) {
+      // get the raw JavaScript from the script tag
+      var rawJs = tzDomHelper.getFirstElementFromNodeByTagName(lkJsEvalExampleTagNode, "script");
+
+      // replace the leading newline and trailing white-space.
+      rawJs = rawJs.replace(/^[\n]|[\s]+$/g, "");
+
+      // build the context
+      var context = {
+        "jsComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsEvalExampleTagNode, jsCommentExpression),
+        "rawJs": rawJs,
+        "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsEvalExampleTagNode, resultCommentExpression),
+        "width": lkJsEvalExampleTagNode.getAttribute("width"),
+        "height": lkJsEvalExampleTagNode.getAttribute("height")
+      };
+
+      // remove child nodes (e.g., optional comment nodes)
+      tzDomHelper.removeAllChildNodes(lkJsEvalExampleTagNode);
+
+      // render the result
+      this.render(lkJsEvalExampleTagNode, context);
+    },
+
+    /**
+     * Render the code examples and live code block, into the given <code>containerNode</code>.
+     *
+     * @param containerNode where to render the result.
+     * @param context object containing the values needed to render the result:
+     *          <ul>
+     *            <li>jsComment: optional comment to render above the JavaScript code block.
+     *            <li>rawJs: the JavaScript code to insert.
+     *            <li>resultComment: optional comment to render above the live result.
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            <li>height: optional height.
+     *          </ul>
+     */
+    render: function(containerNode, context) {
+      // render the JavaScript code example
+      tzCodeHighlighter.render(containerNode, {
+        "heading": "JavaScript",
+        "codeBlockComment": context.jsComment,
+        "lang": "js",
+        "width": context.width,
+        "rawCode": context.rawJs});
+
+      // render heading
+      tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
+
+      // render optional result comment, if present
+      if (tzDomHelper.isNotEmpty(context.resultComment)) {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
+      }
+
+      // render raw JavaScript from the template
+      //var script = tzDomHelper.createElementWithAdjacentHtml(containerNode, "script", '{"type":"text/javascript"}', context.rawJs);
+      try {
+        eval(context.rawJs);
+      } catch (e) {
+        lkResultLogger.log("<span style='color:red;'>LabKit caught exception: " + e.toString() + "</span>");
+      }
+
+      var pre = tzDomHelper.createElementWithAdjacentHtml(containerNode, "pre", '{"className":"lk-live-code-block"}', lkResultLogger.detachLoggedResultLinesAsString());
+      if (tzDomHelper.isNotEmpty(context.height)) {
+        pre.style.height = context.height;
+      }
+    }
+
+  }
+
+}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule, lkResultLoggerModule));
+
+/*
+ ~ Copyright (c) 2014 George Norman.
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ --------------------------------------------------------------
+ ~ Renders <lk-css-example> tags - sharable among all projects.
+ ~ --------------------------------------------------------------
+ */
+
+/**
+ * Renders a syntax-highlighted CSS code examples and then injects the raw CSS
+ * into the DOM so the browser will render the example live.
+ *<p>
+ * The tag attributes are read from the <code>lk-css-example</code> element, as shown in the examples below:
+ *
+ * <pre style="background:#eee; padding:6px;">
+ * &lt;lk-css-example width="750px"&gt;
+ *   &lt;cssComment&gt;A comment rendered beneath the CSS header.&lt;/cssComment&gt;
+ *   &lt;resultComment&gt;A comment rendered beneath the Result header.&lt;/resultComment&gt;
+ *
+ *   &lt;script type="multiline-template"&gt;
+ *     .foo {color: red;}
+ *   &lt;/script&gt;
+ * &lt;/lk-css-example&gt;
+ * </pre>
+ *
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
+ * </table>
+ *<p>
+ *
+ * @module lkCssExampleTag
+ */
+var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
+  "use strict";
+
+  var cssCommentExpression = new RegExp("<cssComment>((.|\n)*)<\/cssComment>", "ig");
+  var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
+
+  return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
+    getTagName: function() {
+      return "lk-css-example";
+    },
+
+    /**
+     * Render all <code>&lt;lk-css-example&gt;</code> tags on the page.
+     */
+    renderAll: function() {
+      tzCustomTagHelper.renderAll(this);
+    },
+
+    /**
+     * Render the <code>&lt;lk-css-example&gt;</code> tag identified by the given <code>tagId</code>.
+     *
+     * @param tagId ID of the tag to render.
+     */
+    renderTagById: function(tagId) {
+      tzCustomTagHelper.renderTagById(this, tagId);
+    },
+
+    /**
+     * Render the given <code>lkCssExampleTagNode</code>.
+     *
+     * @param lkCssExampleTagNode the node to retrieve the attributes from and then render the result to.
+     */
+    renderTag: function(lkCssExampleTagNode) {
+      var cssError = "";
+      var cssComment = tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, cssCommentExpression);
+
+      // get the raw css from the script tag
+      var rawCss = tzDomHelper.getFirstElementFromNodeByTagName(lkCssExampleTagNode, "script");
+
+      // replace the leading newline and trailing white-space.
+      rawCss = rawCss.replace(/^[\n]|[\s]+$/g, "");
+
+      // error if empty
+      if (tzDomHelper.isEmpty(rawCss)) {
+        cssError = "CSS Template was not found";
+      }
+
+      // build the context
+      var context = {
+        "cssComment": cssComment,
+        "rawCss": rawCss,
+        "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, resultCommentExpression),
+        "width": lkCssExampleTagNode.getAttribute("width"),
+        "height": lkCssExampleTagNode.getAttribute("height")
+      };
+
+      // remove child nodes (e.g., optional comment nodes)
+      tzDomHelper.removeAllChildNodes(lkCssExampleTagNode);
+
+      // check for error
+      if (tzDomHelper.isEmpty(cssError)) {
+        this.render(lkCssExampleTagNode, context);
+      } else {
+        tzDomHelper.createElementWithAdjacentHtml(lkCssExampleTagNode, "p", '{"style.color":"red"}', cssError);
+      }
+    },
+
+    /**
+     * Render the code examples and live code block, into the given <code>containerNode</code>.
+     *
+     * @param containerNode where to render the result.
+     * @param context object containing the values needed to render the result:
+     *          <ul>
+     *            <li>cssComment: optional comment to render above the CSS code block.
+     *            <li>rawCss: the CSS code to insert.
+     *            <li>resultComment: optional comment to render above the live result.
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            <li>height: optional height.
+     *          </ul>
+     */
+    render: function(containerNode, context) {
+      // render the live CSS
+      if (tzDomHelper.isEmpty(context.rawCss)) {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw CSS is missing");
+      } else {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.rawCss);
+      }
+
+      // render the CSS code with syntax highlighting
+      tzCodeHighlighter.render(containerNode, {
+        "heading": "CSS",
+        "codeBlockComment": context.cssComment,
+        "lang": "css",
+        "width": context.width,
+        "rawCode": context.rawCss});
+    }
+
+  }
+
+}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
+
+/*
+ ~ Copyright (c) 2014 George Norman.
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ --------------------------------------------------------------
+ ~ Renders <lk-html-example> tags - sharable among all projects.
+ ~ --------------------------------------------------------------
+ */
+
+/**
+ * Renders syntax-highlighted HTML code examples and then injects the raw HTML
+ * into the DOM so the browser will render the examples live.
+ *<p>
+ * The tag attributes are read from the <code>lk-html-example</code> element, as shown in the examples below:
+ *
+ * <pre style="background:#eee; padding:6px;">
+ * &lt;lk-html-example width="750px"&gt;
+ *   &lt;htmlComment&gt;A comment rendered beneath the HTML header.&lt;/htmlComment&gt;
+ *   &lt;resultComment&gt;A comment rendered beneath the Result header.&lt;/resultComment&gt;
+ *
+ *   &lt;script type="multiline-template" id="simpleTemplateHtml"&gt;
+ *     &lt;span class="foo"&gt;This is red&lt;/span&gt;
+ *   &lt;/script&gt;
+ * &lt;/lk-html-example&gt;
+ * </pre>
+ *
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
+ * </table>
+ *
+ * @module lkHtmlExampleTag
+ */
+var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
+  "use strict";
+
+  var htmlCommentExpression = new RegExp("<htmlComment>((.|\n)*)<\/htmlComment>", "ig");
+  var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
+
+  return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
+    getTagName: function() {
+      return "lk-html-example";
+    },
+
+    /**
+     * Render all <code>&lt;lk-html-example&gt;</code> tags on the page.
+     */
+    renderAll: function() {
+      tzCustomTagHelper.renderAll(this);
+    },
+
+    /**
+     * Render the <code>&lt;lk-html-example&gt;</code> tag identified by the given <code>tagId</code>.
+     *
+     * @param tagId ID of the tag to render.
+     */
+    renderTagById: function(tagId) {
+      tzCustomTagHelper.renderTagById(this, tagId);
+    },
+
+    /**
+     * Render the given <code>lkHtmlExampleTagNode</code>.
+     *
+     * @param lkHtmlExampleTagNode the node to retrieve the attributes from and then render the result to.
+     */
+    renderTag: function(lkHtmlExampleTagNode) {
+      // get the rawHtml from the script tag
+      var rawHtml = tzDomHelper.getFirstElementFromNodeByTagName(lkHtmlExampleTagNode, "script");
+
+      // replace the leading newline and trailing white-space.
+      rawHtml = rawHtml.replace(/^[\n]|[\s]+$/g, "");
+
+      // build the context
+      var context = {
+        "htmlComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, htmlCommentExpression),
+        "rawHtml": rawHtml,
+        "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, resultCommentExpression),
+        "width": lkHtmlExampleTagNode.getAttribute("width"),
+        "height": lkHtmlExampleTagNode.getAttribute("height")
+      };
+
+      // remove child nodes (e.g., optional comment nodes)
+      tzDomHelper.removeAllChildNodes(lkHtmlExampleTagNode);
+
+      // render the result
+      this.render(lkHtmlExampleTagNode, context);
+    },
+
+    /**
+     * Render the code examples and live code block, into the given <code>containerNode</code>.
+     *
+     * @param containerNode where to render the result.
+     * @param context object containing the values needed to render the result:
+     *          <ul>
+     *            <li>htmlComment: optional comment to render above the HTML code block.
+     *            <li>rawHtml: the HTML code to insert.
+     *            <li>resultComment: optional comment to render above the live result.
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            <li>height: optional height.
+     *          </ul>
+     */
+    render: function(containerNode, context) {
+      // render the HTML code example
+      tzCodeHighlighter.render(containerNode, {
+        "heading": "HTML",
+        "codeBlockComment": context.htmlComment,
+        "lang": "*ml",
+        "width": context.width,
+        "rawCode": context.rawHtml});
+
+      // render the live HTML code
+      // render heading
+      tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
+
+      // render optional result comment, if present
+      if (tzDomHelper.isNotEmpty(context.resultComment)) {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
+      }
+
+      // render raw HTML from the template
+      var div = tzDomHelper.createElementWithAdjacentHtml(containerNode, "div", '{"className":"lk-live-code-block"}', context.rawHtml);
+      if (tzDomHelper.isNotEmpty(context.height)) {
+        div.style.height = context.height;
+      }
     }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, lkDisplayStylesTag));
+}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));

@@ -1,12 +1,18 @@
 /* ==================================================================
-  ~ lkDisplayStyles.css v1.0.0
+  ~ lkNavigationBar.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
   ================================================================== */
 
-/* Headings */
+/* Create an empty shell to render the tag */
+lk-navigation-bar {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 26px;
+  white-space: nowrap;
+}
 
-lk-css-html-example > h4 {
-  margin-top: 12px;
+lk-navigation-bar > a {
+  margin-right: 12px;
 }

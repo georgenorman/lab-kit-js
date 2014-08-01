@@ -30,7 +30,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       if (element) {
         result = element.innerHTML;
         // remove the leading and trailing newlines (side-effect of using template, the newline after the <script> tag is included).
-        result = result.trim();
+        result = result.replace(/^\n|\s+$/g, '');
       }
 
       return result;
@@ -67,6 +67,23 @@ var tzDomHelperModule = (function( tzLogHelper ) {
         tzLogHelper.warning( "getFirstElementByTagName didn't find an element named: " + tagName );
       } else {
         result = elementList[0];
+      }
+
+      return result;
+    },
+
+    /**
+     * Return the inner HTML, from the first child node of the given <code>parentNode</code>, that matches the given <code>tagName</code>.
+     *
+     * @param elementId - ID of the element with the desired HTML.
+     */
+    getFirstElementFromNodeByTagName: function(parentNode, tagName) {
+      // get the raw css info from the script tag
+      var result = "";
+      var nodeList = parentNode.getElementsByTagName(tagName);
+
+      if (nodeList !== null || nodeList.length !== 0) {
+        result = nodeList[0].innerHTML;
       }
 
       return result;

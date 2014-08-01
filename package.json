@@ -41,37 +41,41 @@
     "tzCommonsJs": [
       "src/js/tz-commons/tzLogHelper.js",
       "src/js/tz-commons/tzDomHelper.js",
-      "src/js/tz-commons/tzCodeHighlighter.js",
-      "src/js/tz-commons/tzCustomTagHelper.js"
+      "src/js/tz-commons/tzCustomTagHelper.js",
+      "src/js/tz-commons/tzCodeHighlighter.js"
     ],
     "tzCommonsCss": [
       "src/css/tz-commons/tzCommons.css"
     ],
     "baseKitJs": [
-      "src/js/baseKit.js"
+      "src/js/baseKit.js",
+      "src/js/lkResultLogger.js"
     ],
     "baseKitCss": [
       "src/css/baseKit.css"
     ],
     "labKitTagsJs": [
       "src/js/tags/lkBulletPoint.js",
-      "src/js/tags/lkBackTo.js",
+      "src/js/tags/lkNavigationBar.js",
       "src/js/tags/lkTableOfContents.js",
-      "src/js/tags/lkHtmlBlock.js",
-      "src/js/tags/lkCssBlock.js",
-      "src/js/tags/lkCodeExample.js",
-      "src/js/tags/lkCssHtmlExample.js",
+      "src/js/tags/lkAncestorStyles.js",
       "src/js/tags/lkDisplayStyles.js",
-      "src/js/tags/lkAncestorStyles.js"
+
+      "src/js/tags/lkJsExample.js",
+      "src/js/tags/lkJsEvalExample.js",
+      "src/js/tags/lkCssExample.js",
+      "src/js/tags/lkHtmlExample.js"
     ],
     "labKitTagsCss": [
+      "src/css/tags/lkDisplayStyles.css",
       "src/css/tags/lkBulletPoint.css",
-      "src/css/tags/lkBackTo.css",
+      "src/css/tags/lkNavigationBar.css",
       "src/css/tags/lkTableOfContents.css",
-      "src/css/tags/lkHtmlBlock.css",
+
+      "src/css/tags/lkLiveCodeBlock.css",
       "src/css/tags/lkCodeExample.css",
-      "src/css/tags/lkCssHtmlExample.css",
-      "src/css/tags/lkDisplayStyles.css"
+      "src/css/tags/lkCssExample.css",
+      "src/css/tags/lkHtmlExample.css"
     ]
   }
 }

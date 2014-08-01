@@ -2,7 +2,7 @@
 
 LabKit is a simple JavaScript library that helps build web pages with live CSS and HTML examples (a DSL for web experiments).
 The main functionality is provided by a set of tags that can be added to any HTML page.
-For example, the `<lk-css-html-example>` tag renders the given CSS and HTML code-examples and then inserts them into the document, for a live rendering of the example.
+For example, the `<lk-html-example>` tag renders the given CSS and HTML code-examples and then inserts them into the document, for a live rendering of the example.
 To help organize the experiments, the `<lk-table-of-contents>` tag can be used to automatically generate a Table of Contents for the page.
 
 ## Demo
@@ -15,123 +15,41 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 
 ## Overview of LabKit Tags
 
-### ‣ CSS and HTML Example tag
+### ‣ CSS Example tag
 
-The `<lk-css-html-example>` tag renders the CSS and HTML code as examples, and then injects them into the DOM, so they will be rendered live.
-The code examples use code templates, identified by the cssTemplateId and htmlTemplateId attributes.
-
-The following example uses separate IDs for the CSS and HTML code templates:
+The `<lk-css-example>` tag renders the given CSS code, with syntax highlighting and line numbers, as an example, and then injects the raw CSS into the DOM, so it will be rendered live.
+The examples use nested code templates.
 
 ```xml
-<lk-css-html-example cssTemplateId="basicBoxModelCss" htmlTemplateId="basicBoxModelHtml">
-</lk-css-html-example>
-```
-
-This example renders only the HTML portion (since the CSS ID is missing):
-
-```xml
-<lk-css-html-example htmlTemplateId="tmplExampleRelInStaticNoMarginHtml">
-</lk-css-html-example>
-```
-
-Tag attributes:
-
-* **cssTemplateId** - Optional ID of the element containing the CSS code to use as example code and live CSS.
-* **htmlTemplateId** - Required ID of the element containing the HTML code to use as example code and live HTML.
-* **templateId** - Optional form for defining the CSS and HTML template IDs. It combines the cssTemplateId and htmlTemplateId into a single templateId, where "Css" and "Html" are appended to the given templateId.
-
-##### Complete Example:
-
-◖CSS Template:
-
-```xml
-<script type="multiline-template" id="simpleTemplateCss">
-  .foo {color: red;}
-</script>
-```
-
-◖HTML Template:
-
-```xml
-<script type="multiline-template" id="simpleTemplateHtml">
-  <span class="foo">This is red</span>
-</script>
-```
-
-◖CSS and HTML Example plus live rendered Result (plus comments):
-
-```xml
-<lk-css-html-example templateId="simpleTemplate" width="750px">
+<lk-css-example width="111">
   <cssComment>A comment rendered beneath the CSS header.</cssComment>
+  <script type="multiline-template">
+    .foo {color: red;}
+  </script>
+</lk-css-example>
+```
+
+Tag attributes:
+
+* **width** - Optional width of the rendered example.
+
+### ‣ HTML Example tag
+
+The `<lk-html-example>` tag renders the given HTML code, with syntax highlighting and line numbers, as an example, and then injects the raw HTML into the DOM, so it will be rendered live.
+The examples use nested code templates.
+
+```xml
+<lk-html-example width="111">
   <htmlComment>A comment rendered beneath the HTML header.</htmlComment>
-  <resultComment>A comment rendered beneath the Result header.</resultComment>
-</lk-css-html-example>
-```
-
-**[⬆ back to top](#readme)**
-
-### ▸ CSS Block tag
-
-The `<lk-css-block>` tag renders a &lt;style&gt; block, with the text extracted from the element with the specified templateId.
-
-Example:
-
-```xml
-<lk-css-block templateId="basicBoxModelCss"></lk-css-block>
+  <script type="multiline-template">
+    <span class="foo">This is red</span>
+  </script>
+</lk-html-example>
 ```
 
 Tag attributes:
 
-* **templateId** - ID of the element containing the CSS code to insert.
-
-**[⬆ back to top](#readme)**
-
-### ▸ HTML Block tag
-
-The `<lk-html-block>` tag renders an optional heading and comment, followed by the raw text from the element of the given templateId.
-
-Example:
-
-```xml
-<lk-html-block templateId="basicBoxModelHtml" heading="Rendered Result">
-  <comment>Optional Comment</comment>
-</lk-html-block>
-```
-
-Tag attributes:
-
-* **templateId** - ID of the element containing the raw HTML code to render.
-* **heading** - Optional heading text
-
-**[⬆ back to top](#readme)**
-
-### ▸ Code Example tag
-
-The `<lk-code-example>` tag renders an optional heading and comment, followed by a &lt;code&gt; block with the XML escaped text extracted from the element with the specified templateId.
-The code block used to render the example also uses a primitive syntax highlighter (which is a bit buggy).
-
-CSS example:
-
-```xml
-<lk-code-example templateId="codeExampleCssTemplate" heading="CSS" lang="css" width="300px">
-  <comment>CSS code example comment.</comment>
-</lk-code-example>
-```
-
-HTML example:
-
-```xml
-<lk-code-example templateId="codeExampleHtmlTemplate" heading="HTML" lang="*ml" width="350px">
-  <comment>HTML code example comment.</comment>
-</lk-code-example>
-```
-
-Tag attributes:
-
-* **templateId** - ID of the element containing the HTML code to render.
-* **heading** - Optional heading (h4).
-* **lang** - Language ID for the code syntax highlighter (e.g., "css", "*ml").
-* **width** - Optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+* **width** - Optional width of the rendered example.
 
 **[⬆ back to top](#readme)**
 
@@ -249,23 +167,22 @@ The styleNames tag specifies the list of styles to be rendered in the table.
 
 **[⬆ back to top](#readme)**
 
+### ▸ Navigation Bar tag
 
-### ▸ Back To tag
-
-The `<lk-back-to>` tag renders back-to links (e.g., "Back to Index", "Back to Table of Contents", etc).
-The tag can be configured globally, via an init function, or individually via attributes read from the lk-back-to element:
+The `<lk-navigation-bar>` tag renders navigation links (e.g., "Back to Index", "Back to Table of Contents", etc).
+The tag can be configured globally, via an init function, or individually via attributes read from the lk-navigation-bar element:
 
 Globally:
 
 ```javascript
-lkBackToTag.setGlobalLinks({"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"});
+lkNavigationBarTag.setGlobalLinks({"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"});
 ```
 
 Locally:
 
 ```xml
-<lk-back-to links='{"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"}'>
-</lk-back-to>
+<lk-navigation-bar links='{"⬅ Back to Index":"./index.html", "⬆ Back to Table of Contents":"#tableOfContents"}'>
+</lk-navigation-bar>
 ```
 
 **[⬆ back to top](#readme)**

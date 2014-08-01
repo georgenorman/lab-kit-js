@@ -10,12 +10,13 @@
  */
 
 /**
- * The <code>&lt;lk-ancestor-styles&gt;</code> tag renders a requested set of styles, for all ancestors of a given element.
+ * Renders a set of styles, for all ancestors of a given element.
  * The ancestor styles are displayed in a table. The <code>startElementId</code> attribute specifies
- * where to the start the traversal. The <code>styleNames</code> tag specifies the list of styles to
+ * where the traversal begins. The <code>styleNames</code> tag specifies the list of styles to
  * be rendered in the table.
  *
  * <pre style="background:#eee; padding:6px;">
+ *  &lt;!-- Render the position and display styles for all ancestors of the "innermost" element. --&gt;
  *  &lt;lk-ancestor-styles title="Genealogy of innermost" startElementId="innermost"&gt;
  *    &lt;comment&gt;A comment rendered beneath the Ancestors header&lt;/comment&gt;
  *    &lt;styleNames&gt;position, display&lt;/styleNames&gt;

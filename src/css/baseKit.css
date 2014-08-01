@@ -74,16 +74,15 @@ header h1 a.labHome {
 
 h2 {
   margin-top: 20px;
-  border-bottom: 1px solid #999;
+  border-bottom: 3px double #669;
   padding-top: 6px;
-  padding-bottom: 6px;
+  padding-bottom: 0;
   color: #669;
 }
 
 h3 {
   margin: 18px 18px 0 0;
-  border-top: 1px dashed #bbb;
-  border-bottom: 1px dashed #bbb;
+  border-bottom: 1px solid #669;
   padding-top: 3px;
   padding-bottom: 3px;
   color: #669;

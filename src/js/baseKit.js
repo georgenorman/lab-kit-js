@@ -9,7 +9,7 @@
  */
 
 /**
- * Manages LabKit (e.g., causes all tags to be rendered).
+ * LabKit initialization module (e.g., causes all tags to be rendered).
  *
  * @module baseKitModule
  */
@@ -23,14 +23,18 @@ var baseKitModule = (function(tzDomHelper) {
     handleOnLoad: function() {
       // Tags common to all Labs
       lkTableOfContentsTag.renderAll();
-      lkCssBlockTag.renderAll();
-      lkCodeExampleTag.renderAll();
-      lkHtmlBlockTag.renderAll();
-      lkCssHtmlExampleTag.renderAll();
+
+      lkBulletPointTag.renderAll();
+      lkNavigationBarTag.renderAll();
+
+      lkCssExampleTag.renderAll();
+      lkHtmlExampleTag.renderAll();
+      lkJsExampleTag.renderAll();
+      lkJsEvalExampleTag.renderAll();
+
+      // these tags depend on the rendered output of the example tags (so they must be rendered after the examples).
       lkDisplayStylesTag.renderAll();
       lkAncestorStylesTag.renderAll();
-      lkBulletPointTag.renderAll();
-      lkBackToTag.renderAll();
     },
 
     /**

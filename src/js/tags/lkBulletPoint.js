@@ -9,7 +9,7 @@
  */
 
 /**
- * The <code>&lt;lk-bullet-point&gt;</code> tag behaves like a single list item - it renders a status icon on the left followed by an HTML block on the right.
+ * Renders a status icon on the left followed by an HTML block on the right.
  *<p>
  * The tag attributes are read from the <code>lk-bullet-point</code> element, as shown in the example below:
  * <pre style="background:#eee; padding:6px;">
@@ -22,14 +22,14 @@
  * <h6>Tag Attributes:</h6>
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
- *   <tr><td class="name"><code>iconClass</code></td><td>class name used to style the &lt;i&gt; element used as a placeholder for the icon. </td><tr>
+ *   <tr><td class="name"><code>iconClass</code></td><td>class name used to style the &lt;i&gt; element used as a placeholder for the icon. </td></tr>
  *   <tr><td class="name"><code>leftColumnWidth</code></td>
  *       <td>
  *         optional width of the left column.
  *         The following icons are predefined: "lk-bullet-point-pass", "lk-bullet-point-fail" (see css/lkBulletPoint.css).
  *       </td>
- *   <tr>
- *   <tr><td class="name"><code>style</code></td><td>optional style for the wrapper div.</td><tr>
+ *   </tr>
+ *   <tr><td class="name"><code>style</code></td><td>optional style for the wrapper div.</td></tr>
  * </table>
  *
  * @module lkBulletPointTag

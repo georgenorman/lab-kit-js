@@ -1,20 +1,12 @@
 /* ==================================================================
-  ~ lkHtmlBlock.css v1.0.0
+  ~ lkCssExample.css v1.0.0
   ~ Copyright (c) 2014 George Norman.
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~     http://www.apache.org/licenses/LICENSE-2.0
   ================================================================== */
 
-/* Create an empty shell to render the HTML block */
-.lk-html-block {
-  margin: 8px 6px;
-  border: thin dashed #ccc;
-  padding: 3px;
-  width: 93%;
-  overflow: auto;
-}
+/* Headings */
 
-.lk-html-block-comment {
-  margin: 6px 0 10px 6px;
-  color: #777;
+lk-css-example > h4 {
+  margin-top: 12px;
 }

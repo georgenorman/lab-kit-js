@@ -3,18 +3,78 @@
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
+ ~ --------------------------------------------------------------
+ ~ Renders code with syntax highlighting and line numbers.
+ ~ --------------------------------------------------------------
  */
 
 /**
- * A crude (hack), SINGLE-LINE code highlighter, that only highlights basic code elements (e.g., some c-style comments, etc).
- * Has many, many bugs - borderline suitable for the simple code examples in these labs.
+ * Renders code with syntax highlighting and line numbers.
  *
  * @module tzCodeHighlighterModule
  */
-var tzCodeHighlighterModule = (function() {
+var tzCodeHighlighterModule = (function(tzDomHelper) {
   "use strict";
 
+  var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
+
   return {
+
+    /**
+     * Render a code example into the given <code>containerNode</code>.
+     *
+     * @param containerNode where to render the result.
+     * @param context object containing the values needed to render the result:
+     *          <ul>
+     *            <li>heading: optional heading to use.
+     *            <li>codeBlockComment: optional comment to render above the code block.
+     *            <li>lang: language ID for the code syntax highlighter (e.g., "css", "*ml").
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
+     *            <li>rawCode: the code that will be XML escaped and rendered into the given containerNode.
+     *          </ul>
+     */
+    render: function(containerNode, context) {
+      // render optional heading, if present
+      if (tzDomHelper.isNotEmpty(context.heading)) {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, context.heading);
+      }
+
+      // render optional comment, if present
+      if (tzDomHelper.isNotEmpty(context.codeBlockComment)) {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-code-example-comment"}', context.codeBlockComment);
+      }
+
+      // render raw code, with syntax highlighting
+      if (tzDomHelper.isEmpty(context.rawCode)) {
+        // error - missing rawCode
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw Code is missing");
+      } else {
+        // create <code> block for the code listing
+        var codeElement = tzDomHelper.createElement(null, "code", '{"className":"lk-code-example"}');
+        var olElement = tzDomHelper.createElement(codeElement, "ol");
+        if (tzDomHelper.isNotEmpty(context.width)) {
+          olElement.style.width = context.width;
+        }
+
+        // prepare to shift all lines left, by the amount of whitespace on first line (extra leading whitespace is a side-effect of template)
+        // @-@:p0 DANGEROUS if first line has more spaces than any line that follows
+        var leadingSpaces = context.rawCode.match(/^ +/);
+        var numLeadingSpaces = leadingSpaces == null ? 0 : leadingSpaces[0].length;
+
+        // create a list item for each line (to display line numbers).
+        var codeLines = context.rawCode.split("\n");
+        for (var i = 0; i < codeLines.length; i++) {
+          var shiftedStr = codeLines[i].substr(numLeadingSpaces); // shift left, to compensate for template padding
+          var escapedCodeLine = tzDomHelper.xmlEscape(shiftedStr);
+          // @-@:p0 Highlighter should be applied to the complete inner HTML, and not line-by-line as done here, but
+          //        the closing list-item (</li>) breaks the span with the style, so keeping it simple and broken, for now.
+          tzDomHelper.createElementWithAdjacentHtml(olElement, "li", null, " " + this.highlight(escapedCodeLine, context.lang));
+        }
+
+        containerNode.appendChild(codeElement);
+      }
+    },
+
     /**
      * Highlight the single line of code for the given language.
      *
@@ -63,4 +123,5 @@ var tzCodeHighlighterModule = (function() {
       return result;
     }
   }
-}());
+
+}(tzDomHelperModule));
