@@ -11,7 +11,7 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 
 ## JSDoc
 
-[LabKit JSDocs](http://www.thruzero.com/pages/jcat3/css-lab-jsdoc/index.html)
+[LabKit JSDocs](http://www.thruzero.com/pages/jcat3/lab-kit-js-jsdoc/index.html)
 
 ## Overview of LabKit Tags
 
