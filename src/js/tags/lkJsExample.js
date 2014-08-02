@@ -122,7 +122,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         "rawCode": context.rawJs});
 
       // render heading
-      tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
+      var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
 
       // render optional result comment, if present
       if (tzDomHelper.isNotEmpty(context.resultComment)) {
@@ -134,14 +134,8 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         context.id = "DefaultID" + ++defaultIdCounter;
       }
 
-      // create an element for the logger to render the results
-      var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-live-code-block"}');
-      if (tzDomHelper.isNotEmpty(context.height)) {
-        outputNode.style.height = context.height;
-      }
-
       // create the logger, for use by the code about to be executed (eval code will lookup logger by the id of this <lk-js-example> tag instance).
-      var logger = lkResultLogger.createLogger(context.id, outputNode);
+      var logger = createLogger(containerNode, context, header);
 
       try {
         eval(context.rawJs);
@@ -149,6 +143,26 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         logger.log("<span style='color:red;'>LabKit caught exception: " + e.toString() + "</span>");
       }
     }
+  };
+
+  // ------------------------------------------------------------------
+  // Private functions
+  // ------------------------------------------------------------------
+
+  function createLogger(containerNode, context, header) {
+    // create an element for the logger to render the results
+    var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-live-code-block"}');
+    if (tzDomHelper.isNotEmpty(context.height)) {
+      outputNode.style.height = context.height;
+    }
+
+    // create the logger, for use by the code about to be executed (eval code will lookup logger by the id of this <lk-js-example> tag instance).
+    var logger = lkResultLogger.createLogger(context.id, header, outputNode);
+
+    // hide the logger (plus header), until (or unless) the experiment attempts to log a result.
+    logger.hide();
+
+    return logger;
   }
 
 }(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule, lkResultLoggerModule));

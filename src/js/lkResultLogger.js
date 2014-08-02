@@ -25,7 +25,7 @@ var lkResultLoggerModule = (function(tzDomHelper) {
    * @returns {{log: log}}
    * @constructor
    */
-  function NodeLogger(outputNode) {
+  function NodeLogger(header, outputNode) {
     return {
       /**
        * Log the given message to the given output node.
@@ -34,10 +34,22 @@ var lkResultLoggerModule = (function(tzDomHelper) {
        */
       log: function( msg ) {
         if (msg === undefined) {
-          msg = "*Message is undefined*";
+          msg = "<span style='color:red;'>*Logger message is undefined*</span>";
         }
         console.log(msg);
+
+        this.show();
         outputNode.innerHTML = outputNode.innerHTML + msg + "\n";
+      },
+
+      show: function() {
+        header.style.display = "block";
+        outputNode.style.display = "block";
+      },
+
+      hide: function() {
+        header.style.display = "none";
+        outputNode.style.display = "none";
       }
     }
   }
@@ -55,7 +67,7 @@ var lkResultLoggerModule = (function(tzDomHelper) {
     return {
       log: function( msg ) {
         if (msg === undefined) {
-          msg = "*Message is undefined*";
+          msg = "*Logger message is undefined*";
         }
         console.log(msg);
         loggedResultLines[loggedResultLines.length++] = msg;
@@ -91,14 +103,14 @@ var lkResultLoggerModule = (function(tzDomHelper) {
 
   return {
 
-    createLogger: function(name, outputNode) {
+    createLogger: function(name, header, outputNode) {
       var result = loggers[name];
 
       if (tzDomHelper.isEmpty(result)) {
-        if (outputNode === undefined) {
+        if (header === undefined || outputNode === undefined) {
           result = CacheLogger();
         } else {
-          result = NodeLogger(outputNode);
+          result = NodeLogger(header, outputNode);
         }
 
         loggers[name] = result;
