@@ -82,7 +82,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       var result = "";
       var nodeList = parentNode.getElementsByTagName(tagName);
 
-      if (nodeList !== null || nodeList.length !== 0) {
+      if (nodeList !== null && nodeList.length !== 0) {
         result = nodeList[0].innerHTML;
       }
 
