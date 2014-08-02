@@ -28,8 +28,7 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 
 * [`lkCssExampleTag`](module-lkCssExampleTag.html): Renders a syntax-highlighted CSS code example and then injects the raw code into the DOM so the browser will render the example live.
 * [`lkHtmlExampleTag`](module-lkHtmlExampleTag.html): Renders a syntax-highlighted HTML code example and then injects the raw code into the DOM so the browser will render the example live.
-* [`lkJsEvalExampleTag`](module-lkJsEvalExampleTag.html): Renders example code with syntax highlighting and then executes it (using eval). Output can be logged to a results panel.
-* [`lkJsExampleTag`](module-lkJsExampleTag.html): Renders a syntax-highlighted JavaScript example and then injects the raw code into the DOM, for live execution by the browser.
+* [`lkJsExampleTag`](module-lkJsExampleTag.html): Renders example code with syntax highlighting and then executes it (using eval). Output can be logged to a results panel.
 
 *Supplemental Info:*
 

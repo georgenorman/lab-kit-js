@@ -16,41 +16,105 @@
 var lkResultLoggerModule = (function(tzDomHelper) {
   "use strict";
 
-  var loggedResultLines = [];
+  var loggers = {};
+
+  /**
+   * A logger that logs messages to a given DOM node.
+   *
+   * @param outputNode
+   * @returns {{log: log}}
+   * @constructor
+   */
+  function NodeLogger(outputNode) {
+    return {
+      /**
+       * Log the given message to the given output node.
+       *
+       * @param msg
+       */
+      log: function( msg ) {
+        if (msg === undefined) {
+          msg = "*Message is undefined*";
+        }
+        console.log(msg);
+        outputNode.innerHTML = outputNode.innerHTML + msg + "\n";
+      }
+    }
+  }
+
+  /**
+   * A logger that logs messages to a cache, for later retrieval.
+   *
+   * @param name
+   * @returns {{log: log, detachLoggedResultLines: detachLoggedResultLines, detachLoggedResultLinesAsString: detachLoggedResultLinesAsString}}
+   * @constructor
+   */
+  function CacheLogger() {
+    var loggedResultLines = [];
+
+    return {
+      log: function( msg ) {
+        if (msg === undefined) {
+          msg = "*Message is undefined*";
+        }
+        console.log(msg);
+        loggedResultLines[loggedResultLines.length++] = msg;
+      },
+
+      /**
+       * Return the current list of results and reset the logger so that future items are added to a new list.
+       *
+       * @returns {Array}
+       */
+      detachLoggedResultLines: function() {
+        var result = loggedResultLines;
+
+        loggedResultLines = [];
+
+        return result;
+      },
+
+      /**
+       * Return the current list of results, as a string, and reset the logger so that future items are added to a new list.
+       *
+       * @returns {string}
+       */
+      detachLoggedResultLinesAsString: function() {
+        var result = loggedResultLines.join("\n");
+
+        loggedResultLines = [];
+
+        return result;
+      }
+    }
+  }
 
   return {
-    /**
-     * Add the given <code>msg</code> to a list of results.
-     *
-     * @param msg
-     */
-    log: function( msg ) {
-      console.log(msg);
-      loggedResultLines[loggedResultLines.length++] = msg;
-    },
 
-    /**
-     * Return the current list of results and reset the logger so that future items are added to a new list.
-     *
-     * @returns {Array}
-     */
-    detachLoggedResultLines: function() {
-      var result = loggedResultLines;
+    createLogger: function(name, outputNode) {
+      var result = loggers[name];
 
-      loggedResultLines = [];
+      if (tzDomHelper.isEmpty(result)) {
+        if (outputNode === undefined) {
+          result = CacheLogger();
+        } else {
+          result = NodeLogger(outputNode);
+        }
+
+        loggers[name] = result;
+      } else {
+        throw "*The logger named '"+name+"' has already been created.*";
+      }
 
       return result;
     },
 
-    /**
-     * Return the current list of results, as a string, and reset the logger so that future items are added to a new list.
-     *
-     * @returns {string}
-     */
-    detachLoggedResultLinesAsString: function() {
-      var result = loggedResultLines.join("\n");
+    getLogger: function(name) {
+      var result = loggers[name];
 
-      loggedResultLines = [];
+      if (tzDomHelper.isEmpty(result)) {
+        throw "*The logger named '"+name+"' does not exist. You must create it first.*";
+      }
 
       return result;
     }

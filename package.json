@@ -62,7 +62,6 @@
       "src/js/tags/lkDisplayStyles.js",
 
       "src/js/tags/lkJsExample.js",
-      "src/js/tags/lkJsEvalExample.js",
       "src/js/tags/lkCssExample.js",
       "src/js/tags/lkHtmlExample.js"
     ],

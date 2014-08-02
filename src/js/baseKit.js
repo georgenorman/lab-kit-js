@@ -30,7 +30,6 @@ var baseKitModule = (function(tzDomHelper) {
       lkCssExampleTag.renderAll();
       lkHtmlExampleTag.renderAll();
       lkJsExampleTag.renderAll();
-      lkJsEvalExampleTag.renderAll();
 
       // these tags depend on the rendered output of the example tags (so they must be rendered after the examples).
       lkDisplayStylesTag.renderAll();

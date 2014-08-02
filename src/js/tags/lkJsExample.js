@@ -22,11 +22,7 @@
  *   &lt;resultComment&gt;A comment rendered beneath the rendered Result header.&lt;/resultComment&gt;
  *
  *   &lt;script type="multiline-template" id="simpleTemplateJs"&gt;
- *     var backBtn = document.getElementById( "back" );
- *
- *     backBtn.onclick = function() {
- *       history.back();
- *     }
+ *     lkResultLoggerModule.log(navigator.appCodeName);
  *   &lt;/script&gt;
  * &lt;/lk-js-example&gt;
  * </pre>
@@ -41,11 +37,12 @@
  *
  * @module lkJsExampleTag
  */
-var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
+var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter, lkResultLogger) {
   "use strict";
 
   var jsCommentExpression = new RegExp("<jsComment>((.|\n)*)<\/jsComment>", "ig");
   var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
+  var defaultIdCounter = 0;
 
   return {
     /**
@@ -87,6 +84,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
 
       // build the context
       var context = {
+        "id": lkJsExampleTagNode.getAttribute("id"),
         "jsComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, jsCommentExpression),
         "rawJs": rawJs,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, resultCommentExpression),
@@ -123,10 +121,34 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         "width": context.width,
         "rawCode": context.rawJs});
 
-      // render the live JavaScript code
-      tzDomHelper.createElementWithAdjacentHtml(containerNode, "script", '{"type":"text/javascript"}', context.rawJs);
-    }
+      // render heading
+      tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
 
+      // render optional result comment, if present
+      if (tzDomHelper.isNotEmpty(context.resultComment)) {
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
+      }
+
+      // create default ID, if id is missing
+      if (tzDomHelper.isEmpty(context.id)) {
+        context.id = "DefaultID" + ++defaultIdCounter;
+      }
+
+      // create an element for the logger to render the results
+      var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-live-code-block"}');
+      if (tzDomHelper.isNotEmpty(context.height)) {
+        outputNode.style.height = context.height;
+      }
+
+      // create the logger, for use by the code about to be executed (eval code will lookup logger by the id of this <lk-js-example> tag instance).
+      var logger = lkResultLogger.createLogger(context.id, outputNode);
+
+      try {
+        eval(context.rawJs);
+      } catch (e) {
+        logger.log("<span style='color:red;'>LabKit caught exception: " + e.toString() + "</span>");
+      }
+    }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
+}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule, lkResultLoggerModule));
