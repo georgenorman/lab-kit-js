@@ -26,6 +26,10 @@ var lkResultLoggerModule = (function(tzDomHelper) {
    * @constructor
    */
   function NodeLogger(header, outputNode) {
+    var spinnerNode = tzDomHelper.createElementWithAdjacentHtml(outputNode, "div", '{"className":"lk-result-logger-loader"}', "<span></span><span></span><span></span><br>");
+
+    hideSpinner();
+
     return {
       /**
        * Log the given message to the given output node.
@@ -38,19 +42,45 @@ var lkResultLoggerModule = (function(tzDomHelper) {
         }
         console.log(msg);
 
-        this.show();
+        this.showResultPanel();
+        hideSpinner();
         outputNode.innerHTML = outputNode.innerHTML + msg + "\n";
       },
 
-      show: function() {
+      /**
+       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value").
+       *
+       * @param label
+       * @param value
+       */
+      logLabelValue: function(label, value, comment) {
+        var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
+        this.log("<label>"+label+":</label> <output>"+ value + "</output>" + comment2)
+      },
+
+      waiting: function() {
+        this.showResultPanel();
+
+        showSpinner();
+      },
+
+      showResultPanel: function() {
         header.style.display = "block";
         outputNode.style.display = "block";
       },
 
-      hide: function() {
+      hideResultPanel: function() {
         header.style.display = "none";
         outputNode.style.display = "none";
       }
+    };
+
+    function showSpinner() {
+      spinnerNode.style.display = "block";
+    }
+
+    function hideSpinner() {
+      spinnerNode.style.display = "none";
     }
   }
 
@@ -125,7 +155,7 @@ var lkResultLoggerModule = (function(tzDomHelper) {
       var result = loggers[name];
 
       if (tzDomHelper.isEmpty(result)) {
-        throw "*The logger named '"+name+"' does not exist. You must create it first.*";
+        throw "*The logger named '"+name+"' does not exist. If you are using the &lt;lk-js-example&gt; tag, make sure its ID is '"+name+"'.*";
       }
 
       return result;

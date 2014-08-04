@@ -699,6 +699,10 @@ var lkResultLoggerModule = (function(tzDomHelper) {
    * @constructor
    */
   function NodeLogger(header, outputNode) {
+    var spinnerNode = tzDomHelper.createElementWithAdjacentHtml(outputNode, "div", '{"className":"lk-result-logger-loader"}', "<span></span><span></span><span></span><br>");
+
+    hideSpinner();
+
     return {
       /**
        * Log the given message to the given output node.
@@ -711,19 +715,45 @@ var lkResultLoggerModule = (function(tzDomHelper) {
         }
         console.log(msg);
 
-        this.show();
+        this.showResultPanel();
+        hideSpinner();
         outputNode.innerHTML = outputNode.innerHTML + msg + "\n";
       },
 
-      show: function() {
+      /**
+       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value").
+       *
+       * @param label
+       * @param value
+       */
+      logLabelValue: function(label, value, comment) {
+        var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
+        this.log("<label>"+label+":</label> <output>"+ value + "</output>" + comment2)
+      },
+
+      waiting: function() {
+        this.showResultPanel();
+
+        showSpinner();
+      },
+
+      showResultPanel: function() {
         header.style.display = "block";
         outputNode.style.display = "block";
       },
 
-      hide: function() {
+      hideResultPanel: function() {
         header.style.display = "none";
         outputNode.style.display = "none";
       }
+    };
+
+    function showSpinner() {
+      spinnerNode.style.display = "block";
+    }
+
+    function hideSpinner() {
+      spinnerNode.style.display = "none";
     }
   }
 
@@ -798,7 +828,7 @@ var lkResultLoggerModule = (function(tzDomHelper) {
       var result = loggers[name];
 
       if (tzDomHelper.isEmpty(result)) {
-        throw "*The logger named '"+name+"' does not exist. You must create it first.*";
+        throw "*The logger named '"+name+"' does not exist. If you are using the &lt;lk-js-example&gt; tag, make sure its ID is '"+name+"'.*";
       }
 
       return result;
@@ -1807,8 +1837,10 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       // build the context
       var context = {
         "id": lkJsExampleTagNode.getAttribute("id"),
+        "renderCode": lkJsExampleTagNode.getAttribute("renderCode") || true,
         "jsComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, jsCommentExpression),
         "rawJs": rawJs,
+        "resultHeaderTitle": lkJsExampleTagNode.getAttribute("resultHeaderTitle"),
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, resultCommentExpression),
         "width": lkJsExampleTagNode.getAttribute("width"),
         "height": lkJsExampleTagNode.getAttribute("height")
@@ -1829,22 +1861,25 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
      *          <ul>
      *            <li>jsComment: optional comment to render above the JavaScript code block.
      *            <li>rawJs: the JavaScript code to insert.
+     *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
      *            <li>height: optional height.
      *          </ul>
      */
     render: function(containerNode, context) {
-      // render the JavaScript code example
-      tzCodeHighlighter.render(containerNode, {
-        "heading": "JavaScript",
-        "codeBlockComment": context.jsComment,
-        "lang": "js",
-        "width": context.width,
-        "rawCode": context.rawJs});
+      // render the JavaScript code example (optional)
+      if (context.renderCode == true) {
+        tzCodeHighlighter.render(containerNode, {
+          "heading": "JavaScript",
+          "codeBlockComment": context.jsComment,
+          "lang": "js",
+          "width": context.width,
+          "rawCode": context.rawJs});
+      }
 
       // render heading
-      var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
+      var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
       // render optional result comment, if present
       if (tzDomHelper.isNotEmpty(context.resultComment)) {
@@ -1862,7 +1897,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       try {
         eval(context.rawJs);
       } catch (e) {
-        logger.log("<span style='color:red;'>LabKit caught exception: " + e.toString() + "</span>");
+        logger.log("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
       }
     }
   };
@@ -1873,7 +1908,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
 
   function createLogger(containerNode, context, header) {
     // create an element for the logger to render the results
-    var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-live-code-block"}');
+    var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-result-logger"}');
     if (tzDomHelper.isNotEmpty(context.height)) {
       outputNode.style.height = context.height;
     }
@@ -1882,7 +1917,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
     var logger = lkResultLogger.createLogger(context.id, header, outputNode);
 
     // hide the logger (plus header), until (or unless) the experiment attempts to log a result.
-    logger.hide();
+    logger.hideResultPanel();
 
     return logger;
   }

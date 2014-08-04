@@ -52,7 +52,8 @@
       "src/js/lkResultLogger.js"
     ],
     "baseKitCss": [
-      "src/css/baseKit.css"
+      "src/css/baseKit.css",
+      "src/css/lkResultLogger.css"
     ],
     "labKitTagsJs": [
       "src/js/tags/lkBulletPoint.js",
