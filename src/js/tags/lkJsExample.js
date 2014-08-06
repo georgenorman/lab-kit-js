@@ -165,7 +165,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
     var logger = lkResultLogger.createLogger(context.id, header, outputNode);
 
     // hide the logger (plus header), until (or unless) the experiment attempts to log a result.
-    logger.hideResultPanel();
+    logger.hide();
 
     return logger;
   }

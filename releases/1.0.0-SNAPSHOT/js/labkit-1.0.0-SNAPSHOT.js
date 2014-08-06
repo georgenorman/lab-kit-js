@@ -707,46 +707,69 @@ var lkResultLoggerModule = (function(tzDomHelper) {
       /**
        * Log the given message to the given output node.
        *
-       * @param msg
+       * @param msg message to log
        */
       log: function( msg ) {
         if (msg === undefined) {
-          msg = "<span style='color:red;'>*Logger message is undefined*</span>";
+          this.logError("*Logger message is undefined*");
+        } else {
+          doLog(msg);
         }
-        console.log(msg);
-
-        this.showResultPanel();
-        hideSpinner();
-        outputNode.innerHTML = outputNode.innerHTML + msg + "\n";
       },
 
       /**
-       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value").
+       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
        *
        * @param label
        * @param value
        */
       logLabelValue: function(label, value, comment) {
         var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
-        this.log("<label>"+label+":</label> <output>"+ value + "</output>" + comment2)
+
+        doLog("<label>"+label+":</label> <output>"+ value + "</output>" + comment2)
+      },
+
+      /**
+       * Log an error message.
+       *
+       * @param errMsg
+       */
+      logError: function(errMsg) {
+        doLog("<span style='color:red;'>" + errMsg + "</span>");
       },
 
       waiting: function() {
-        this.showResultPanel();
-
+        showResultPanel();
         showSpinner();
       },
 
-      showResultPanel: function() {
-        header.style.display = "block";
-        outputNode.style.display = "block";
+      hide: function() {
+        hideResultPanel();
       },
 
-      hideResultPanel: function() {
-        header.style.display = "none";
-        outputNode.style.display = "none";
+      reset: function() {
+        hideSpinner();
+        outputNode.innerHTML = "";
       }
     };
+
+    function doLog(msg) {
+      console.log(msg);
+
+      showResultPanel();
+      hideSpinner();
+      outputNode.innerHTML = outputNode.innerHTML + msg + "\n";
+    }
+
+    function showResultPanel() {
+      header.style.display = "block";
+      outputNode.style.display = "block";
+    }
+
+    function hideResultPanel() {
+      header.style.display = "none";
+      outputNode.style.display = "none";
+    }
 
     function showSpinner() {
       spinnerNode.style.display = "block";
@@ -800,6 +823,10 @@ var lkResultLoggerModule = (function(tzDomHelper) {
         loggedResultLines = [];
 
         return result;
+      },
+
+      reset: function() {
+        loggedResultLines = [];
       }
     }
   }
@@ -824,11 +851,15 @@ var lkResultLoggerModule = (function(tzDomHelper) {
       return result;
     },
 
-    getLogger: function(name) {
+    getLogger: function(name, reset) {
       var result = loggers[name];
 
       if (tzDomHelper.isEmpty(result)) {
         throw "*The logger named '"+name+"' does not exist. If you are using the &lt;lk-js-example&gt; tag, make sure its ID is '"+name+"'.*";
+      }
+
+      if (reset == true) {
+        result.reset();
       }
 
       return result;
@@ -1917,7 +1948,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
     var logger = lkResultLogger.createLogger(context.id, header, outputNode);
 
     // hide the logger (plus header), until (or unless) the experiment attempts to log a result.
-    logger.hideResultPanel();
+    logger.hide();
 
     return logger;
   }
