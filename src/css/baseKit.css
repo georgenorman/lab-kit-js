@@ -41,12 +41,12 @@ header {
   white-space: nowrap;
 }
 
-/* Add a logo, align the header text */
+/* Add 'go back' icon and align the header text */
 header h1 {
   margin: 0 0;
 
-  /* add the logo */
-  background: url("../img/logo/tz-icon-24.png") no-repeat;
+  /* add the icon */
+  background: url("../img/go-previous.png") no-repeat;
   width: 24px;
   height: 24px;
 
