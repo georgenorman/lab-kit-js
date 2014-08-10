@@ -54,7 +54,7 @@ header h1 {
   line-height: 23px;
 }
 
-/* Move the header text off of the logo */
+/* Move the header text off of the icon */
 header h1:before {
   content: "\00a0"; /* requires one space for margin to work */
   margin-right: 22px;
@@ -66,6 +66,12 @@ header h1 a.labHome {
   display: block;
   height: 21px;
   width: 21px;
+}
+
+/* Use 'logo' icon instead of 'go back' icon */
+header h1.logo {
+  /* add the icon */
+  background: url("../img/logo/tz-icon-24.png") no-repeat;
 }
 
 /* ---------------------------------

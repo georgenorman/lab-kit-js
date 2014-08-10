@@ -19,7 +19,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     // https://github.com/gruntjs/grunt-contrib-clean
-    clean: ["target"],
+    clean: ["target", 'releases/<%= pkg.version %>'],
 
     // https://github.com/gruntjs/grunt-contrib-concat/blob/master/docs/concat-examples.md
     concat: {
@@ -128,8 +128,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', ['assemble-fragments', 'assemble-final', 'uglify:labKit', 'autoprefixer:labKit', 'cssmin:labKit', 'copy:release']);
   grunt.registerTask('docs', ['jsdoc']);
 
-  grunt.registerTask('release', ['build', 'docs']);
+  grunt.registerTask('release', ['clean', 'build', 'docs']);
 
   // register default task
-  grunt.registerTask('default', ['clean', 'release']);
+  grunt.registerTask('default', ['release']);
 };
