@@ -1792,11 +1792,10 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
  */
 
 /**
- * Combines the features of the <code>&lt;lk-code-example&gt;</code>,
- * and <code>&lt;lk-js-block&gt;</code> tags.
- * This single tag can be used to render syntax-highlighted JavaScript code examples and then inject the raw JavaScript
- * into the DOM so the browser will render the examples live.
- *<p>
+ * Renders the raw JavaScript code, with syntax highlighting and line numbers,
+ * and then executes it (via eval), so that the live results will be reflected in the DOM
+ * (e.g., DOM manipulation, results logged to a panel, etc).
+ * <p>
  * The tag attributes are read from the <code>lk-js-example</code> element, as shown in the examples below:
  *
  * <pre style="background:#eee; padding:6px;">
@@ -1870,11 +1869,12 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         "id": lkJsExampleTagNode.getAttribute("id"),
         "renderCode": lkJsExampleTagNode.getAttribute("renderCode") || true,
         "jsComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, jsCommentExpression),
-        "rawJs": rawJs,
+        "width": lkJsExampleTagNode.getAttribute("width"),
+
+        "evalCode": lkJsExampleTagNode.getAttribute("evalCode") || true,
         "resultHeaderTitle": lkJsExampleTagNode.getAttribute("resultHeaderTitle"),
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, resultCommentExpression),
-        "width": lkJsExampleTagNode.getAttribute("width"),
-        "height": lkJsExampleTagNode.getAttribute("height")
+        "rawJs": rawJs
       };
 
       // remove child nodes (e.g., optional comment nodes)
@@ -1885,17 +1885,22 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
     },
 
     /**
-     * Render the code examples and live code block, into the given <code>containerNode</code>.
+     * Render the code example and live code block, into the given <code>containerNode</code>.
      *
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
      *          <ul>
-     *            <li>jsComment: optional comment to render above the JavaScript code block.
-     *            <li>rawJs: the JavaScript code to insert.
+     *            <li>renderCode: if true (default), then render the <i>rawJs</i> code example, with syntax highlighting and line numbers;
+     *                otherwise, the code example is not rendered (but the JavaScript may still be executed via eval).
+     *                You may want to set this to false, if you want the code to be evaluated and results logged to the browser, but don't want the code to be displayed.
+     *            <li>jsComment: optional comment to render above the JavaScript code example.
+     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code example area when scrolling is required.
+     *
+     *            <li>evalCode: if true (default), then execute the JavaScript (via eval); otherwise, the code is not executed.
+     *                You may want to set this to false, if you want the code to be displayed, but don't want it to be executed.
      *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
-     *            <li>resultComment: optional comment to render above the live result.
-     *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
-     *            <li>height: optional height.
+     *            <li>resultComment: optional comment to render above the evaluated result.
+     *            <li>rawJs: the JavaScript code to execute.
      *          </ul>
      */
     render: function(containerNode, context) {
@@ -1909,26 +1914,29 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
           "rawCode": context.rawJs});
       }
 
-      // render heading
-      var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
+      // execute the JavaScript code (optional)
+      if (context.evalCode == true) {
+        // render result heading
+        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
-      // render optional result comment, if present
-      if (tzDomHelper.isNotEmpty(context.resultComment)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
-      }
+        // render optional result comment, if present
+        if (tzDomHelper.isNotEmpty(context.resultComment)) {
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
+        }
 
-      // create default ID, if id is missing
-      if (tzDomHelper.isEmpty(context.id)) {
-        context.id = "DefaultID" + ++defaultIdCounter;
-      }
+        // create default ID, if id is missing
+        if (tzDomHelper.isEmpty(context.id)) {
+          context.id = "DefaultID" + ++defaultIdCounter;
+        }
 
-      // create the logger, for use by the code about to be executed (eval code will lookup logger by the id of this <lk-js-example> tag instance).
-      var logger = createLogger(containerNode, context, header);
+        // create the logger, for use by the code about to be executed (the code can lookup this logger by the id of its <lk-js-example> tag instance).
+        var logger = createLogger(containerNode, context, header);
 
-      try {
-        eval(context.rawJs);
-      } catch (e) {
-        logger.log("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
+        try {
+          eval(context.rawJs);
+        } catch (e) {
+          logger.log("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
+        }
       }
     }
   };
@@ -1966,9 +1974,9 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
  */
 
 /**
- * Renders a syntax-highlighted CSS code examples and then injects the raw CSS
- * into the DOM so the browser will render the example live.
- *<p>
+ * Renders the raw CSS code, with syntax highlighting and line numbers,
+ * and then injects it into the DOM, so the injected CSS can be available for live styling).
+ * <p>
  * The tag attributes are read from the <code>lk-css-example</code> element, as shown in the examples below:
  *
  * <pre style="background:#eee; padding:6px;">
@@ -2050,7 +2058,9 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
         "rawCss": rawCss,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, resultCommentExpression),
         "width": lkCssExampleTagNode.getAttribute("width"),
-        "height": lkCssExampleTagNode.getAttribute("height")
+        "height": lkCssExampleTagNode.getAttribute("height"),
+
+        "injectCode": lkCssExampleTagNode.getAttribute("injectCode") || true
       };
 
       // remove child nodes (e.g., optional comment nodes)
@@ -2070,28 +2080,36 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
      *          <ul>
-     *            <li>cssComment: optional comment to render above the CSS code block.
+     *            <li>cssComment: optional comment to render above the CSS example code block.
      *            <li>rawCss: the CSS code to insert.
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
      *            <li>height: optional height.
+     *
+     *            <li>injectCode: if true (default), then inject the raw CSS into the DOM; otherwise, the code is not injected.
+     *                You may want to set this to false, if you want the code to be displayed, but don't want it to be injected.
      *          </ul>
      */
     render: function(containerNode, context) {
-      // render the live CSS
-      if (tzDomHelper.isEmpty(context.rawCss)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw CSS is missing");
-      } else {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.rawCss);
-      }
-
       // render the CSS code with syntax highlighting
       tzCodeHighlighter.render(containerNode, {
         "heading": "CSS",
         "codeBlockComment": context.cssComment,
         "lang": "css",
         "width": context.width,
+        "height": context.height,
         "rawCode": context.rawCss});
+
+      // inject the live CSS code, if requested
+      if (context.injectCode) {
+        // render the live CSS
+        if (tzDomHelper.isEmpty(context.rawCss)) {
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw CSS is missing");
+        } else {
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.rawCss);
+        }
+      }
+
     }
 
   }
@@ -2109,9 +2127,9 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
  */
 
 /**
- * Renders syntax-highlighted HTML code examples and then injects the raw HTML
- * into the DOM so the browser will render the examples live.
- *<p>
+ * Renders the raw HTML code, with syntax highlighting and line numbers,
+ * and then injects it into the DOM, so the injected HTML elements can be rendered live.
+ * <p>
  * The tag attributes are read from the <code>lk-html-example</code> element, as shown in the examples below:
  *
  * <pre style="background:#eee; padding:6px;">
@@ -2184,7 +2202,9 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
         "rawHtml": rawHtml,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, resultCommentExpression),
         "width": lkHtmlExampleTagNode.getAttribute("width"),
-        "height": lkHtmlExampleTagNode.getAttribute("height")
+        "height": lkHtmlExampleTagNode.getAttribute("height"),
+
+        "injectCode": lkHtmlExampleTagNode.getAttribute("injectCode") || true
       };
 
       // remove child nodes (e.g., optional comment nodes)
@@ -2205,10 +2225,13 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
      *            <li>height: optional height.
+     *
+     *            <li>injectCode: if true (default), then inject the raw HTML into the DOM; otherwise, the code is not injected.
+     *                You may want to set this to false, if you want the code to be displayed, but don't want it to be injected.
      *          </ul>
      */
     render: function(containerNode, context) {
-      // render the HTML code example
+      // render the HTML code with syntax highlighting
       tzCodeHighlighter.render(containerNode, {
         "heading": "HTML",
         "codeBlockComment": context.htmlComment,
@@ -2216,19 +2239,21 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
         "width": context.width,
         "rawCode": context.rawHtml});
 
-      // render the live HTML code
-      // render heading
-      tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
+      // inject the live HTML code, if requested
+      if (context.injectCode) {
+        // render heading
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
 
-      // render optional result comment, if present
-      if (tzDomHelper.isNotEmpty(context.resultComment)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
-      }
+        // render optional result comment, if present
+        if (tzDomHelper.isNotEmpty(context.resultComment)) {
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
+        }
 
-      // render raw HTML from the template
-      var div = tzDomHelper.createElementWithAdjacentHtml(containerNode, "div", '{"className":"lk-live-code-block"}', context.rawHtml);
-      if (tzDomHelper.isNotEmpty(context.height)) {
-        div.style.height = context.height;
+        // render raw HTML from the template
+        var div = tzDomHelper.createElementWithAdjacentHtml(containerNode, "div", '{"className":"lk-live-code-block"}', context.rawHtml);
+        if (tzDomHelper.isNotEmpty(context.height)) {
+          div.style.height = context.height;
+        }
       }
     }
   }

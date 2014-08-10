@@ -9,9 +9,9 @@
  */
 
 /**
- * Renders a syntax-highlighted CSS code examples and then injects the raw CSS
- * into the DOM so the browser will render the example live.
- *<p>
+ * Renders the raw CSS code, with syntax highlighting and line numbers,
+ * and then injects it into the DOM, so the injected CSS can be available for live styling).
+ * <p>
  * The tag attributes are read from the <code>lk-css-example</code> element, as shown in the examples below:
  *
  * <pre style="background:#eee; padding:6px;">
@@ -93,7 +93,9 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
         "rawCss": rawCss,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, resultCommentExpression),
         "width": lkCssExampleTagNode.getAttribute("width"),
-        "height": lkCssExampleTagNode.getAttribute("height")
+        "height": lkCssExampleTagNode.getAttribute("height"),
+
+        "injectCode": lkCssExampleTagNode.getAttribute("injectCode") || true
       };
 
       // remove child nodes (e.g., optional comment nodes)
@@ -113,28 +115,36 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
      *          <ul>
-     *            <li>cssComment: optional comment to render above the CSS code block.
+     *            <li>cssComment: optional comment to render above the CSS example code block.
      *            <li>rawCss: the CSS code to insert.
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
      *            <li>height: optional height.
+     *
+     *            <li>injectCode: if true (default), then inject the raw CSS into the DOM; otherwise, the code is not injected.
+     *                You may want to set this to false, if you want the code to be displayed, but don't want it to be injected.
      *          </ul>
      */
     render: function(containerNode, context) {
-      // render the live CSS
-      if (tzDomHelper.isEmpty(context.rawCss)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw CSS is missing");
-      } else {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.rawCss);
-      }
-
       // render the CSS code with syntax highlighting
       tzCodeHighlighter.render(containerNode, {
         "heading": "CSS",
         "codeBlockComment": context.cssComment,
         "lang": "css",
         "width": context.width,
+        "height": context.height,
         "rawCode": context.rawCss});
+
+      // inject the live CSS code, if requested
+      if (context.injectCode) {
+        // render the live CSS
+        if (tzDomHelper.isEmpty(context.rawCss)) {
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw CSS is missing");
+        } else {
+          tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.rawCss);
+        }
+      }
+
     }
 
   }

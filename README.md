@@ -15,12 +15,12 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 
 [LabKit JSDocs](http://www.thruzero.com/pages/jcat3/lab-kit-js-jsdoc/index.html)
 
-## Overview of LabKit Tags
+## Overview of the LabKit Tags
 
 ### ‣ CSS Example tag
 
-The `<lk-css-example>` tag renders the given CSS code, with syntax highlighting and line numbers, as an example, and then injects the raw CSS into the DOM, so it will be rendered live.
-The examples use nested code templates.
+The `<lk-css-example>` tag renders the raw CSS code, with syntax highlighting and line numbers,
+and then injects it into the DOM (so the injected CSS can be available for live styling).
 
 ```xml
 <lk-css-example width="111">
@@ -34,11 +34,14 @@ The examples use nested code templates.
 Tag attributes:
 
 * **width** - Optional width of the rendered example.
+* **injectCode** - Optional flag to control if the raw CSS is injected into the DOM (for live rendering).
+
+**[⬆ back to top](#readme)**
 
 ### ‣ HTML Example tag
 
-The `<lk-html-example>` tag renders the given HTML code, with syntax highlighting and line numbers, as an example, and then injects the raw HTML into the DOM, so it will be rendered live.
-The examples use nested code templates.
+The `<lk-html-example>` tag renders the raw HTML code, with syntax highlighting and line numbers,
+and then injects it into the DOM (so the injected HTML elements can be rendered live).
 
 ```xml
 <lk-html-example width="111">
@@ -52,6 +55,29 @@ The examples use nested code templates.
 Tag attributes:
 
 * **width** - Optional width of the rendered example.
+* **injectCode** - Optional flag to control if the raw HTML is injected into the DOM (for live rendering).
+
+**[⬆ back to top](#readme)**
+
+### ‣ JavaScript Example tag
+
+The `<lk-js-example>` tag renders the raw JavaScript code, with syntax highlighting and line numbers,
+and then executes it (via eval), so that the live results will be reflected in the DOM 
+(e.g., DOM manipulation, results logged to a panel, etc).
+
+```xml
+<lk-html-example width="111">
+  <htmlComment>A comment rendered beneath the HTML header.</htmlComment>
+  <script type="multiline-template">
+    <span class="foo">This is red</span>
+  </script>
+</lk-html-example>
+```
+
+Tag attributes:
+
+* **width** - Optional width of the rendered example.
+* **injectCode** - Optional flag to control if the raw HTML is injected into the DOM (for live rendering).
 
 **[⬆ back to top](#readme)**
 
