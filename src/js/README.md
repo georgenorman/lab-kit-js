@@ -22,6 +22,7 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 
 * [`lkTableOfContentsTag`](module-lkTableOfContentsTag.html): Auto-generates a simple two-level Table of Contents.
 * [`lkBulletPointTag`](module-lkBulletPointTag.html): Renders a status icon on the left followed by an HTML block on the right.
+* [`lkApiReferenceTag`](module-lkApiReferenceTag.html): Renders a simple panel for displaying a link to the API reference documentation, plus a summary of key interfaces.
 * [`lkNavigationBarTag`](module-lkNavigationBarTag.html): Renders a navigation bar, typically configured with the following links: "Back to Index" and "Back to Table of Contents".
 
 *Code blocks and examples:*

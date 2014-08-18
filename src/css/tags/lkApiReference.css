@@ -1,0 +1,49 @@
+/* ==================================================================
+  ~ lkApiReference.css v1.0.0
+  ~ Copyright (c) 2014 George Norman.
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ================================================================== */
+
+/* ---------------------------------
+ * Layout
+ * --------------------------------- */
+
+lk-api-reference {
+  display: block;
+  border: 1px solid #ccc;
+  margin-left:6px;
+  margin-top:12px;
+  width: 93%;
+  overflow: auto;
+
+  /* hack to shade gutter, without also shading the code area. */
+  background: linear-gradient(to right, #ddddff, #efefff 40%);
+}
+
+lk-api-reference > div > div:nth-child(1) {
+  float: left;
+  margin-top: 0;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+lk-api-reference > div > div:nth-child(1) > a {
+  padding: 6px;
+  display: table-cell;
+}
+
+lk-api-reference > div > div:nth-child(2) {
+  border-left: 2px solid #2a00ff;
+  margin-left: 36px;
+  padding: 6px;
+  background: #efefff;
+  font-size: 12px;
+  font-family: monospace;
+  white-space: pre-line;
+}
+
+lk-api-reference > div > div:nth-child(2) > p:first-child {
+  margin-top: 0;
+}

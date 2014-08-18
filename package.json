@@ -56,6 +56,7 @@
       "src/css/lkResultLogger.css"
     ],
     "labKitTagsJs": [
+      "src/js/tags/lkApiReference.js",
       "src/js/tags/lkBulletPoint.js",
       "src/js/tags/lkNavigationBar.js",
       "src/js/tags/lkTableOfContents.js",
@@ -67,6 +68,7 @@
       "src/js/tags/lkHtmlExample.js"
     ],
     "labKitTagsCss": [
+      "src/css/tags/lkApiReference.css",
       "src/css/tags/lkDisplayStyles.css",
       "src/css/tags/lkBulletPoint.css",
       "src/css/tags/lkNavigationBar.css",

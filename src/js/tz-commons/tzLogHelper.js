@@ -44,9 +44,9 @@ var tzLogHelperModule = (function() {
      *
      * @param message the message to log, if logging is enabled.
      */
-    debug: function(message) {
+    debug: function(message, object) {
       if (loggingEnabled) {
-        console.log( new Date().toJSON() + " DEBUG: " + message );
+        console.log( new Date().toJSON() + " DEBUG: " + message, object );
       }
     },
 
@@ -55,9 +55,9 @@ var tzLogHelperModule = (function() {
      *
      * @param message the message to log, if logging is enabled.
      */
-    warning: function(message) {
+    warning: function(message, object) {
       if (loggingEnabled) {
-        console.log( new Date().toJSON() + " WARN: " + message );
+        console.log( new Date().toJSON() + " WARN: " + message, object );
       }
     },
 
@@ -66,11 +66,11 @@ var tzLogHelperModule = (function() {
      *
      * @param message the message to log, if logging is enabled.
      */
-    error: function(message) {
+    error: function(message, object) {
       if (loggingEnabled) {
         var tracer = new Error();
 
-        console.log( new Date().toJSON() + " ERROR: " + message + " - " + tracer.stack );
+        console.log( new Date().toJSON() + " ERROR: " + message + " - " + tracer.stack, object );
       }
      }
   }

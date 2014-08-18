@@ -100,6 +100,7 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
      *           <ul>
      *             <li>iconClass: css used to render an icon in the left column.
      *             <li>leftColumnWidth: width of the left column.
+     *             <li>styleAttribute: optional style for the wrapper div.
      *             <li>rawRightColumnHtml: the raw HTML to render into the right column.
      *           </ul>
      */

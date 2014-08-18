@@ -180,6 +180,26 @@ Tag attributes:
 
 **[⬆ back to top](#readme)**
 
+### ▸ API Reference tag
+
+The `<lk-bullet-point>` tag renders a simple panel for displaying a link to the API reference documentation, plus a summary of key interfaces:
+
+```xml
+<lk-api-reference href="http://api.jquery.com/ready/">
+  $( document ).ready( handler )
+  $( handler )
+</lk-api-reference>
+```
+
+Tag attributes:
+
+* **href** - URL to the API reference documentation.
+* **width** - Optional width for the wrapper div.
+
+
+**[⬆ back to top](#readme)**
+
+
 ### ▸ Ancestor Styles tag
 
 The `<lk-ancestor-styles>` tag renders a set of styles for all ancestors of a given element.

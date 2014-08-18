@@ -13,7 +13,7 @@
  *
  * @module lkResultLoggerModule
  */
-var lkResultLoggerModule = (function(tzDomHelper) {
+var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
   "use strict";
 
   var loggers = {};
@@ -65,6 +65,11 @@ var lkResultLoggerModule = (function(tzDomHelper) {
         doLog("<span style='color:red;'>" + errMsg + "</span>");
       },
 
+      logDivider: function(color) {
+        var hrColor = tzDomHelper.isEmpty(color) ? "#888" : color;
+        doLog("<hr style='border:1px dotted " + hrColor + ";'>", false);
+      },
+
       waiting: function() {
         showResultPanel();
         showSpinner();
@@ -80,12 +85,19 @@ var lkResultLoggerModule = (function(tzDomHelper) {
       }
     };
 
-    function doLog(msg) {
-      console.log(msg);
+    function doLog(msg, withNewline) {
+      tzLogHelper.debug(msg);
 
       showResultPanel();
       hideSpinner();
-      outputNode.innerHTML = outputNode.innerHTML + msg + "\n";
+
+      // log a new line by default (withNewline is empty) or if withNewline is true
+      var eol = "";
+      if (tzDomHelper.isEmpty(withNewline) || withNewline == true) {
+        eol = "\n";
+      }
+
+      outputNode.innerHTML = outputNode.innerHTML + msg + eol;
     }
 
     function showResultPanel() {
@@ -122,7 +134,7 @@ var lkResultLoggerModule = (function(tzDomHelper) {
         if (msg === undefined) {
           msg = "*Logger message is undefined*";
         }
-        console.log(msg);
+        tzLogHelper.debug(msg);
         loggedResultLines[loggedResultLines.length++] = msg;
       },
 
@@ -193,4 +205,4 @@ var lkResultLoggerModule = (function(tzDomHelper) {
     }
   };
 
-}(tzDomHelperModule));
+}(tzDomHelperModule, tzLogHelperModule));

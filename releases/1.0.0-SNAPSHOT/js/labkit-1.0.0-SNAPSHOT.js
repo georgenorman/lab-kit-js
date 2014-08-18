@@ -49,9 +49,9 @@ var tzLogHelperModule = (function() {
      *
      * @param message the message to log, if logging is enabled.
      */
-    debug: function(message) {
+    debug: function(message, object) {
       if (loggingEnabled) {
-        console.log( new Date().toJSON() + " DEBUG: " + message );
+        console.log( new Date().toJSON() + " DEBUG: " + message, object );
       }
     },
 
@@ -60,9 +60,9 @@ var tzLogHelperModule = (function() {
      *
      * @param message the message to log, if logging is enabled.
      */
-    warning: function(message) {
+    warning: function(message, object) {
       if (loggingEnabled) {
-        console.log( new Date().toJSON() + " WARN: " + message );
+        console.log( new Date().toJSON() + " WARN: " + message, object );
       }
     },
 
@@ -71,11 +71,11 @@ var tzLogHelperModule = (function() {
      *
      * @param message the message to log, if logging is enabled.
      */
-    error: function(message) {
+    error: function(message, object) {
       if (loggingEnabled) {
         var tracer = new Error();
 
-        console.log( new Date().toJSON() + " ERROR: " + message + " - " + tracer.stack );
+        console.log( new Date().toJSON() + " ERROR: " + message + " - " + tracer.stack, object );
       }
      }
   }
@@ -641,6 +641,7 @@ var baseKitModule = (function(tzDomHelper) {
       // Tags common to all Labs
       lkTableOfContentsTag.renderAll();
 
+      lkApiReferenceTag.renderAll();
       lkBulletPointTag.renderAll();
       lkNavigationBarTag.renderAll();
 
@@ -686,7 +687,7 @@ var baseKitModule = (function(tzDomHelper) {
  *
  * @module lkResultLoggerModule
  */
-var lkResultLoggerModule = (function(tzDomHelper) {
+var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
   "use strict";
 
   var loggers = {};
@@ -738,6 +739,11 @@ var lkResultLoggerModule = (function(tzDomHelper) {
         doLog("<span style='color:red;'>" + errMsg + "</span>");
       },
 
+      logDivider: function(color) {
+        var hrColor = tzDomHelper.isEmpty(color) ? "#888" : color;
+        doLog("<hr style='border:1px dotted " + hrColor + ";'>", false);
+      },
+
       waiting: function() {
         showResultPanel();
         showSpinner();
@@ -753,12 +759,19 @@ var lkResultLoggerModule = (function(tzDomHelper) {
       }
     };
 
-    function doLog(msg) {
-      console.log(msg);
+    function doLog(msg, withNewline) {
+      tzLogHelper.debug(msg);
 
       showResultPanel();
       hideSpinner();
-      outputNode.innerHTML = outputNode.innerHTML + msg + "\n";
+
+      // log a new line by default (withNewline is empty) or if withNewline is true
+      var eol = "";
+      if (tzDomHelper.isEmpty(withNewline) || withNewline == true) {
+        eol = "\n";
+      }
+
+      outputNode.innerHTML = outputNode.innerHTML + msg + eol;
     }
 
     function showResultPanel() {
@@ -795,7 +808,7 @@ var lkResultLoggerModule = (function(tzDomHelper) {
         if (msg === undefined) {
           msg = "*Logger message is undefined*";
         }
-        console.log(msg);
+        tzLogHelper.debug(msg);
         loggedResultLines[loggedResultLines.length++] = msg;
       },
 
@@ -866,7 +879,120 @@ var lkResultLoggerModule = (function(tzDomHelper) {
     }
   };
 
-}(tzDomHelperModule));
+}(tzDomHelperModule, tzLogHelperModule));
+
+/*
+ ~ Copyright (c) 2014 George Norman.
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ --------------------------------------------------------------
+ ~ Renders <lk-api-reference> tags - sharable among all projects.
+ ~ --------------------------------------------------------------
+ */
+
+/**
+ * Renders a simple panel for displaying a link to the API reference documentation, plus a summary of key interfaces.
+ *<p>
+ * The tag attributes are read from the <code>lk-api-reference</code> element, as shown in the example below:
+ * <pre style="background:#eee; padding:6px;">
+ *    &lt;lk-api-reference href="http://api.jquery.com/ready/"&gt;
+ *      $( document ).ready( handler )<br>
+ *      $( handler )
+ *    &lt;/lk-api-reference&gt;
+ * </pre>
+ *
+ * <p style="padding-left:12px;">
+ * <h6>Tag Attributes:</h6>
+ * <table class="params">
+ *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
+ *   <tr><td class="name"><code>href</code></td><td>URL to the API reference documentation.</td></tr>
+ *   <tr><td class="name"><code>width</code></td><td>optional width for the wrapper div.</td></tr>
+ * </table>
+ *
+ * @module lkApiReferenceTag
+ */
+var lkApiReferenceTag = (function(tzDomHelper, tzCustomTagHelper) {
+  "use strict";
+
+  var template =
+      ['<div class="group">',
+       '  <div><a href="{{context.href}}">api</a></div>',
+       '  <div>{{context.rawRightColumnHtml}}</div>',
+       '</div>'
+      ].join('\n');
+
+  return {
+    /**
+     * Return the name of this tag.
+     *
+     * @returns {string}
+     */
+    getTagName: function() {
+      return "lk-api-reference";
+    },
+
+    /**
+     * Render all <code>&lt;lk-api-reference&gt;</code> tags on the page.
+     */
+    renderAll: function() {
+      tzCustomTagHelper.renderAll(this);
+    },
+
+    /**
+     * Render the <code>&lt;lk-api-reference&gt;</code> tag identified by the given tagId.
+     *
+     * @param tagId ID of the tag to render.
+     */
+    renderTagById: function(tagId) {
+      tzCustomTagHelper.renderTagById(this, tagId);
+    },
+
+    /**
+     * Render the given <code>lkApiReferenceTagNode</code>.
+     *
+     * @param lkApiReferenceTagNode the node to retrieve the attributes from and then render the result to.
+     */
+    renderTag: function(lkApiReferenceTagNode) {
+      // build the context
+      var width = lkApiReferenceTagNode.getAttribute("width");
+      var context = {
+        "href": lkApiReferenceTagNode.getAttribute("href"),
+        "width": lkApiReferenceTagNode.getAttribute("width"),
+        "rawRightColumnHtml": lkApiReferenceTagNode.innerHTML.trim()
+      };
+
+      // remove child nodes (e.g., rawRightColumnHtml retrieved for use by the right column)
+      tzDomHelper.removeAllChildNodes(lkApiReferenceTagNode);
+
+      // render the result
+      this.render(lkApiReferenceTagNode, context);
+    },
+
+    /**
+     * Render the <code>&lt;lk-api-reference&gt;</code> tag into the given <code>containerNode</code>.
+     *
+     * @param containerNode where to render the result.
+     * @param context object containing the values needed to render the result:
+     *           <ul>
+     *             <li>href: URL to the API reference documentation.
+     *             <li>width: optional width for the wrapper div.
+     *             <li>rawRightColumnHtml: the raw HTML to render into the right column (e.g., APIs to be referenced).
+     *           </ul>
+     */
+    render: function(containerNode, context) {
+      //var template = tzCustomTagHelper.getTemplate(this.getTagName() + "Template"); // @-@:p1(geo) Experimental
+
+      tzCustomTagHelper.renderTagFromTemplate(containerNode, template, context);
+
+      // update the width
+      if (tzDomHelper.isNotEmpty(context.width)) {
+        containerNode.style.width = context.width;
+      }
+    }
+  };
+
+}(tzDomHelperModule, tzCustomTagHelperModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -970,6 +1096,7 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
      *           <ul>
      *             <li>iconClass: css used to render an icon in the left column.
      *             <li>leftColumnWidth: width of the left column.
+     *             <li>styleAttribute: optional style for the wrapper div.
      *             <li>rawRightColumnHtml: the raw HTML to render into the right column.
      *           </ul>
      */

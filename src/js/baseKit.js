@@ -24,6 +24,7 @@ var baseKitModule = (function(tzDomHelper) {
       // Tags common to all Labs
       lkTableOfContentsTag.renderAll();
 
+      lkApiReferenceTag.renderAll();
       lkBulletPointTag.renderAll();
       lkNavigationBarTag.renderAll();
 
