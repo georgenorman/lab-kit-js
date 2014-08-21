@@ -57,6 +57,18 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       },
 
       /**
+       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
+       *
+       * @param label
+       * @param value
+       */
+      logLabelPropertiesValue: function(label, value, comment) {
+        var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
+
+        doLog("<label>"+label+":</label> <output>"+ tzDomHelper.getProperties(value) + "</output>" + comment2)
+      },
+
+      /**
        * Log an error message.
        *
        * @param errMsg
@@ -80,6 +92,10 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       },
 
       reset: function() {
+        this.clear();
+      },
+
+      clear: function() {
         hideSpinner();
         outputNode.innerHTML = "";
       }

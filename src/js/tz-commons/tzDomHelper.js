@@ -245,11 +245,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    // @-@:p0 move to general utils
-    isNotEmpty: function( value ) {
-      return !this.isEmpty( value );
-    },
-
     show: function( elementId ) {
       var element = document.getElementById( elementId );
 
@@ -260,6 +255,49 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       var element = document.getElementById( elementId );
 
       element.style.display = "none";
+    },
+
+    // @-@:p0 move to general utils module
+    isNotEmpty: function( value ) {
+      return !this.isEmpty( value );
+    },
+
+    // @-@:p0 move to general utils module
+    getProperties: function(obj) {
+      var result = "";
+
+      if (this.isNotEmpty(obj !== undefined && obj !== null )) {
+        var separator = "";
+        for(var propertyName in obj) {
+          if (typeof(obj[propertyName]) != "undefined") {
+            result += separator + propertyName + "=" + obj[propertyName];
+            separator = ",\n";
+          }
+        }
+      }
+
+      return result;
+    },
+
+    /**
+     * Registers the element, with the given triggerElementId, for onclick events.
+     * For the first onclick event, it calls subject.on(). For the next onclick,
+     * it calls subject.off() and then back to on for the third, etc.
+     *
+     * @param triggerElementId
+     * @param subject
+     */
+    onclickEventToggler: function(triggerElementId, subject) {
+      var state = false;
+
+      document.getElementById( triggerElementId ).onclick = function(event) {
+        if (state) {
+          subject.off(event);
+        } else {
+          subject.on(event);
+        }
+        state = !state;
+      }
     }
   };
 

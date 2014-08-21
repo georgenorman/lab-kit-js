@@ -31,6 +31,7 @@
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
  *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
+ *   <tr><td class="name"><code>logger-height</code></td><td>The constrained height for the logger output</td></tr>
  * </table>
  *<p>
  *
@@ -91,7 +92,9 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         "evalCode": lkJsExampleTagNode.getAttribute("evalCode") || true,
         "resultHeaderTitle": lkJsExampleTagNode.getAttribute("resultHeaderTitle"),
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, resultCommentExpression),
-        "rawJs": rawJs
+        "rawJs": rawJs,
+
+        "loggerHeight": lkJsExampleTagNode.getAttribute("logger-height")
       };
 
       // remove child nodes (e.g., optional comment nodes)
@@ -118,6 +121,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
      *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the evaluated result.
      *            <li>rawJs: the JavaScript code to execute.
+     *            <li>loggerHeight: the constrained height for the logger output.
      *          </ul>
      */
     render: function(containerNode, context) {
@@ -165,8 +169,8 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
   function createLogger(containerNode, context, header) {
     // create an element for the logger to render the results
     var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-result-logger"}');
-    if (tzDomHelper.isNotEmpty(context.height)) {
-      outputNode.style.height = context.height;
+    if (tzDomHelper.isNotEmpty(context.loggerHeight)) {
+      outputNode.style.maxHeight = context.loggerHeight;
     }
 
     // create the logger, for use by the code about to be executed (eval code will lookup logger by the id of this <lk-js-example> tag instance).

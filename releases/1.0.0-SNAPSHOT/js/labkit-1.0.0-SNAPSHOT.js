@@ -328,11 +328,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       return result;
     },
 
-    // @-@:p0 move to general utils
-    isNotEmpty: function( value ) {
-      return !this.isEmpty( value );
-    },
-
     show: function( elementId ) {
       var element = document.getElementById( elementId );
 
@@ -343,6 +338,49 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       var element = document.getElementById( elementId );
 
       element.style.display = "none";
+    },
+
+    // @-@:p0 move to general utils module
+    isNotEmpty: function( value ) {
+      return !this.isEmpty( value );
+    },
+
+    // @-@:p0 move to general utils module
+    getProperties: function(obj) {
+      var result = "";
+
+      if (this.isNotEmpty(obj !== undefined && obj !== null )) {
+        var separator = "";
+        for(var propertyName in obj) {
+          if (typeof(obj[propertyName]) != "undefined") {
+            result += separator + propertyName + "=" + obj[propertyName];
+            separator = ",\n";
+          }
+        }
+      }
+
+      return result;
+    },
+
+    /**
+     * Registers the element, with the given triggerElementId, for onclick events.
+     * For the first onclick event, it calls subject.on(). For the next onclick,
+     * it calls subject.off() and then back to on for the third, etc.
+     *
+     * @param triggerElementId
+     * @param subject
+     */
+    onclickEventToggler: function(triggerElementId, subject) {
+      var state = false;
+
+      document.getElementById( triggerElementId ).onclick = function(event) {
+        if (state) {
+          subject.off(event);
+        } else {
+          subject.on(event);
+        }
+        state = !state;
+      }
     }
   };
 
@@ -731,6 +769,18 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       },
 
       /**
+       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
+       *
+       * @param label
+       * @param value
+       */
+      logLabelPropertiesValue: function(label, value, comment) {
+        var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
+
+        doLog("<label>"+label+":</label> <output>"+ tzDomHelper.getProperties(value) + "</output>" + comment2)
+      },
+
+      /**
        * Log an error message.
        *
        * @param errMsg
@@ -754,6 +804,10 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       },
 
       reset: function() {
+        this.clear();
+      },
+
+      clear: function() {
         hideSpinner();
         outputNode.innerHTML = "";
       }
@@ -1941,6 +1995,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
  *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
+ *   <tr><td class="name"><code>logger-height</code></td><td>The constrained height for the logger output</td></tr>
  * </table>
  *<p>
  *
@@ -2001,7 +2056,9 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         "evalCode": lkJsExampleTagNode.getAttribute("evalCode") || true,
         "resultHeaderTitle": lkJsExampleTagNode.getAttribute("resultHeaderTitle"),
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, resultCommentExpression),
-        "rawJs": rawJs
+        "rawJs": rawJs,
+
+        "loggerHeight": lkJsExampleTagNode.getAttribute("logger-height")
       };
 
       // remove child nodes (e.g., optional comment nodes)
@@ -2028,6 +2085,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
      *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the evaluated result.
      *            <li>rawJs: the JavaScript code to execute.
+     *            <li>loggerHeight: the constrained height for the logger output.
      *          </ul>
      */
     render: function(containerNode, context) {
@@ -2075,8 +2133,8 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
   function createLogger(containerNode, context, header) {
     // create an element for the logger to render the results
     var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-result-logger"}');
-    if (tzDomHelper.isNotEmpty(context.height)) {
-      outputNode.style.height = context.height;
+    if (tzDomHelper.isNotEmpty(context.loggerHeight)) {
+      outputNode.style.maxHeight = context.loggerHeight;
     }
 
     // create the logger, for use by the code about to be executed (eval code will lookup logger by the id of this <lk-js-example> tag instance).
