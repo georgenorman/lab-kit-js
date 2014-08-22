@@ -346,14 +346,21 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     },
 
     // @-@:p0 move to general utils module
-    getProperties: function(obj) {
+    getProperties: function(obj, boldLabels) {
       var result = "";
 
-      if (this.isNotEmpty(obj !== undefined && obj !== null )) {
+      if (obj !== undefined && obj !== null) {
         var separator = "";
+        var labelPrefix = "";
+        var labelSuffix = "";
+        if (this.isNotEmpty(boldLabels)) {
+          labelPrefix = "  <b>"; // plus indent
+          labelSuffix = "</b>";
+        }
+
         for(var propertyName in obj) {
           if (typeof(obj[propertyName]) != "undefined") {
-            result += separator + propertyName + "=" + obj[propertyName];
+            result += separator + labelPrefix + propertyName + labelSuffix + "=" + obj[propertyName];
             separator = ",\n";
           }
         }
@@ -769,15 +776,24 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       },
 
       /**
+       * Log a label.
+       *
+       * @param label
+       */
+      logLabel: function(label) {
+        doLog("<label>"+label+"</label>")
+      },
+
+      /**
        * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
        *
        * @param label
        * @param value
        */
-      logLabelPropertiesValue: function(label, value, comment) {
+      logLabelValueProperties: function(label, value, comment) {
         var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
 
-        doLog("<label>"+label+":</label> <output>"+ tzDomHelper.getProperties(value) + "</output>" + comment2)
+        doLog("<label>"+label+":</label> \n<output>"+ tzDomHelper.getProperties(value, true) + "</output>" + comment2)
       },
 
       /**

@@ -263,14 +263,21 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     },
 
     // @-@:p0 move to general utils module
-    getProperties: function(obj) {
+    getProperties: function(obj, boldLabels) {
       var result = "";
 
-      if (this.isNotEmpty(obj !== undefined && obj !== null )) {
+      if (obj !== undefined && obj !== null) {
         var separator = "";
+        var labelPrefix = "";
+        var labelSuffix = "";
+        if (this.isNotEmpty(boldLabels)) {
+          labelPrefix = "  <b>"; // plus indent
+          labelSuffix = "</b>";
+        }
+
         for(var propertyName in obj) {
           if (typeof(obj[propertyName]) != "undefined") {
-            result += separator + propertyName + "=" + obj[propertyName];
+            result += separator + labelPrefix + propertyName + labelSuffix + "=" + obj[propertyName];
             separator = ",\n";
           }
         }
