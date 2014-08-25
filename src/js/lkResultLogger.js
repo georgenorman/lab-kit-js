@@ -32,49 +32,106 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
 
     return {
       /**
-       * Log the given message to the given output node.
+       * Log the given msg to the DOM node given at construction time, using the default output style (".lk-logger-value")
        *
        * @param msg message to log
+       * @param color optional color of message
        */
-      log: function( msg ) {
-        if (msg === undefined) {
-          this.logError("*Logger message is undefined*");
-        } else {
-          doLog(msg);
-        }
-      },
-
-      /**
-       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
-       *
-       * @param label
-       * @param value
-       */
-      logLabelValue: function(label, value, comment) {
-        var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
-
-        doLog("<label>"+label+":</label> <output>"+ value + "</output>" + comment2)
+      log: function(msg, color) {
+        doLog(formatOutput(msg, color));
       },
 
       /**
        * Log a label.
        *
        * @param label
+       * @param color optional color of label
        */
-      logLabel: function(label) {
-        doLog("<label>"+label+"</label>")
+      logLabel: function(label, color) {
+        doLog(formatLabel(label, color, "plain"));
       },
 
       /**
-       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
+       * Log a label and value, using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
        *
        * @param label
        * @param value
+       * @param comment optional comment to display to the right of the value, surrounded by parens.
+       * @param labelColor optional color of label
        */
-      logLabelValueProperties: function(label, value, comment) {
-        var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
+      logLabelValue: function(label, value, comment, labelColor) {
+        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
-        doLog("<label>"+label+":</label> \n<output>"+ tzDomHelper.getProperties(value, true) + "</output>" + comment2)
+        doLog(formatLabel(label, labelColor) + " " + formatOutput(value) + commentFmt)
+      },
+
+      /**
+       * Log a label and value properties, using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
+       *
+       * @param label
+       * @param value
+       * @param comment optional comment to display to the right of the value, surrounded by parens.
+       * @param maxNumProperties optional number used to limit the number of properties to display.
+       */
+      logLabelValueProperties: function(label, value, comment, maxNumProperties) {
+        var labelFmt = formatLabel(label);
+        var valueFmt = value === undefined ? formatOutput("undefined", "red") : "\n" + formatOutput(tzDomHelper.getProperties(value, true, maxNumProperties));
+        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+
+        doLog(labelFmt + valueFmt + commentFmt)
+      },
+
+      /**
+       * Log an expression as a label and then evaluate the expression as the value
+       * (to keep the label as expression and expression result in sync; avoiding typos).
+       *
+       * @param expression the text to use as the label and the text to be evaluated as the value.
+       * @param comment optional comment to display to the right of the value, surrounded by parens.
+       * @param labelColor optional color of label
+       */
+      logExpression: function(expression, comment, labelColor) {
+        var labelFmt = formatLabel(expression, labelColor);
+        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+
+        // Ternary Operator is broken (tested via FF and Chrome).
+        //var valueFmt = (expression === undefined) ? formatOutput("undefined", "red") : + formatOutput(eval(expression));
+        var valueFmt;
+        if (expression === undefined) {
+          valueFmt = formatOutput("undefined", "red");
+        } else {
+          valueFmt = formatOutput(eval(expression));
+        }
+
+        doLog(labelFmt + " " + valueFmt + commentFmt)
+      },
+
+      /**
+       * Log a typeof expression (e.g., typeof fooBar), using the expression as the label,
+       * the evaluated typeof expression as the value and the expression with the typeof
+       * removed, as the comment.
+       *
+       * @param expression
+       * @param labelColor optional color of label
+       */
+      logTypeOfExpressionAndValue: function(expression, labelColor) {
+        var labelFmt = formatLabel(expression, labelColor);
+
+        var valueFmt;
+        if (expression === undefined) {
+          valueFmt = formatOutput("undefined", "red");
+        } else {
+          valueFmt = formatOutput(eval(expression));
+        }
+
+        var commentFmt;
+        if (expression === undefined) {
+          commentFmt = formatOutput("undefined", "red");
+        } else {
+          var valueExpression = expression.replace("typeof","");
+          commentFmt = " <small>(value=" + eval(valueExpression) + ")</small>";
+        }
+
+        doLog(labelFmt + " " + valueFmt + commentFmt)
       },
 
       /**
@@ -109,6 +166,33 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
         outputNode.innerHTML = "";
       }
     };
+
+    function formatLabel(label, color, cssClassName) {
+      var style = "";
+      var cssClass = cssClassName === undefined ? "" : " class='"+cssClassName+"'";
+
+      if (label === undefined) {
+        label = "undefined";
+        style = " style='color:red'";
+      } else if (tzDomHelper.isNotEmpty(color)) {
+        style = " style='color:" + color + "'";
+      }
+
+      return "<label" + style + cssClass + ">" + label + ":</label>";
+    }
+
+    function formatOutput(msg, color) {
+      var style = "";
+
+      if (msg === undefined) {
+        msg = "undefined";
+        style = " style='color:red'";
+      } else if (tzDomHelper.isNotEmpty(color)) {
+        style = " style='color:" + color + "'";
+      }
+
+      return "<output" + style + ">" + msg + "</output>";
+    }
 
     function doLog(msg, withNewline) {
       tzLogHelper.debug(msg);

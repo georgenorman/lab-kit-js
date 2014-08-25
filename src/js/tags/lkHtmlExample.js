@@ -16,7 +16,7 @@
  *
  * <pre style="background:#eee; padding:6px;">
  * &lt;lk-html-example width="750px"&gt;
- *   &lt;htmlComment&gt;A comment rendered beneath the HTML header.&lt;/htmlComment&gt;
+ *   &lt;codeComment&gt;A comment rendered beneath the HTML header, above the HTML code example.&lt;/codeComment&gt;
  *   &lt;resultComment&gt;A comment rendered beneath the Result header.&lt;/resultComment&gt;
  *
  *   &lt;script type="multiline-template" id="simpleTemplateHtml"&gt;
@@ -37,7 +37,7 @@
 var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
-  var htmlCommentExpression = new RegExp("<htmlComment>((.|\n)*)<\/htmlComment>", "ig");
+  var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
   var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
 
   return {
@@ -80,7 +80,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
 
       // build the context
       var context = {
-        "htmlComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, htmlCommentExpression),
+        "codeComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, codeCommentExpression),
         "rawHtml": rawHtml,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, resultCommentExpression),
         "width": lkHtmlExampleTagNode.getAttribute("width"),
@@ -102,7 +102,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
      *          <ul>
-     *            <li>htmlComment: optional comment to render above the HTML code block.
+     *            <li>codeComment: optional comment to render above the HTML code block.
      *            <li>rawHtml: the HTML code to insert.
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
@@ -116,7 +116,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
       // render the HTML code with syntax highlighting
       tzCodeHighlighter.render(containerNode, {
         "heading": "HTML",
-        "codeBlockComment": context.htmlComment,
+        "codeBlockComment": context.codeComment,
         "lang": "*ml",
         "width": context.width,
         "rawCode": context.rawHtml});
@@ -124,7 +124,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
       // inject the live HTML code, if requested
       if (context.injectCode) {
         // render heading
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, "Rendered Result");
 
         // render optional result comment, if present
         if (tzDomHelper.isNotEmpty(context.resultComment)) {

@@ -204,7 +204,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     render: function(containerNode, context) {
        // handle optional title
       if (tzDomHelper.isNotEmpty(context.title)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, context.title);
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, context.title);
       }
 
       // handle optional comment

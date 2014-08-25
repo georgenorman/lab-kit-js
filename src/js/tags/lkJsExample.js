@@ -17,7 +17,7 @@
  *
  * <pre style="background:#eee; padding:6px;">
  * &lt;lk-js-example width="750px"&gt;
- *   &lt;jsComment&gt;A comment rendered beneath the JavaScript code example.&lt;/cssComment&gt;
+ *   &lt;codeComment&gt;A comment rendered beneath the JavaScript header, above the JavaScript code example.&lt;/codeComment&gt;
  *   &lt;resultComment&gt;A comment rendered beneath the rendered Result header.&lt;/resultComment&gt;
  *
  *   &lt;script type="multiline-template" id="simpleTemplateJs"&gt;
@@ -40,7 +40,7 @@
 var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter, lkResultLogger) {
   "use strict";
 
-  var jsCommentExpression = new RegExp("<jsComment>((.|\n)*)<\/jsComment>", "ig");
+  var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
   var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
   var defaultIdCounter = 0;
 
@@ -86,7 +86,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       var context = {
         "id": lkJsExampleTagNode.getAttribute("id"),
         "renderCode": lkJsExampleTagNode.getAttribute("renderCode") || true,
-        "jsComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, jsCommentExpression),
+        "codeComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, codeCommentExpression),
         "width": lkJsExampleTagNode.getAttribute("width"),
 
         "evalCode": lkJsExampleTagNode.getAttribute("evalCode") || true,
@@ -113,7 +113,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
      *            <li>renderCode: if true (default), then render the <i>rawJs</i> code example, with syntax highlighting and line numbers;
      *                otherwise, the code example is not rendered (but the JavaScript may still be executed via eval).
      *                You may want to set this to false, if you want the code to be evaluated and results logged to the browser, but don't want the code to be displayed.
-     *            <li>jsComment: optional comment to render above the JavaScript code example.
+     *            <li>codeComment: optional comment to render above the JavaScript code example.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code example area when scrolling is required.
      *
      *            <li>evalCode: if true (default), then execute the JavaScript (via eval); otherwise, the code is not executed.
@@ -129,7 +129,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       if (context.renderCode == true) {
         tzCodeHighlighter.render(containerNode, {
           "heading": "JavaScript",
-          "codeBlockComment": context.jsComment,
+          "codeBlockComment": context.codeComment,
           "lang": "js",
           "width": context.width,
           "rawCode": context.rawJs});
@@ -138,7 +138,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       // execute the JavaScript code (optional)
       if (context.evalCode == true) {
         // render result heading
-        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
         // render optional result comment, if present
         if (tzDomHelper.isNotEmpty(context.resultComment)) {

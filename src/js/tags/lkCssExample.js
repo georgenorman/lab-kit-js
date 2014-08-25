@@ -16,7 +16,7 @@
  *
  * <pre style="background:#eee; padding:6px;">
  * &lt;lk-css-example width="750px"&gt;
- *   &lt;cssComment&gt;A comment rendered beneath the CSS header.&lt;/cssComment&gt;
+ *   &lt;codeComment&gt;A comment rendered beneath the CSS header, above the CSS code example.&lt;/codeComment&gt;
  *   &lt;resultComment&gt;A comment rendered beneath the Result header.&lt;/resultComment&gt;
  *
  *   &lt;script type="multiline-template"&gt;
@@ -38,7 +38,7 @@
 var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
-  var cssCommentExpression = new RegExp("<cssComment>((.|\n)*)<\/cssComment>", "ig");
+  var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
   var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
 
   return {
@@ -74,7 +74,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
      */
     renderTag: function(lkCssExampleTagNode) {
       var cssError = "";
-      var cssComment = tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, cssCommentExpression);
+      var codeComment = tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, codeCommentExpression);
 
       // get the raw css from the script tag
       var rawCss = tzDomHelper.getFirstElementFromNodeByTagName(lkCssExampleTagNode, "script");
@@ -89,7 +89,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
 
       // build the context
       var context = {
-        "cssComment": cssComment,
+        "codeComment": codeComment,
         "rawCss": rawCss,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, resultCommentExpression),
         "width": lkCssExampleTagNode.getAttribute("width"),
@@ -115,7 +115,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
      *          <ul>
-     *            <li>cssComment: optional comment to render above the CSS example code block.
+     *            <li>codeComment: optional comment to render above the CSS example code block.
      *            <li>rawCss: the CSS code to insert.
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
@@ -129,7 +129,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
       // render the CSS code with syntax highlighting
       tzCodeHighlighter.render(containerNode, {
         "heading": "CSS",
-        "codeBlockComment": context.cssComment,
+        "codeBlockComment": context.codeComment,
         "lang": "css",
         "width": context.width,
         "height": context.height,

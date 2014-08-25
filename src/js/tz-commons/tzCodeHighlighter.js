@@ -36,7 +36,7 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
     render: function(containerNode, context) {
       // render optional heading, if present
       if (tzDomHelper.isNotEmpty(context.heading)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, context.heading);
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, context.heading);
       }
 
       // render optional comment, if present

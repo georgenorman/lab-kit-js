@@ -346,27 +346,47 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     },
 
     // @-@:p0 move to general utils module
-    getProperties: function(obj, boldLabels) {
+    getProperties: function(obj, boldLabels, maxNumProperties) {
       var result = "";
+
+      maxNumProperties = maxNumProperties === undefined ? Number.MAX_VALUE : maxNumProperties;
 
       if (obj !== undefined && obj !== null) {
         var separator = "";
         var labelPrefix = "";
         var labelSuffix = "";
+
         if (this.isNotEmpty(boldLabels)) {
           labelPrefix = "  <b>"; // plus indent
           labelSuffix = "</b>";
         }
 
-        for(var propertyName in obj) {
-          if (typeof(obj[propertyName]) != "undefined") {
-            result += separator + labelPrefix + propertyName + labelSuffix + "=" + obj[propertyName];
-            separator = ",\n";
+        var propCount = 0;
+        for (var propertyName in obj) {
+          var objValue;
+
+          if ((obj[propertyName]) === undefined) {
+            objValue = "<style='color:red'>undefined</style>";
+          } else {
+            objValue = obj[propertyName];
+          }
+          result += separator + labelPrefix + propertyName + labelSuffix + "=" + objValue;
+          separator = ",\n";
+          propCount++;
+
+          if (propCount >= maxNumProperties) {
+            break;
           }
         }
       }
 
       return result;
+    },
+
+    // @-@:p0 move to general utils module
+    // http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
+    isNumber: function(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
     },
 
     /**
@@ -570,7 +590,7 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
     render: function(containerNode, context) {
       // render optional heading, if present
       if (tzDomHelper.isNotEmpty(context.heading)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, context.heading);
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, context.heading);
       }
 
       // render optional comment, if present
@@ -751,49 +771,106 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
 
     return {
       /**
-       * Log the given message to the given output node.
+       * Log the given msg to the DOM node given at construction time, using the default output style (".lk-logger-value")
        *
        * @param msg message to log
+       * @param color optional color of message
        */
-      log: function( msg ) {
-        if (msg === undefined) {
-          this.logError("*Logger message is undefined*");
-        } else {
-          doLog(msg);
-        }
-      },
-
-      /**
-       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
-       *
-       * @param label
-       * @param value
-       */
-      logLabelValue: function(label, value, comment) {
-        var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
-
-        doLog("<label>"+label+":</label> <output>"+ value + "</output>" + comment2)
+      log: function(msg, color) {
+        doLog(formatOutput(msg, color));
       },
 
       /**
        * Log a label.
        *
        * @param label
+       * @param color optional color of label
        */
-      logLabel: function(label) {
-        doLog("<label>"+label+"</label>")
+      logLabel: function(label, color) {
+        doLog(formatLabel(label, color, "plain"));
       },
 
       /**
-       * Log a label and value using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
+       * Log a label and value, using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
        *
        * @param label
        * @param value
+       * @param comment optional comment to display to the right of the value, surrounded by parens.
+       * @param labelColor optional color of label
        */
-      logLabelValueProperties: function(label, value, comment) {
-        var comment2 = comment === undefined ? "" : " <small>(" + comment + ")</small>";
+      logLabelValue: function(label, value, comment, labelColor) {
+        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
-        doLog("<label>"+label+":</label> \n<output>"+ tzDomHelper.getProperties(value, true) + "</output>" + comment2)
+        doLog(formatLabel(label, labelColor) + " " + formatOutput(value) + commentFmt)
+      },
+
+      /**
+       * Log a label and value properties, using the default styles (".lk-logger-label" and ".lk-logger-value") and an optional comment.
+       *
+       * @param label
+       * @param value
+       * @param comment optional comment to display to the right of the value, surrounded by parens.
+       * @param maxNumProperties optional number used to limit the number of properties to display.
+       */
+      logLabelValueProperties: function(label, value, comment, maxNumProperties) {
+        var labelFmt = formatLabel(label);
+        var valueFmt = value === undefined ? formatOutput("undefined", "red") : "\n" + formatOutput(tzDomHelper.getProperties(value, true, maxNumProperties));
+        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+
+        doLog(labelFmt + valueFmt + commentFmt)
+      },
+
+      /**
+       * Log an expression as a label and then evaluate the expression as the value
+       * (to keep the label as expression and expression result in sync; avoiding typos).
+       *
+       * @param expression the text to use as the label and the text to be evaluated as the value.
+       * @param comment optional comment to display to the right of the value, surrounded by parens.
+       * @param labelColor optional color of label
+       */
+      logExpression: function(expression, comment, labelColor) {
+        var labelFmt = formatLabel(expression, labelColor);
+        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+
+        // Ternary Operator is broken (tested via FF and Chrome).
+        //var valueFmt = (expression === undefined) ? formatOutput("undefined", "red") : + formatOutput(eval(expression));
+        var valueFmt;
+        if (expression === undefined) {
+          valueFmt = formatOutput("undefined", "red");
+        } else {
+          valueFmt = formatOutput(eval(expression));
+        }
+
+        doLog(labelFmt + " " + valueFmt + commentFmt)
+      },
+
+      /**
+       * Log a typeof expression (e.g., typeof fooBar), using the expression as the label,
+       * the evaluated typeof expression as the value and the expression with the typeof
+       * removed, as the comment.
+       *
+       * @param expression
+       * @param labelColor optional color of label
+       */
+      logTypeOfExpressionAndValue: function(expression, labelColor) {
+        var labelFmt = formatLabel(expression, labelColor);
+
+        var valueFmt;
+        if (expression === undefined) {
+          valueFmt = formatOutput("undefined", "red");
+        } else {
+          valueFmt = formatOutput(eval(expression));
+        }
+
+        var commentFmt;
+        if (expression === undefined) {
+          commentFmt = formatOutput("undefined", "red");
+        } else {
+          var valueExpression = expression.replace("typeof","");
+          commentFmt = " <small>(value=" + eval(valueExpression) + ")</small>";
+        }
+
+        doLog(labelFmt + " " + valueFmt + commentFmt)
       },
 
       /**
@@ -828,6 +905,33 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
         outputNode.innerHTML = "";
       }
     };
+
+    function formatLabel(label, color, cssClassName) {
+      var style = "";
+      var cssClass = cssClassName === undefined ? "" : " class='"+cssClassName+"'";
+
+      if (label === undefined) {
+        label = "undefined";
+        style = " style='color:red'";
+      } else if (tzDomHelper.isNotEmpty(color)) {
+        style = " style='color:" + color + "'";
+      }
+
+      return "<label" + style + cssClass + ">" + label + ":</label>";
+    }
+
+    function formatOutput(msg, color) {
+      var style = "";
+
+      if (msg === undefined) {
+        msg = "undefined";
+        style = " style='color:red'";
+      } else if (tzDomHelper.isNotEmpty(color)) {
+        style = " style='color:" + color + "'";
+      }
+
+      return "<output" + style + ">" + msg + "</output>";
+    }
 
     function doLog(msg, withNewline) {
       tzLogHelper.debug(msg);
@@ -1824,7 +1928,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     render: function(containerNode, context) {
        // handle optional title
       if (tzDomHelper.isNotEmpty(context.title)) {
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, context.title);
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, context.title);
       }
 
       // handle optional comment
@@ -1997,7 +2101,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
  *
  * <pre style="background:#eee; padding:6px;">
  * &lt;lk-js-example width="750px"&gt;
- *   &lt;jsComment&gt;A comment rendered beneath the JavaScript code example.&lt;/cssComment&gt;
+ *   &lt;codeComment&gt;A comment rendered beneath the JavaScript header, above the JavaScript code example.&lt;/codeComment&gt;
  *   &lt;resultComment&gt;A comment rendered beneath the rendered Result header.&lt;/resultComment&gt;
  *
  *   &lt;script type="multiline-template" id="simpleTemplateJs"&gt;
@@ -2020,7 +2124,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
 var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter, lkResultLogger) {
   "use strict";
 
-  var jsCommentExpression = new RegExp("<jsComment>((.|\n)*)<\/jsComment>", "ig");
+  var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
   var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
   var defaultIdCounter = 0;
 
@@ -2066,7 +2170,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       var context = {
         "id": lkJsExampleTagNode.getAttribute("id"),
         "renderCode": lkJsExampleTagNode.getAttribute("renderCode") || true,
-        "jsComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, jsCommentExpression),
+        "codeComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, codeCommentExpression),
         "width": lkJsExampleTagNode.getAttribute("width"),
 
         "evalCode": lkJsExampleTagNode.getAttribute("evalCode") || true,
@@ -2093,7 +2197,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
      *            <li>renderCode: if true (default), then render the <i>rawJs</i> code example, with syntax highlighting and line numbers;
      *                otherwise, the code example is not rendered (but the JavaScript may still be executed via eval).
      *                You may want to set this to false, if you want the code to be evaluated and results logged to the browser, but don't want the code to be displayed.
-     *            <li>jsComment: optional comment to render above the JavaScript code example.
+     *            <li>codeComment: optional comment to render above the JavaScript code example.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code example area when scrolling is required.
      *
      *            <li>evalCode: if true (default), then execute the JavaScript (via eval); otherwise, the code is not executed.
@@ -2109,7 +2213,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       if (context.renderCode == true) {
         tzCodeHighlighter.render(containerNode, {
           "heading": "JavaScript",
-          "codeBlockComment": context.jsComment,
+          "codeBlockComment": context.codeComment,
           "lang": "js",
           "width": context.width,
           "rawCode": context.rawJs});
@@ -2118,7 +2222,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       // execute the JavaScript code (optional)
       if (context.evalCode == true) {
         // render result heading
-        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
         // render optional result comment, if present
         if (tzDomHelper.isNotEmpty(context.resultComment)) {
@@ -2182,7 +2286,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
  *
  * <pre style="background:#eee; padding:6px;">
  * &lt;lk-css-example width="750px"&gt;
- *   &lt;cssComment&gt;A comment rendered beneath the CSS header.&lt;/cssComment&gt;
+ *   &lt;codeComment&gt;A comment rendered beneath the CSS header, above the CSS code example.&lt;/codeComment&gt;
  *   &lt;resultComment&gt;A comment rendered beneath the Result header.&lt;/resultComment&gt;
  *
  *   &lt;script type="multiline-template"&gt;
@@ -2204,7 +2308,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
 var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
-  var cssCommentExpression = new RegExp("<cssComment>((.|\n)*)<\/cssComment>", "ig");
+  var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
   var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
 
   return {
@@ -2240,7 +2344,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
      */
     renderTag: function(lkCssExampleTagNode) {
       var cssError = "";
-      var cssComment = tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, cssCommentExpression);
+      var codeComment = tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, codeCommentExpression);
 
       // get the raw css from the script tag
       var rawCss = tzDomHelper.getFirstElementFromNodeByTagName(lkCssExampleTagNode, "script");
@@ -2255,7 +2359,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
 
       // build the context
       var context = {
-        "cssComment": cssComment,
+        "codeComment": codeComment,
         "rawCss": rawCss,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkCssExampleTagNode, resultCommentExpression),
         "width": lkCssExampleTagNode.getAttribute("width"),
@@ -2281,7 +2385,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
      *          <ul>
-     *            <li>cssComment: optional comment to render above the CSS example code block.
+     *            <li>codeComment: optional comment to render above the CSS example code block.
      *            <li>rawCss: the CSS code to insert.
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
@@ -2295,7 +2399,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
       // render the CSS code with syntax highlighting
       tzCodeHighlighter.render(containerNode, {
         "heading": "CSS",
-        "codeBlockComment": context.cssComment,
+        "codeBlockComment": context.codeComment,
         "lang": "css",
         "width": context.width,
         "height": context.height,
@@ -2335,7 +2439,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
  *
  * <pre style="background:#eee; padding:6px;">
  * &lt;lk-html-example width="750px"&gt;
- *   &lt;htmlComment&gt;A comment rendered beneath the HTML header.&lt;/htmlComment&gt;
+ *   &lt;codeComment&gt;A comment rendered beneath the HTML header, above the HTML code example.&lt;/codeComment&gt;
  *   &lt;resultComment&gt;A comment rendered beneath the Result header.&lt;/resultComment&gt;
  *
  *   &lt;script type="multiline-template" id="simpleTemplateHtml"&gt;
@@ -2356,7 +2460,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
 var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
-  var htmlCommentExpression = new RegExp("<htmlComment>((.|\n)*)<\/htmlComment>", "ig");
+  var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
   var resultCommentExpression = new RegExp("<resultComment>((.|\n)*)<\/resultComment>", "ig");
 
   return {
@@ -2399,7 +2503,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
 
       // build the context
       var context = {
-        "htmlComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, htmlCommentExpression),
+        "codeComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, codeCommentExpression),
         "rawHtml": rawHtml,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, resultCommentExpression),
         "width": lkHtmlExampleTagNode.getAttribute("width"),
@@ -2421,7 +2525,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
      * @param containerNode where to render the result.
      * @param context object containing the values needed to render the result:
      *          <ul>
-     *            <li>htmlComment: optional comment to render above the HTML code block.
+     *            <li>codeComment: optional comment to render above the HTML code block.
      *            <li>rawHtml: the HTML code to insert.
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
@@ -2435,7 +2539,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
       // render the HTML code with syntax highlighting
       tzCodeHighlighter.render(containerNode, {
         "heading": "HTML",
-        "codeBlockComment": context.htmlComment,
+        "codeBlockComment": context.codeComment,
         "lang": "*ml",
         "width": context.width,
         "rawCode": context.rawHtml});
@@ -2443,7 +2547,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
       // inject the live HTML code, if requested
       if (context.injectCode) {
         // render heading
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h4", null, "Rendered Result");
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, "Rendered Result");
 
         // render optional result comment, if present
         if (tzDomHelper.isNotEmpty(context.resultComment)) {

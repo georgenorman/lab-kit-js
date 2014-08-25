@@ -263,27 +263,47 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     },
 
     // @-@:p0 move to general utils module
-    getProperties: function(obj, boldLabels) {
+    getProperties: function(obj, boldLabels, maxNumProperties) {
       var result = "";
+
+      maxNumProperties = maxNumProperties === undefined ? Number.MAX_VALUE : maxNumProperties;
 
       if (obj !== undefined && obj !== null) {
         var separator = "";
         var labelPrefix = "";
         var labelSuffix = "";
+
         if (this.isNotEmpty(boldLabels)) {
           labelPrefix = "  <b>"; // plus indent
           labelSuffix = "</b>";
         }
 
-        for(var propertyName in obj) {
-          if (typeof(obj[propertyName]) != "undefined") {
-            result += separator + labelPrefix + propertyName + labelSuffix + "=" + obj[propertyName];
-            separator = ",\n";
+        var propCount = 0;
+        for (var propertyName in obj) {
+          var objValue;
+
+          if ((obj[propertyName]) === undefined) {
+            objValue = "<style='color:red'>undefined</style>";
+          } else {
+            objValue = obj[propertyName];
+          }
+          result += separator + labelPrefix + propertyName + labelSuffix + "=" + objValue;
+          separator = ",\n";
+          propCount++;
+
+          if (propCount >= maxNumProperties) {
+            break;
           }
         }
       }
 
       return result;
+    },
+
+    // @-@:p0 move to general utils module
+    // http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
+    isNumber: function(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
     },
 
     /**

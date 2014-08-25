@@ -153,7 +153,7 @@ header h1.logo {
 }
 
 /* ---------------------------------
- * Headings (h2-h4)
+ * Headings (h2-h5)
  * --------------------------------- */
 
 h2 {
@@ -176,6 +176,15 @@ h3 {
 h4 {
   margin: 12px 6px 0 0;
   color: #888;
+  border-bottom: 1px dashed #bbb;
+  width: 92%;
+  font-size: 14px;
+}
+
+h5 {
+  margin: 12px 6px 0 0;
+  color: #888;
+  font-size: 14px;
 }
 
 /* ---------------------------------
@@ -401,6 +410,12 @@ footer:after {
 
 .lk-result-logger label {
   font-weight: bold;
+  color: #666;
+}
+
+.lk-result-logger label.plain {
+  font-weight: bold;
+  color: #036;
 }
 
 .lk-result-logger output {
@@ -511,7 +526,7 @@ lk-api-reference > div > div:nth-child(2) > p:first-child {
 
 /* Headings */
 
-lk-display-styles > h4 {
+lk-display-styles > h5 {
   margin-top: 12px;
 }
 
@@ -585,7 +600,7 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
 .lk-bullet-point-pass {
   color: green;
   border: 1px solid green;
-  padding: 2px 4px 1px 4px;
+  padding: 0 3px 0 3px;
   border-radius: 50%;
   font-size: 11px;
 }
@@ -594,6 +609,11 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   content: "\2714";
   font-style: normal;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+lk-bullet-point i.lk-bullet-point-pass {
+  margin-top: 3px;
+  display: inline-block;
 }
 
 /* FAIL */
@@ -607,6 +627,11 @@ lk-bullet-point > div > div:nth-child(2) > p:first-child {
   font-weight: bold;
   font-size: 22px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+lk-bullet-point i.lk-bullet-point-fail {
+  margin-top: -3px;
+  display: inline-block;
 }
 
 /* STAR */
@@ -810,7 +835,7 @@ code.lk-code-example ol li:nth-child(even) {
 
 /* Headings */
 
-lk-css-example > h4 {
+lk-css-example > h5 {
   margin-top: 12px;
 }
 
@@ -823,6 +848,6 @@ lk-css-example > h4 {
 
 /* Headings */
 
-lk-html-example > h4 {
+lk-html-example > h5 {
   margin-top: 12px;
 }
