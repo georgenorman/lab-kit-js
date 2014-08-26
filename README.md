@@ -1,15 +1,15 @@
 # LabKit JS
 
-LabKit is a simple JavaScript library that helps build web pages with live CSS and HTML examples (a DSL for web experiments).
-The main functionality is provided by a set of tags that can be added to any HTML page.
-For example, the `<lk-html-example>` tag renders the given CSS and HTML code-examples and then inserts them into the document, for a live rendering of the example.
+LabKit is a simple JavaScript library that helps build HTML, CSS and JavaScript web experiments (e.g., CSS selector experiments, jQuery ajax experiments, etc).
+The main functionality is provided by a set of tags that can be added to any HTML page (these tags represent a DSL for web experiments).
+For example, the `<lk-html-example>` tag renders an HTML code-example, with syntax highlighting and line numbers, then inserts the raw code into the DOM so it can be rendered live.
 To help organize the experiments, the `<lk-table-of-contents>` tag can be used to automatically generate a Table of Contents for the page.
 
 ## Demos
 
 * [CSS Lab](http://www.thruzero.com/pages/jcat3/css-lab/index.html)
 * [JS Lab](http://www.thruzero.com/pages/jcat3/js-lab/index.html)
-
+* [jQuery Lab](http://www.thruzero.com/pages/jcat3/jquery-lab/index.html)
 
 ## JSDoc
 
