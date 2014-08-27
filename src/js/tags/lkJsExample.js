@@ -21,7 +21,7 @@
  *   &lt;resultComment&gt;A comment rendered beneath the rendered Result header.&lt;/resultComment&gt;
  *
  *   &lt;script type="multiline-template" id="simpleTemplateJs"&gt;
- *     lkResultLoggerModule.log(navigator.appCodeName);
+ *     lkResultLoggerModule.msg(navigator.appCodeName);
  *   &lt;/script&gt;
  * &lt;/lk-js-example&gt;
  * </pre>
@@ -156,7 +156,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         try {
           eval(context.rawJs);
         } catch (e) {
-          logger.log("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
+          logger.msg("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
         }
       }
     }

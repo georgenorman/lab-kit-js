@@ -37,7 +37,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param msg message to log
        * @param color optional color of message
        */
-      log: function(msg, color) {
+      msg: function(msg, color) {
         doLog(formatOutput(msg, color));
       },
 
@@ -47,7 +47,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param label
        * @param color optional color of label
        */
-      logLabel: function(label, color) {
+      label: function(label, color) {
         doLog(formatLabel(label, color, "plain"));
       },
 
@@ -59,7 +59,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param comment optional comment to display to the right of the value, surrounded by parens.
        * @param labelColor optional color of label
        */
-      logLabelValue: function(label, value, comment, labelColor) {
+      labelValue: function(label, value, comment, labelColor) {
         var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         doLog(formatLabel(label, labelColor) + " " + formatOutput(value) + commentFmt)
@@ -73,7 +73,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param comment optional comment to display to the right of the value, surrounded by parens.
        * @param maxNumProperties optional number used to limit the number of properties to display.
        */
-      logLabelValueProperties: function(label, value, comment, maxNumProperties) {
+      labelValueProperties: function(label, value, comment, maxNumProperties) {
         var labelFmt = formatLabel(label);
         var valueFmt = value === undefined ? formatOutput("undefined", "red") : "\n" + formatOutput(tzDomHelper.getProperties(value, true, maxNumProperties));
         var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
@@ -89,7 +89,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param comment optional comment to display to the right of the value, surrounded by parens.
        * @param labelColor optional color of label
        */
-      logExpression: function(expression, comment, labelColor) {
+      expression: function(expression, comment, labelColor) {
         var labelFmt = formatLabel(expression, labelColor);
         var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
@@ -113,7 +113,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param expression
        * @param labelColor optional color of label
        */
-      logTypeOfExpressionAndValue: function(expression, labelColor) {
+      typeOfExpressionAndValue: function(expression, labelColor) {
         var labelFmt = formatLabel(expression, labelColor);
 
         var valueFmt;
@@ -139,11 +139,11 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        *
        * @param errMsg
        */
-      logError: function(errMsg) {
+      error: function(errMsg) {
         doLog("<span style='color:red;'>" + errMsg + "</span>");
       },
 
-      logDivider: function(color) {
+      divider: function(color) {
         var hrColor = tzDomHelper.isEmpty(color) ? "#888" : color;
         doLog("<hr style='border:1px dotted " + hrColor + ";'>", false);
       },
