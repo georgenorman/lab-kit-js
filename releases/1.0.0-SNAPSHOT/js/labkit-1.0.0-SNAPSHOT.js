@@ -853,21 +853,31 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param labelColor optional color of label
        */
       typeOfExpressionAndValue: function(expression, labelColor) {
-        var labelFmt = formatLabel(expression, labelColor);
-
         var valueFmt;
+        var labelFmt = "";
+        var commentFmt = "";
+
         if (expression === undefined) {
           valueFmt = formatOutput("undefined", "red");
+        } else if (expression === null) {
+          valueFmt = formatOutput("null", "red");
         } else {
-          valueFmt = formatOutput(eval(expression));
-        }
+          // prepend the typeof operator to the expression, preserving indentation
+          var regex = /(^\s+)(.+)/;
+          var matches = expression.match(regex);
+          var expressionWithTypeOf
 
-        var commentFmt;
-        if (expression === undefined) {
-          commentFmt = formatOutput("undefined", "red");
-        } else {
-          var valueExpression = expression.replace("typeof","");
-          commentFmt = " <small>(value=" + eval(valueExpression) + ")</small>";
+          if (matches === null) {
+            expressionWithTypeOf = "typeof " + expression;
+          } else {
+            expressionWithTypeOf = matches[1] + "typeof " + matches[2];
+          }
+
+          labelFmt = formatLabel(expressionWithTypeOf, labelColor);
+          valueFmt = formatOutput(eval(expressionWithTypeOf));
+
+          // evaluate original expression
+          commentFmt = " <small>(value=" + eval(expression) + ")</small>";
         }
 
         doLog(labelFmt + " " + valueFmt + commentFmt)

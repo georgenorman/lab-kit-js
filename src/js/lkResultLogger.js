@@ -106,29 +106,37 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       },
 
       /**
-       * Log a typeof expression (e.g., typeof fooBar), using the expression as the label,
-       * the evaluated typeof expression as the value and the expression with the typeof
-       * removed, as the comment.
+       * Log the typeof the given expression plus the value of the given expression.
        *
-       * @param expression
+       * @param expression expression to be typed and evaluated (e.g., Number(7) results in: "typeof Number(7): number (value=7)".
        * @param labelColor optional color of label
        */
       typeOfExpressionAndValue: function(expression, labelColor) {
-        var labelFmt = formatLabel(expression, labelColor);
-
         var valueFmt;
+        var labelFmt = "";
+        var commentFmt = "";
+
         if (expression === undefined) {
           valueFmt = formatOutput("undefined", "red");
+        } else if (expression === null) {
+          valueFmt = formatOutput("null", "red");
         } else {
-          valueFmt = formatOutput(eval(expression));
-        }
+          // prepend the typeof operator to the expression, preserving indentation
+          var regex = /(^\s+)(.+)/;
+          var matches = expression.match(regex);
+          var expressionWithTypeOf
 
-        var commentFmt;
-        if (expression === undefined) {
-          commentFmt = formatOutput("undefined", "red");
-        } else {
-          var valueExpression = expression.replace("typeof","");
-          commentFmt = " <small>(value=" + eval(valueExpression) + ")</small>";
+          if (matches === null) {
+            expressionWithTypeOf = "typeof " + expression;
+          } else {
+            expressionWithTypeOf = matches[1] + "typeof " + matches[2];
+          }
+
+          labelFmt = formatLabel(expressionWithTypeOf, labelColor);
+          valueFmt = formatOutput(eval(expressionWithTypeOf));
+
+          // evaluate original expression
+          commentFmt = " <small>(value=" + eval(expression) + ")</small>";
         }
 
         doLog(labelFmt + " " + valueFmt + commentFmt)
