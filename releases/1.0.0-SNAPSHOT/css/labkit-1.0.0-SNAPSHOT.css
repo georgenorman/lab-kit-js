@@ -162,6 +162,7 @@ h2 {
   padding-top: 6px;
   padding-bottom: 0;
   color: #669;
+  font-size: 24px;
 }
 
 h3 {
@@ -171,14 +172,15 @@ h3 {
   padding-bottom: 3px;
   color: #669;
   font-style: italic;
+  font-size: 22px;
 }
 
 h4 {
-  margin: 12px 6px 0 0;
-  color: #888;
-  border-bottom: 1px dashed #bbb;
+  margin: 18px 6px 0 0;
+  color: #669;
+  border-bottom: 1px dashed #669;
   width: 92%;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 h5 {

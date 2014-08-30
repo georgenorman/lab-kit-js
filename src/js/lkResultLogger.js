@@ -18,6 +18,10 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
 
   var loggers = {};
 
+  // -------------------------------------------------
+  // NodeLogger
+  // -------------------------------------------------
+
   /**
    * A logger that logs messages to a given DOM node.
    *
@@ -90,7 +94,11 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param labelColor optional color of label
        */
       expression: function(expression, comment, labelColor) {
-        var labelFmt = formatLabel(expression, labelColor);
+        this.labelExpression(expression, expression, comment, labelColor);
+      },
+
+      labelExpression: function(label, expression, comment, labelColor) {
+        var labelFmt = formatLabel(label, labelColor);
         var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         // Ternary Operator is broken (tested via FF and Chrome).
@@ -100,43 +108,6 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
           valueFmt = formatOutput("undefined", "red");
         } else {
           valueFmt = formatOutput(eval(expression));
-        }
-
-        doLog(labelFmt + " " + valueFmt + commentFmt)
-      },
-
-      /**
-       * Log the typeof the given expression plus the value of the given expression.
-       *
-       * @param expression expression to be typed and evaluated (e.g., Number(7) results in: "typeof Number(7): number (value=7)".
-       * @param labelColor optional color of label
-       */
-      typeOfExpressionAndValue: function(expression, labelColor) {
-        var valueFmt;
-        var labelFmt = "";
-        var commentFmt = "";
-
-        if (expression === undefined) {
-          valueFmt = formatOutput("undefined", "red");
-        } else if (expression === null) {
-          valueFmt = formatOutput("null", "red");
-        } else {
-          // prepend the typeof operator to the expression, preserving indentation
-          var regex = /(^\s+)(.+)/;
-          var matches = expression.match(regex);
-          var expressionWithTypeOf
-
-          if (matches === null) {
-            expressionWithTypeOf = "typeof " + expression;
-          } else {
-            expressionWithTypeOf = matches[1] + "typeof " + matches[2];
-          }
-
-          labelFmt = formatLabel(expressionWithTypeOf, labelColor);
-          valueFmt = formatOutput(eval(expressionWithTypeOf));
-
-          // evaluate original expression
-          commentFmt = " <small>(value=" + eval(expression) + ")</small>";
         }
 
         doLog(labelFmt + " " + valueFmt + commentFmt)
@@ -236,6 +207,10 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
     }
   }
 
+  // -------------------------------------------------
+  // CacheLogger
+  // -------------------------------------------------
+
   /**
    * A logger that logs messages to a cache, for later retrieval.
    *
@@ -286,6 +261,10 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       }
     }
   }
+
+  // ==============================================================================
+  // lkResultLoggerModule
+  // ==============================================================================
 
   return {
 

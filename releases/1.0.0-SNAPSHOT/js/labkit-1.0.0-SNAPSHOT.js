@@ -757,6 +757,10 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
 
   var loggers = {};
 
+  // -------------------------------------------------
+  // NodeLogger
+  // -------------------------------------------------
+
   /**
    * A logger that logs messages to a given DOM node.
    *
@@ -829,7 +833,11 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param labelColor optional color of label
        */
       expression: function(expression, comment, labelColor) {
-        var labelFmt = formatLabel(expression, labelColor);
+        this.labelExpression(expression, expression, comment, labelColor);
+      },
+
+      labelExpression: function(label, expression, comment, labelColor) {
+        var labelFmt = formatLabel(label, labelColor);
         var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         // Ternary Operator is broken (tested via FF and Chrome).
@@ -839,45 +847,6 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
           valueFmt = formatOutput("undefined", "red");
         } else {
           valueFmt = formatOutput(eval(expression));
-        }
-
-        doLog(labelFmt + " " + valueFmt + commentFmt)
-      },
-
-      /**
-       * Log a typeof expression (e.g., typeof fooBar), using the expression as the label,
-       * the evaluated typeof expression as the value and the expression with the typeof
-       * removed, as the comment.
-       *
-       * @param expression
-       * @param labelColor optional color of label
-       */
-      typeOfExpressionAndValue: function(expression, labelColor) {
-        var valueFmt;
-        var labelFmt = "";
-        var commentFmt = "";
-
-        if (expression === undefined) {
-          valueFmt = formatOutput("undefined", "red");
-        } else if (expression === null) {
-          valueFmt = formatOutput("null", "red");
-        } else {
-          // prepend the typeof operator to the expression, preserving indentation
-          var regex = /(^\s+)(.+)/;
-          var matches = expression.match(regex);
-          var expressionWithTypeOf
-
-          if (matches === null) {
-            expressionWithTypeOf = "typeof " + expression;
-          } else {
-            expressionWithTypeOf = matches[1] + "typeof " + matches[2];
-          }
-
-          labelFmt = formatLabel(expressionWithTypeOf, labelColor);
-          valueFmt = formatOutput(eval(expressionWithTypeOf));
-
-          // evaluate original expression
-          commentFmt = " <small>(value=" + eval(expression) + ")</small>";
         }
 
         doLog(labelFmt + " " + valueFmt + commentFmt)
@@ -977,6 +946,10 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
     }
   }
 
+  // -------------------------------------------------
+  // CacheLogger
+  // -------------------------------------------------
+
   /**
    * A logger that logs messages to a cache, for later retrieval.
    *
@@ -1027,6 +1000,10 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       }
     }
   }
+
+  // ==============================================================================
+  // lkResultLoggerModule
+  // ==============================================================================
 
   return {
 
@@ -2106,6 +2083,8 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
  * Renders the raw JavaScript code, with syntax highlighting and line numbers,
  * and then executes it (via eval), so that the live results will be reflected in the DOM
  * (e.g., DOM manipulation, results logged to a panel, etc).
+ * Optionally, if the eval attribute is set to false, the JavaScript will be rendered inline (instead of executed via eval).
+ * Using this option, the lkResultLogger will not be available.
  * <p>
  * The tag attributes are read from the <code>lk-js-example</code> element, as shown in the examples below:
  *
@@ -2126,6 +2105,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
  *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
  *   <tr><td class="name"><code>logger-height</code></td><td>The constrained height for the logger output</td></tr>
+ *   <tr><td class="name"><code>resultHeaderTitle</code></td><td>Optional header title for the result section</td></tr>
  * </table>
  *<p>
  *
@@ -2210,8 +2190,8 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
      *            <li>codeComment: optional comment to render above the JavaScript code example.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code example area when scrolling is required.
      *
-     *            <li>evalCode: if true (default), then execute the JavaScript (via eval); otherwise, the code is not executed.
-     *                You may want to set this to false, if you want the code to be displayed, but don't want it to be executed.
+     *            <li>evalCode: if true (default), then execute the JavaScript (via eval); otherwise, the code is not executed, but is rendered inline.
+     *                You may want to set this to false, if you want the code to be displayed and be available to the DOM.
      *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the evaluated result.
      *            <li>rawJs: the JavaScript code to execute.
@@ -2252,6 +2232,9 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         } catch (e) {
           logger.msg("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
         }
+      } else {
+        // render the live JavaScript code
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "script", '{"type":"text/javascript"}', context.rawJs);
       }
     }
   };
@@ -2463,6 +2446,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
  *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
+ *   <tr><td class="name"><code>resultHeaderTitle</code></td><td>Optional header title for the result section</td></tr>
  * </table>
  *
  * @module lkHtmlExampleTag
@@ -2515,6 +2499,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
       var context = {
         "codeComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, codeCommentExpression),
         "rawHtml": rawHtml,
+        "resultHeaderTitle": lkHtmlExampleTagNode.getAttribute("resultHeaderTitle"),
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, resultCommentExpression),
         "width": lkHtmlExampleTagNode.getAttribute("width"),
         "height": lkHtmlExampleTagNode.getAttribute("height"),
@@ -2537,6 +2522,7 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
      *          <ul>
      *            <li>codeComment: optional comment to render above the HTML code block.
      *            <li>rawHtml: the HTML code to insert.
+     *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
      *            <li>height: optional height.
@@ -2556,8 +2542,8 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
 
       // inject the live HTML code, if requested
       if (context.injectCode) {
-        // render heading
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, "Rendered Result");
+        // render result heading
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
         // render optional result comment, if present
         if (tzDomHelper.isNotEmpty(context.resultComment)) {

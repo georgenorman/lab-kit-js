@@ -12,6 +12,8 @@
  * Renders the raw JavaScript code, with syntax highlighting and line numbers,
  * and then executes it (via eval), so that the live results will be reflected in the DOM
  * (e.g., DOM manipulation, results logged to a panel, etc).
+ * Optionally, if the eval attribute is set to false, the JavaScript will be rendered inline (instead of executed via eval).
+ * Using this option, the lkResultLogger will not be available.
  * <p>
  * The tag attributes are read from the <code>lk-js-example</code> element, as shown in the examples below:
  *
@@ -32,6 +34,7 @@
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
  *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
  *   <tr><td class="name"><code>logger-height</code></td><td>The constrained height for the logger output</td></tr>
+ *   <tr><td class="name"><code>resultHeaderTitle</code></td><td>Optional header title for the result section</td></tr>
  * </table>
  *<p>
  *
@@ -116,8 +119,8 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
      *            <li>codeComment: optional comment to render above the JavaScript code example.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code example area when scrolling is required.
      *
-     *            <li>evalCode: if true (default), then execute the JavaScript (via eval); otherwise, the code is not executed.
-     *                You may want to set this to false, if you want the code to be displayed, but don't want it to be executed.
+     *            <li>evalCode: if true (default), then execute the JavaScript (via eval); otherwise, the code is not executed, but is rendered inline.
+     *                You may want to set this to false, if you want the code to be displayed and be available to the DOM.
      *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the evaluated result.
      *            <li>rawJs: the JavaScript code to execute.
@@ -158,6 +161,9 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         } catch (e) {
           logger.msg("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
         }
+      } else {
+        // render the live JavaScript code
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "script", '{"type":"text/javascript"}', context.rawJs);
       }
     }
   };
