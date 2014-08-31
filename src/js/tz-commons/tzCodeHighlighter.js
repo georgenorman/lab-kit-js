@@ -13,7 +13,7 @@
  *
  * @module tzCodeHighlighterModule
  */
-var tzCodeHighlighterModule = (function(tzDomHelper) {
+var tzCodeHighlighterModule = (function(tzGeneralUtils, tzDomHelper) {
   "use strict";
 
   var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
@@ -35,24 +35,24 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
      */
     render: function(containerNode, context) {
       // render optional heading, if present
-      if (tzDomHelper.isNotEmpty(context.heading)) {
+      if (tzGeneralUtils.isNotEmpty(context.heading)) {
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, context.heading);
       }
 
       // render optional comment, if present
-      if (tzDomHelper.isNotEmpty(context.codeBlockComment)) {
+      if (tzGeneralUtils.isNotEmpty(context.codeBlockComment)) {
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-code-example-comment"}', context.codeBlockComment);
       }
 
       // render raw code, with syntax highlighting
-      if (tzDomHelper.isEmpty(context.rawCode)) {
+      if (tzGeneralUtils.isEmpty(context.rawCode)) {
         // error - missing rawCode
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw Code is missing");
       } else {
         // create <code> block for the code listing
         var codeElement = tzDomHelper.createElement(null, "code", '{"className":"lk-code-example"}');
         var olElement = tzDomHelper.createElement(codeElement, "ol");
-        if (tzDomHelper.isNotEmpty(context.width)) {
+        if (tzGeneralUtils.isNotEmpty(context.width)) {
           olElement.style.width = context.width;
         }
 
@@ -65,7 +65,7 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
         var codeLines = context.rawCode.split("\n");
         for (var i = 0; i < codeLines.length; i++) {
           var shiftedStr = codeLines[i].substr(numLeadingSpaces); // shift left, to compensate for template padding
-          var escapedCodeLine = tzDomHelper.xmlEscape(shiftedStr);
+          var escapedCodeLine = tzGeneralUtils.xmlEscape(shiftedStr);
           // @-@:p0 Highlighter should be applied to the complete inner HTML, and not line-by-line as done here, but
           //        the closing list-item (</li>) breaks the span with the style, so keeping it simple and broken, for now.
           tzDomHelper.createElementWithAdjacentHtml(olElement, "li", null, " " + this.highlight(escapedCodeLine, context.lang));
@@ -124,4 +124,4 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
     }
   }
 
-}(tzDomHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule));

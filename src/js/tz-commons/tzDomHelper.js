@@ -13,7 +13,7 @@
  *
  * @module tzDomHelperModule
  */
-var tzDomHelperModule = (function( tzLogHelper ) {
+var tzDomHelperModule = (function( tzGeneralUtils, tzLogHelper ) {
   "use strict";
 
   return {
@@ -45,7 +45,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     getInnerHtmlWithDefault: function( elementId ) {
       var result = this.getInnerHtml( elementId );
 
-      return this.isEmpty( result ) ? '<span style="color:red;">No element found for ID: ' + elementId : result;
+      return tzGeneralUtils.isEmpty( result ) ? '<span style="color:red;">No element found for ID: ' + elementId : result;
     },
 
     /**
@@ -159,7 +159,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     createElement: function(parent, elementName, attributes) {
       var result = document.createElement(elementName);
 
-      if (this.isNotEmpty(attributes)) {
+      if (tzGeneralUtils.isNotEmpty(attributes)) {
         var attributeMap = JSON.parse(attributes);
         for (var key in attributeMap) {
           // support simple styles
@@ -193,58 +193,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       }
     },
 
-    // @-@:p0 move to general utils
-    xmlEscape: function( rawString ) {
-      var result = rawString.replace( /&/g, "&amp;" ).replace( /</g, "&lt;" ).replace( />/g, "&gt;" );
-
-      return result;
-    },
-
-    // @-@:p0 move to general utils
-    splitWithTrim: function(srcString) {
-      var result = this.isEmpty(srcString) ? srcString : srcString.split(/[\s,]+/);
-
-      return result;
-    },
-
-    // @-@:p0 move to general utils
-    quoteList: function( itemsArray ) {
-      var result = "";
-
-      if (itemsArray != null) {
-        var separator = "";
-
-        for (var i=0; i<itemsArray.length; i++) {
-          result += separator + "\"" + itemsArray[i].trim() + "\"";
-          separator = ",";
-        }
-      }
-
-      return result;
-    },
-
-    /**
-     * Returns the given <code>value</code> if not <code>null</code>, otherwise returns the given <code>defaultValue</code>.
-     *
-     * @param value - value to return if not <code>null</code>.
-     * @param defaultValue - defaultValue to return if value is <code>null</code>.
-     */
-    // @-@:p0 move to general utils
-    coalesce: function( value, defaultValue ) {
-      var result = this.isEmpty( value ) ? defaultValue : value;
-
-      tzLogHelper.debug( value );
-
-      return result;
-    },
-
-    // @-@:p0 move to general utils
-    isEmpty: function( value ) {
-      var result = (value === undefined || value === null || value === "" || (value.hasOwnProperty("length") && value.length == 0));
-
-      return result;
-    },
-
     show: function( elementId ) {
       var element = document.getElementById( elementId );
 
@@ -255,55 +203,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       var element = document.getElementById( elementId );
 
       element.style.display = "none";
-    },
-
-    // @-@:p0 move to general utils module
-    isNotEmpty: function( value ) {
-      return !this.isEmpty( value );
-    },
-
-    // @-@:p0 move to general utils module
-    getProperties: function(obj, boldLabels, maxNumProperties) {
-      var result = "";
-
-      maxNumProperties = maxNumProperties === undefined ? Number.MAX_VALUE : maxNumProperties;
-
-      if (obj !== undefined && obj !== null) {
-        var separator = "";
-        var labelPrefix = "";
-        var labelSuffix = "";
-
-        if (this.isNotEmpty(boldLabels)) {
-          labelPrefix = "  <b>"; // plus indent
-          labelSuffix = "</b>";
-        }
-
-        var propCount = 0;
-        for (var propertyName in obj) {
-          var objValue;
-
-          if ((obj[propertyName]) === undefined) {
-            objValue = "<style='color:red'>undefined</style>";
-          } else {
-            objValue = obj[propertyName];
-          }
-          result += separator + labelPrefix + propertyName + labelSuffix + "=" + objValue;
-          separator = ",\n";
-          propCount++;
-
-          if (propCount >= maxNumProperties) {
-            break;
-          }
-        }
-      }
-
-      return result;
-    },
-
-    // @-@:p0 move to general utils module
-    // http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
-    isNumber: function(n) {
-      return !isNaN(parseFloat(n)) && isFinite(n);
     },
 
     /**
@@ -340,4 +239,4 @@ var tzDomHelperModule = (function( tzLogHelper ) {
   function insertLine( text ) {
     document.writeln( text );
   }
-}( tzLogHelperModule ));
+}( tzGeneralUtilsModule, tzLogHelperModule ));

@@ -34,7 +34,7 @@
  *
  * @module lkBulletPointTag
  */
-var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkBulletPointTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var template =
@@ -80,8 +80,8 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
       var style = lkBulletPointTagNode.getAttribute("style");
       var context = {
         "iconClass": lkBulletPointTagNode.getAttribute("iconClass"), // class name
-        "styleAttribute": tzDomHelper.isEmpty(style) ? "" : "style='" + style + "'", // complete style attribute
-        "leftColumnWidth": tzDomHelper.coalesce(lkBulletPointTagNode.getAttribute("leftColumnWidth"), "24px"),
+        "styleAttribute": tzGeneralUtils.isEmpty(style) ? "" : "style='" + style + "'", // complete style attribute
+        "leftColumnWidth": tzGeneralUtils.coalesce(lkBulletPointTagNode.getAttribute("leftColumnWidth"), "24px"),
         "rawRightColumnHtml": lkBulletPointTagNode.innerHTML
       };
 
@@ -111,4 +111,4 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
     }
   };
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));

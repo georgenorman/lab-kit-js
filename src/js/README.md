@@ -39,6 +39,7 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 **Common Modules (tz-commons):**
 
 * [`tzDomHelperModule`](module-tzDomHelperModule.html): Provides helper methods for DOM manipulation and node retrieval.
+* [`tzGeneralUtilsModule`](module-tzGeneralUtilsModule.html): Provides general purpose helper functions.
 * [`tzCustomTagHelperModule`](module-tzCustomTagHelperModule.html): Provides helper methods for custom tags.
 * [`tzLogHelperModule`](module-tzLogHelperModule.html): Formats strings, for use in a console log.
 * [`tzCodeHighlighterModule`](module-tzCodeHighlighterModule.html): A crude (hack), SINGLE-LINE code highlighter, that only highlights basic code elements.

@@ -47,7 +47,7 @@
  *
  * @module lkTableOfContentsTag
  */
-var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkTableOfContentsTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   return {
@@ -113,12 +113,12 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
 
       // find all level-2 nodes (if tag name is given)
       var level2NodeList = null;
-      if (tzDomHelper.isNotEmpty(context.level2ItemsTagName)) {
+      if (tzGeneralUtils.isNotEmpty(context.level2ItemsTagName)) {
         level2NodeList = document.getElementsByTagName(context.level2ItemsTagName);
       }
 
       // start ToC
-      var toc = tzDomHelper.createElement(null, "ul", '{"className":"'+tzDomHelper.coalesce(context.cssClassName, "toc")+'"}'); // default to "toc"
+      var toc = tzDomHelper.createElement(null, "ul", '{"className":"'+tzGeneralUtils.coalesce(context.cssClassName, "toc")+'"}'); // default to "toc"
 
       // generate list of level-1 and level-2 ToC items
       for (var i = 0; i < level1NodeList.length; i++) {
@@ -141,7 +141,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
       }
 
       // add heading
-      context.title = tzDomHelper.coalesce(context.title, "Table of Contents");
+      context.title = tzGeneralUtils.coalesce(context.title, "Table of Contents");
       tzDomHelper.createElementWithAdjacentHtml(containerNode,"h2", '{"id":"tableOfContents"}', "<b>" + context.title + "</b>");
 
       // add all items to ToC element
@@ -182,10 +182,10 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
       result.className += " fail";
     }
 
-    var tocItemText = tzDomHelper.coalesce(node.innerHTML, node.id);
+    var tocItemText = tzGeneralUtils.coalesce(node.innerHTML, node.id);
     result.insertAdjacentHTML("afterbegin", "<a href=\"#" + node.id + "\">" + tocItemText + "</a>");
 
     return result;
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));

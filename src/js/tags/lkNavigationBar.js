@@ -39,7 +39,7 @@
  *
  * @module lkNavigationBarTag
  */
-var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkNavigationBarTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var globalLinks = null;
@@ -80,7 +80,7 @@ var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
       var localLinksText = lkNavigationBarTagNode.getAttribute("links");
 
       var context = {
-        "links": tzDomHelper.isEmpty(localLinksText) ? null : JSON.parse(localLinksText)
+        "links": tzGeneralUtils.isEmpty(localLinksText) ? null : JSON.parse(localLinksText)
       };
 
       // render the result
@@ -97,7 +97,7 @@ var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
      *            </ul>
      */
     render: function(containerNode, context) {
-      if (tzDomHelper.isEmpty(context.links)) {
+      if (tzGeneralUtils.isEmpty(context.links)) {
         // use global links, if none provided by the tag's link attribute
         if (this.globalLinks == null) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkNavigationBarTag.");
@@ -116,4 +116,4 @@ var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
     }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));

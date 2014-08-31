@@ -12,8 +12,12 @@
  * Renders the raw JavaScript code, with syntax highlighting and line numbers,
  * and then executes it (via eval), so that the live results will be reflected in the DOM
  * (e.g., DOM manipulation, results logged to a panel, etc).
- * Optionally, if the eval attribute is set to false, the JavaScript will be rendered inline (instead of executed via eval).
- * Using this option, the lkResultLogger will not be available.
+ * Optionally, if the evalCode attribute is set to false, the JavaScript will not be executed (via eval) or injected into the DOM
+ * (but the syntax-highlighted code will still be rendered).
+ * If the JavaScript code is required to be available to the DOM, then remove the 'type="multiline-template"' attribute from
+ * the script tag.
+ *
+ * When using the evalCode='false' option, the lkResultLogger will not be available.
  * <p>
  * The tag attributes are read from the <code>lk-js-example</code> element, as shown in the examples below:
  *
@@ -40,7 +44,7 @@
  *
  * @module lkJsExampleTag
  */
-var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter, lkResultLogger) {
+var lkJsExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, tzCodeHighlighter, lkResultLogger) {
   "use strict";
 
   var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
@@ -141,15 +145,15 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       // execute the JavaScript code (optional)
       if (context.evalCode == true) {
         // render result heading
-        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
         // render optional result comment, if present
-        if (tzDomHelper.isNotEmpty(context.resultComment)) {
+        if (tzGeneralUtils.isNotEmpty(context.resultComment)) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
         }
 
         // create default ID, if id is missing
-        if (tzDomHelper.isEmpty(context.id)) {
+        if (tzGeneralUtils.isEmpty(context.id)) {
           context.id = "DefaultID" + ++defaultIdCounter;
         }
 
@@ -161,9 +165,6 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         } catch (e) {
           logger.msg("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
         }
-      } else {
-        // render the live JavaScript code
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "script", '{"type":"text/javascript"}', context.rawJs);
       }
     }
   };
@@ -175,7 +176,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
   function createLogger(containerNode, context, header) {
     // create an element for the logger to render the results
     var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-result-logger"}');
-    if (tzDomHelper.isNotEmpty(context.loggerHeight)) {
+    if (tzGeneralUtils.isNotEmpty(context.loggerHeight)) {
       outputNode.style.maxHeight = context.loggerHeight;
     }
 
@@ -188,4 +189,4 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
     return logger;
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule, lkResultLoggerModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule, lkResultLoggerModule));

@@ -13,7 +13,7 @@
  *
  * @module lkResultLoggerModule
  */
-var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
+var lkResultLoggerModule = (function(tzGeneralUtils, tzDomHelper, tzLogHelper) {
   "use strict";
 
   var loggers = {};
@@ -64,7 +64,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param labelColor optional color of label
        */
       labelValue: function(label, value, comment, labelColor) {
-        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+        var commentFmt = tzGeneralUtils.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         doLog(formatLabel(label, labelColor) + " " + formatOutput(value) + commentFmt)
       },
@@ -79,8 +79,8 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        */
       labelValueProperties: function(label, value, comment, maxNumProperties) {
         var labelFmt = formatLabel(label);
-        var valueFmt = value === undefined ? formatOutput("undefined", "red") : "\n" + formatOutput(tzDomHelper.getProperties(value, true, maxNumProperties));
-        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+        var valueFmt = value === undefined ? formatOutput("undefined", "red") : "\n" + formatOutput(tzGeneralUtils.getProperties(value, true, maxNumProperties));
+        var commentFmt = tzGeneralUtils.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         doLog(labelFmt + valueFmt + commentFmt)
       },
@@ -99,7 +99,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
 
       labelExpression: function(label, expression, comment, labelColor) {
         var labelFmt = formatLabel(label, labelColor);
-        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+        var commentFmt = tzGeneralUtils.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         // Ternary Operator is broken (tested via FF and Chrome).
         //var valueFmt = (expression === undefined) ? formatOutput("undefined", "red") : + formatOutput(eval(expression));
@@ -123,7 +123,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       },
 
       divider: function(color) {
-        var hrColor = tzDomHelper.isEmpty(color) ? "#888" : color;
+        var hrColor = tzGeneralUtils.isEmpty(color) ? "#888" : color;
         doLog("<hr style='border:1px dotted " + hrColor + ";'>", false);
       },
 
@@ -153,7 +153,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       if (label === undefined) {
         label = "undefined";
         style = " style='color:red'";
-      } else if (tzDomHelper.isNotEmpty(color)) {
+      } else if (tzGeneralUtils.isNotEmpty(color)) {
         style = " style='color:" + color + "'";
       }
 
@@ -166,7 +166,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       if (msg === undefined) {
         msg = "undefined";
         style = " style='color:red'";
-      } else if (tzDomHelper.isNotEmpty(color)) {
+      } else if (tzGeneralUtils.isNotEmpty(color)) {
         style = " style='color:" + color + "'";
       }
 
@@ -181,7 +181,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
 
       // log a new line by default (withNewline is empty) or if withNewline is true
       var eol = "";
-      if (tzDomHelper.isEmpty(withNewline) || withNewline == true) {
+      if (tzGeneralUtils.isEmpty(withNewline) || withNewline == true) {
         eol = "\n";
       }
 
@@ -271,7 +271,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
     createLogger: function(name, header, outputNode) {
       var result = loggers[name];
 
-      if (tzDomHelper.isEmpty(result)) {
+      if (tzGeneralUtils.isEmpty(result)) {
         if (header === undefined || outputNode === undefined) {
           result = CacheLogger();
         } else {
@@ -289,7 +289,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
     getLogger: function(name, reset) {
       var result = loggers[name];
 
-      if (tzDomHelper.isEmpty(result)) {
+      if (tzGeneralUtils.isEmpty(result)) {
         throw "*The logger named '"+name+"' does not exist. If you are using the &lt;lk-js-example&gt; tag, make sure its ID is '"+name+"'.*";
       }
 
@@ -301,4 +301,4 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
     }
   };
 
-}(tzDomHelperModule, tzLogHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzLogHelperModule));

@@ -35,7 +35,7 @@
  *
  * @module lkCssExampleTag
  */
-var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
+var lkCssExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
   var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
@@ -83,7 +83,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
       rawCss = rawCss.replace(/^[\n]|[\s]+$/g, "");
 
       // error if empty
-      if (tzDomHelper.isEmpty(rawCss)) {
+      if (tzGeneralUtils.isEmpty(rawCss)) {
         cssError = "CSS Template was not found";
       }
 
@@ -102,7 +102,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
       tzDomHelper.removeAllChildNodes(lkCssExampleTagNode);
 
       // check for error
-      if (tzDomHelper.isEmpty(cssError)) {
+      if (tzGeneralUtils.isEmpty(cssError)) {
         this.render(lkCssExampleTagNode, context);
       } else {
         tzDomHelper.createElementWithAdjacentHtml(lkCssExampleTagNode, "p", '{"style.color":"red"}', cssError);
@@ -138,7 +138,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
       // inject the live CSS code, if requested
       if (context.injectCode) {
         // render the live CSS
-        if (tzDomHelper.isEmpty(context.rawCss)) {
+        if (tzGeneralUtils.isEmpty(context.rawCss)) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw CSS is missing");
         } else {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.rawCss);
@@ -149,4 +149,4 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
 
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));

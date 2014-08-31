@@ -40,6 +40,7 @@
   "labKitFiles": {
     "tzCommonsJs": [
       "src/js/tz-commons/tzLogHelper.js",
+      "src/js/tz-commons/tzGeneralUtils.js",
       "src/js/tz-commons/tzDomHelper.js",
       "src/js/tz-commons/tzCustomTagHelper.js",
       "src/js/tz-commons/tzCodeHighlighter.js"

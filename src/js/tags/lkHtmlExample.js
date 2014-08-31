@@ -35,7 +35,7 @@
  *
  * @module lkHtmlExampleTag
  */
-var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
+var lkHtmlExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
   var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
@@ -127,20 +127,20 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
       // inject the live HTML code, if requested
       if (context.injectCode) {
         // render result heading
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
         // render optional result comment, if present
-        if (tzDomHelper.isNotEmpty(context.resultComment)) {
+        if (tzGeneralUtils.isNotEmpty(context.resultComment)) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
         }
 
         // render raw HTML from the template
         var div = tzDomHelper.createElementWithAdjacentHtml(containerNode, "div", '{"className":"lk-live-code-block"}', context.rawHtml);
-        if (tzDomHelper.isNotEmpty(context.height)) {
+        if (tzGeneralUtils.isNotEmpty(context.height)) {
           div.style.height = context.height;
         }
       }
     }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));

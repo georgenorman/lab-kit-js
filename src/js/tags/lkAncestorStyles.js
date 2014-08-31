@@ -25,7 +25,7 @@
  *
  * @module lkAncestorStylesTag
  */
-var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
+var lkAncestorStylesTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
   "use strict";
 
   var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
@@ -83,7 +83,7 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
       // create the matrix object
       var matrix = {
         "elements": elementArray,
-        "styleNames": tzDomHelper.splitWithTrim(styleNames),
+        "styleNames": tzGeneralUtils.splitWithTrim(styleNames),
         "columnOptions": "[id][name]"
       };
 
@@ -123,4 +123,4 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
     }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, lkDisplayStylesTag));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule, lkDisplayStylesTag));

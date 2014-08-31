@@ -13,7 +13,7 @@
  *
  * @module baseKitModule
  */
-var baseKitModule = (function(tzDomHelper) {
+var baseKitModule = (function(tzGeneralUtils, tzDomHelper) {
   "use strict";
 
   return {
@@ -44,7 +44,7 @@ var baseKitModule = (function(tzDomHelper) {
      *   class name is provided, then uses the first &lt;progress&gt; element.
      */
     handlePageLoadCompleted: function( pageLoadProgressClassName ) {
-      var progressBar = tzDomHelper.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);
+      var progressBar = tzGeneralUtils.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);
 
       if (progressBar != null) {
         progressBar.style.display = "none";
@@ -53,4 +53,4 @@ var baseKitModule = (function(tzDomHelper) {
     }
   };
 
-}(tzDomHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule));

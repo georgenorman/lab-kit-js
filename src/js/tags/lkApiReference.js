@@ -29,7 +29,7 @@
  *
  * @module lkApiReferenceTag
  */
-var lkApiReferenceTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkApiReferenceTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var template =
@@ -103,10 +103,10 @@ var lkApiReferenceTag = (function(tzDomHelper, tzCustomTagHelper) {
       tzCustomTagHelper.renderTagFromTemplate(containerNode, template, context);
 
       // update the width
-      if (tzDomHelper.isNotEmpty(context.width)) {
+      if (tzGeneralUtils.isNotEmpty(context.width)) {
         containerNode.style.width = context.width;
       }
     }
   };
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));

@@ -87,6 +87,185 @@ var tzLogHelperModule = (function() {
  ~     http://www.apache.org/licenses/LICENSE-2.0
  ~
  ~ --------------------------------------------------------------
+ ~ General utility functions - sharable among all projects.
+ ~ --------------------------------------------------------------
+ */
+
+/**
+ * A module that provides general purpose helper functions.
+ *
+ * @module tzGeneralUtilsModule
+ */
+var tzGeneralUtilsModule = (function( tzLogHelper ) {
+  "use strict";
+
+  return {
+
+    /**
+     * Simple XML escape function that replaces all ampersand, less-than and greater-than characters with
+     * their escaped equivalents.
+     *
+     * @param rawString to be escaped
+     * @returns {string} escaped string.
+     */
+    xmlEscape: function( rawString ) {
+      var result = rawString.replace( /&/g, "&amp;" ).replace( /</g, "&lt;" ).replace( />/g, "&gt;" );
+
+      return result;
+    },
+
+    /**
+     * Splits the given white-space separated string, removing all white-space from the remaining segments.
+     *
+     * @param srcString white-space separated string to be split.
+     * @returns {array} array of trimmed string segments.
+     */
+    splitWithTrim: function(srcString) {
+      var result = this.isEmpty(srcString) ? srcString : srcString.split(/[\s,]+/);
+
+      return result;
+    },
+
+    /**
+     * For each item in the given stringItemsArray, trim the string, then surround it with quotes and lastly,
+     * append it to the result string (separated by commas).
+     *
+     * @param stringItemsArray
+     * @returns {string} a comma separated string, with each item in the stringItemsArray surrounded by quotes.
+     */
+    quoteList: function( stringItemsArray ) {
+      var result = "";
+
+      if (stringItemsArray != null) {
+        var separator = "";
+
+        for (var i=0; i<stringItemsArray.length; i++) {
+          result += separator + "\"" + stringItemsArray[i].trim() + "\"";
+          separator = ",";
+        }
+      }
+
+      return result;
+    },
+
+    /**
+     * Returns the given <code>value</code> if not <code>null</code>, otherwise returns the given <code>defaultValue</code>.
+     *
+     * @param value - value to return if not <code>null</code>.
+     * @param defaultValue - defaultValue to return if value is <code>null</code>.
+     */
+    coalesce: function( value, defaultValue ) {
+      var result = this.isEmpty( value ) ? defaultValue : value;
+
+      tzLogHelper.debug( value );
+
+      return result;
+    },
+
+    /**
+     * Returns true if the given value is undefined, null, an empty String or an Object with a
+     * length property that's zero (e.g., a zero-length array).
+     *
+     * @param value to be tested
+     * @returns {boolean|*}
+     */
+    isEmpty: function( value ) {
+      var result = (value === undefined || value === null || value === "" || (value.hasOwnProperty("length") && value.length == 0));
+
+      return result;
+    },
+
+    /**
+     * Inverse of isEmpty.
+     *
+     * @param value to be tested
+     * @returns {boolean|*}
+     */
+    isNotEmpty: function( value ) {
+      return !this.isEmpty( value );
+    },
+
+    /**
+     * Return a String, of the form "propertyName=propertyValue\n", for every property of the given obj, or until
+     * maxNumProperties has been reached.
+     *
+     * @param obj object to retrieve the properties from.
+     * @param boldLabels optional flag that causes each propertyName to be surrounded by HTML bold tags
+     * @param maxNumProperties optional limiter for the number of properties to retrieve.
+     * @returns {string} new-line separated set of property/value pairs
+     */
+    getProperties: function(obj, boldLabels, maxNumProperties) {
+      var result = "";
+
+      maxNumProperties = maxNumProperties === undefined ? Number.MAX_VALUE : maxNumProperties;
+
+      if (obj !== undefined && obj !== null) {
+        var separator = "";
+        var labelPrefix = "";
+        var labelSuffix = "";
+
+        if (this.isNotEmpty(boldLabels)) {
+          labelPrefix = "  <b>"; // plus indent
+          labelSuffix = "</b>";
+        }
+
+        var propCount = 0;
+        for (var propertyName in obj) {
+          var objValue;
+
+          if ((obj[propertyName]) === undefined) {
+            objValue = "<style='color:red'>undefined</style>";
+          } else {
+            objValue = obj[propertyName];
+          }
+
+          result += separator + labelPrefix + propertyName + labelSuffix + "=" + objValue;
+          separator = ",\n";
+          propCount++;
+
+          if (propCount >= maxNumProperties) {
+            break;
+          }
+        }
+      }
+
+      return result;
+    },
+
+    /**
+     * Copy all properties that are directly owned by the given source object (i.e., hasOwnProperty) to the given target object.
+     *
+     * @param source object to copy methods and properties from.
+     * @param target object to copy methods and properties to.
+     */
+    copyProperties: function(source, target) {
+      for (var prop in source) {
+        if (source.hasOwnProperty(prop)) {
+          target[prop] = source[prop];
+        }
+      }
+    },
+
+    /**
+     * Returns true if the given value is a number.
+     * See: http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
+     *
+     * @param value
+     * @returns {boolean|*}
+     */
+    isNumber: function(value) {
+      return !isNaN(parseFloat(value)) && isFinite(value);
+    }
+  };
+
+}( tzLogHelperModule ));
+
+/*
+ ~ Copyright (c) 2014 George Norman.
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ --------------------------------------------------------------
  ~ Simple DOM helper functions - sharable among all projects.
  ~ --------------------------------------------------------------
  */
@@ -96,7 +275,7 @@ var tzLogHelperModule = (function() {
  *
  * @module tzDomHelperModule
  */
-var tzDomHelperModule = (function( tzLogHelper ) {
+var tzDomHelperModule = (function( tzGeneralUtils, tzLogHelper ) {
   "use strict";
 
   return {
@@ -128,7 +307,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     getInnerHtmlWithDefault: function( elementId ) {
       var result = this.getInnerHtml( elementId );
 
-      return this.isEmpty( result ) ? '<span style="color:red;">No element found for ID: ' + elementId : result;
+      return tzGeneralUtils.isEmpty( result ) ? '<span style="color:red;">No element found for ID: ' + elementId : result;
     },
 
     /**
@@ -242,7 +421,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
     createElement: function(parent, elementName, attributes) {
       var result = document.createElement(elementName);
 
-      if (this.isNotEmpty(attributes)) {
+      if (tzGeneralUtils.isNotEmpty(attributes)) {
         var attributeMap = JSON.parse(attributes);
         for (var key in attributeMap) {
           // support simple styles
@@ -276,58 +455,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       }
     },
 
-    // @-@:p0 move to general utils
-    xmlEscape: function( rawString ) {
-      var result = rawString.replace( /&/g, "&amp;" ).replace( /</g, "&lt;" ).replace( />/g, "&gt;" );
-
-      return result;
-    },
-
-    // @-@:p0 move to general utils
-    splitWithTrim: function(srcString) {
-      var result = this.isEmpty(srcString) ? srcString : srcString.split(/[\s,]+/);
-
-      return result;
-    },
-
-    // @-@:p0 move to general utils
-    quoteList: function( itemsArray ) {
-      var result = "";
-
-      if (itemsArray != null) {
-        var separator = "";
-
-        for (var i=0; i<itemsArray.length; i++) {
-          result += separator + "\"" + itemsArray[i].trim() + "\"";
-          separator = ",";
-        }
-      }
-
-      return result;
-    },
-
-    /**
-     * Returns the given <code>value</code> if not <code>null</code>, otherwise returns the given <code>defaultValue</code>.
-     *
-     * @param value - value to return if not <code>null</code>.
-     * @param defaultValue - defaultValue to return if value is <code>null</code>.
-     */
-    // @-@:p0 move to general utils
-    coalesce: function( value, defaultValue ) {
-      var result = this.isEmpty( value ) ? defaultValue : value;
-
-      tzLogHelper.debug( value );
-
-      return result;
-    },
-
-    // @-@:p0 move to general utils
-    isEmpty: function( value ) {
-      var result = (value === undefined || value === null || value === "" || (value.hasOwnProperty("length") && value.length == 0));
-
-      return result;
-    },
-
     show: function( elementId ) {
       var element = document.getElementById( elementId );
 
@@ -338,55 +465,6 @@ var tzDomHelperModule = (function( tzLogHelper ) {
       var element = document.getElementById( elementId );
 
       element.style.display = "none";
-    },
-
-    // @-@:p0 move to general utils module
-    isNotEmpty: function( value ) {
-      return !this.isEmpty( value );
-    },
-
-    // @-@:p0 move to general utils module
-    getProperties: function(obj, boldLabels, maxNumProperties) {
-      var result = "";
-
-      maxNumProperties = maxNumProperties === undefined ? Number.MAX_VALUE : maxNumProperties;
-
-      if (obj !== undefined && obj !== null) {
-        var separator = "";
-        var labelPrefix = "";
-        var labelSuffix = "";
-
-        if (this.isNotEmpty(boldLabels)) {
-          labelPrefix = "  <b>"; // plus indent
-          labelSuffix = "</b>";
-        }
-
-        var propCount = 0;
-        for (var propertyName in obj) {
-          var objValue;
-
-          if ((obj[propertyName]) === undefined) {
-            objValue = "<style='color:red'>undefined</style>";
-          } else {
-            objValue = obj[propertyName];
-          }
-          result += separator + labelPrefix + propertyName + labelSuffix + "=" + objValue;
-          separator = ",\n";
-          propCount++;
-
-          if (propCount >= maxNumProperties) {
-            break;
-          }
-        }
-      }
-
-      return result;
-    },
-
-    // @-@:p0 move to general utils module
-    // http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
-    isNumber: function(n) {
-      return !isNaN(parseFloat(n)) && isFinite(n);
     },
 
     /**
@@ -423,7 +501,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
   function insertLine( text ) {
     document.writeln( text );
   }
-}( tzLogHelperModule ));
+}( tzGeneralUtilsModule, tzLogHelperModule ));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -440,7 +518,7 @@ var tzDomHelperModule = (function( tzLogHelper ) {
  *
  * @module tzCustomTagHelperModule
  */
-var tzCustomTagHelperModule = (function( tzDomHelper ) {
+var tzCustomTagHelperModule = (function( tzGeneralUtils, tzDomHelper ) {
   "use strict";
 
   var templateVariableExpression = new RegExp( "{{(.*?)}}", "g" );
@@ -528,7 +606,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
     getTemplate: function( templateId ) {
       var result = tzDomHelper.getInnerHtml( templateId );
 
-      if (tzDomHelper.isEmpty( result )) {
+      if (tzGeneralUtils.isEmpty( result )) {
         result = '<span style="color:red;">Template was not found: ' + templateId + '</span>';
       }
 
@@ -550,7 +628,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
       return result;
     }
   }
-}( tzDomHelperModule ));
+}( tzGeneralUtilsModule, tzDomHelperModule ));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -567,7 +645,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
  *
  * @module tzCodeHighlighterModule
  */
-var tzCodeHighlighterModule = (function(tzDomHelper) {
+var tzCodeHighlighterModule = (function(tzGeneralUtils, tzDomHelper) {
   "use strict";
 
   var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
@@ -589,24 +667,24 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
      */
     render: function(containerNode, context) {
       // render optional heading, if present
-      if (tzDomHelper.isNotEmpty(context.heading)) {
+      if (tzGeneralUtils.isNotEmpty(context.heading)) {
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, context.heading);
       }
 
       // render optional comment, if present
-      if (tzDomHelper.isNotEmpty(context.codeBlockComment)) {
+      if (tzGeneralUtils.isNotEmpty(context.codeBlockComment)) {
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-code-example-comment"}', context.codeBlockComment);
       }
 
       // render raw code, with syntax highlighting
-      if (tzDomHelper.isEmpty(context.rawCode)) {
+      if (tzGeneralUtils.isEmpty(context.rawCode)) {
         // error - missing rawCode
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw Code is missing");
       } else {
         // create <code> block for the code listing
         var codeElement = tzDomHelper.createElement(null, "code", '{"className":"lk-code-example"}');
         var olElement = tzDomHelper.createElement(codeElement, "ol");
-        if (tzDomHelper.isNotEmpty(context.width)) {
+        if (tzGeneralUtils.isNotEmpty(context.width)) {
           olElement.style.width = context.width;
         }
 
@@ -619,7 +697,7 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
         var codeLines = context.rawCode.split("\n");
         for (var i = 0; i < codeLines.length; i++) {
           var shiftedStr = codeLines[i].substr(numLeadingSpaces); // shift left, to compensate for template padding
-          var escapedCodeLine = tzDomHelper.xmlEscape(shiftedStr);
+          var escapedCodeLine = tzGeneralUtils.xmlEscape(shiftedStr);
           // @-@:p0 Highlighter should be applied to the complete inner HTML, and not line-by-line as done here, but
           //        the closing list-item (</li>) breaks the span with the style, so keeping it simple and broken, for now.
           tzDomHelper.createElementWithAdjacentHtml(olElement, "li", null, " " + this.highlight(escapedCodeLine, context.lang));
@@ -678,7 +756,7 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
     }
   }
 
-}(tzDomHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule));
 
 /*
   ~ Copyright (c) 2014 George Norman.
@@ -695,7 +773,7 @@ var tzCodeHighlighterModule = (function(tzDomHelper) {
  *
  * @module baseKitModule
  */
-var baseKitModule = (function(tzDomHelper) {
+var baseKitModule = (function(tzGeneralUtils, tzDomHelper) {
   "use strict";
 
   return {
@@ -726,7 +804,7 @@ var baseKitModule = (function(tzDomHelper) {
      *   class name is provided, then uses the first &lt;progress&gt; element.
      */
     handlePageLoadCompleted: function( pageLoadProgressClassName ) {
-      var progressBar = tzDomHelper.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);
+      var progressBar = tzGeneralUtils.isEmpty(pageLoadProgressClassName) ? tzDomHelper.getFirstElementByTagName("progress") : document.querySelector("."+pageLoadProgressClassName);
 
       if (progressBar != null) {
         progressBar.style.display = "none";
@@ -735,7 +813,7 @@ var baseKitModule = (function(tzDomHelper) {
     }
   };
 
-}(tzDomHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule));
 
 /*
   ~ Copyright (c) 2014 George Norman.
@@ -752,7 +830,7 @@ var baseKitModule = (function(tzDomHelper) {
  *
  * @module lkResultLoggerModule
  */
-var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
+var lkResultLoggerModule = (function(tzGeneralUtils, tzDomHelper, tzLogHelper) {
   "use strict";
 
   var loggers = {};
@@ -803,7 +881,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        * @param labelColor optional color of label
        */
       labelValue: function(label, value, comment, labelColor) {
-        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+        var commentFmt = tzGeneralUtils.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         doLog(formatLabel(label, labelColor) + " " + formatOutput(value) + commentFmt)
       },
@@ -818,8 +896,8 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
        */
       labelValueProperties: function(label, value, comment, maxNumProperties) {
         var labelFmt = formatLabel(label);
-        var valueFmt = value === undefined ? formatOutput("undefined", "red") : "\n" + formatOutput(tzDomHelper.getProperties(value, true, maxNumProperties));
-        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+        var valueFmt = value === undefined ? formatOutput("undefined", "red") : "\n" + formatOutput(tzGeneralUtils.getProperties(value, true, maxNumProperties));
+        var commentFmt = tzGeneralUtils.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         doLog(labelFmt + valueFmt + commentFmt)
       },
@@ -838,7 +916,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
 
       labelExpression: function(label, expression, comment, labelColor) {
         var labelFmt = formatLabel(label, labelColor);
-        var commentFmt = tzDomHelper.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
+        var commentFmt = tzGeneralUtils.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         // Ternary Operator is broken (tested via FF and Chrome).
         //var valueFmt = (expression === undefined) ? formatOutput("undefined", "red") : + formatOutput(eval(expression));
@@ -862,7 +940,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       },
 
       divider: function(color) {
-        var hrColor = tzDomHelper.isEmpty(color) ? "#888" : color;
+        var hrColor = tzGeneralUtils.isEmpty(color) ? "#888" : color;
         doLog("<hr style='border:1px dotted " + hrColor + ";'>", false);
       },
 
@@ -892,7 +970,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       if (label === undefined) {
         label = "undefined";
         style = " style='color:red'";
-      } else if (tzDomHelper.isNotEmpty(color)) {
+      } else if (tzGeneralUtils.isNotEmpty(color)) {
         style = " style='color:" + color + "'";
       }
 
@@ -905,7 +983,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
       if (msg === undefined) {
         msg = "undefined";
         style = " style='color:red'";
-      } else if (tzDomHelper.isNotEmpty(color)) {
+      } else if (tzGeneralUtils.isNotEmpty(color)) {
         style = " style='color:" + color + "'";
       }
 
@@ -920,7 +998,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
 
       // log a new line by default (withNewline is empty) or if withNewline is true
       var eol = "";
-      if (tzDomHelper.isEmpty(withNewline) || withNewline == true) {
+      if (tzGeneralUtils.isEmpty(withNewline) || withNewline == true) {
         eol = "\n";
       }
 
@@ -1010,7 +1088,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
     createLogger: function(name, header, outputNode) {
       var result = loggers[name];
 
-      if (tzDomHelper.isEmpty(result)) {
+      if (tzGeneralUtils.isEmpty(result)) {
         if (header === undefined || outputNode === undefined) {
           result = CacheLogger();
         } else {
@@ -1028,7 +1106,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
     getLogger: function(name, reset) {
       var result = loggers[name];
 
-      if (tzDomHelper.isEmpty(result)) {
+      if (tzGeneralUtils.isEmpty(result)) {
         throw "*The logger named '"+name+"' does not exist. If you are using the &lt;lk-js-example&gt; tag, make sure its ID is '"+name+"'.*";
       }
 
@@ -1040,7 +1118,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
     }
   };
 
-}(tzDomHelperModule, tzLogHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzLogHelperModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -1073,7 +1151,7 @@ var lkResultLoggerModule = (function(tzDomHelper, tzLogHelper) {
  *
  * @module lkApiReferenceTag
  */
-var lkApiReferenceTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkApiReferenceTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var template =
@@ -1147,13 +1225,13 @@ var lkApiReferenceTag = (function(tzDomHelper, tzCustomTagHelper) {
       tzCustomTagHelper.renderTagFromTemplate(containerNode, template, context);
 
       // update the width
-      if (tzDomHelper.isNotEmpty(context.width)) {
+      if (tzGeneralUtils.isNotEmpty(context.width)) {
         containerNode.style.width = context.width;
       }
     }
   };
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -1191,7 +1269,7 @@ var lkApiReferenceTag = (function(tzDomHelper, tzCustomTagHelper) {
  *
  * @module lkBulletPointTag
  */
-var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkBulletPointTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var template =
@@ -1237,8 +1315,8 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
       var style = lkBulletPointTagNode.getAttribute("style");
       var context = {
         "iconClass": lkBulletPointTagNode.getAttribute("iconClass"), // class name
-        "styleAttribute": tzDomHelper.isEmpty(style) ? "" : "style='" + style + "'", // complete style attribute
-        "leftColumnWidth": tzDomHelper.coalesce(lkBulletPointTagNode.getAttribute("leftColumnWidth"), "24px"),
+        "styleAttribute": tzGeneralUtils.isEmpty(style) ? "" : "style='" + style + "'", // complete style attribute
+        "leftColumnWidth": tzGeneralUtils.coalesce(lkBulletPointTagNode.getAttribute("leftColumnWidth"), "24px"),
         "rawRightColumnHtml": lkBulletPointTagNode.innerHTML
       };
 
@@ -1268,7 +1346,7 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
     }
   };
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -1311,7 +1389,7 @@ var lkBulletPointTag = (function(tzDomHelper, tzCustomTagHelper) {
  *
  * @module lkNavigationBarTag
  */
-var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkNavigationBarTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var globalLinks = null;
@@ -1352,7 +1430,7 @@ var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
       var localLinksText = lkNavigationBarTagNode.getAttribute("links");
 
       var context = {
-        "links": tzDomHelper.isEmpty(localLinksText) ? null : JSON.parse(localLinksText)
+        "links": tzGeneralUtils.isEmpty(localLinksText) ? null : JSON.parse(localLinksText)
       };
 
       // render the result
@@ -1369,7 +1447,7 @@ var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
      *            </ul>
      */
     render: function(containerNode, context) {
-      if (tzDomHelper.isEmpty(context.links)) {
+      if (tzGeneralUtils.isEmpty(context.links)) {
         // use global links, if none provided by the tag's link attribute
         if (this.globalLinks == null) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Global Links was not set for lkNavigationBarTag.");
@@ -1388,7 +1466,7 @@ var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
     }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -1439,7 +1517,7 @@ var lkNavigationBarTag = (function(tzDomHelper, tzCustomTagHelper) {
  *
  * @module lkTableOfContentsTag
  */
-var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkTableOfContentsTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   return {
@@ -1505,12 +1583,12 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
 
       // find all level-2 nodes (if tag name is given)
       var level2NodeList = null;
-      if (tzDomHelper.isNotEmpty(context.level2ItemsTagName)) {
+      if (tzGeneralUtils.isNotEmpty(context.level2ItemsTagName)) {
         level2NodeList = document.getElementsByTagName(context.level2ItemsTagName);
       }
 
       // start ToC
-      var toc = tzDomHelper.createElement(null, "ul", '{"className":"'+tzDomHelper.coalesce(context.cssClassName, "toc")+'"}'); // default to "toc"
+      var toc = tzDomHelper.createElement(null, "ul", '{"className":"'+tzGeneralUtils.coalesce(context.cssClassName, "toc")+'"}'); // default to "toc"
 
       // generate list of level-1 and level-2 ToC items
       for (var i = 0; i < level1NodeList.length; i++) {
@@ -1533,7 +1611,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
       }
 
       // add heading
-      context.title = tzDomHelper.coalesce(context.title, "Table of Contents");
+      context.title = tzGeneralUtils.coalesce(context.title, "Table of Contents");
       tzDomHelper.createElementWithAdjacentHtml(containerNode,"h2", '{"id":"tableOfContents"}', "<b>" + context.title + "</b>");
 
       // add all items to ToC element
@@ -1574,13 +1652,13 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
       result.className += " fail";
     }
 
-    var tocItemText = tzDomHelper.coalesce(node.innerHTML, node.id);
+    var tocItemText = tzGeneralUtils.coalesce(node.innerHTML, node.id);
     result.insertAdjacentHTML("afterbegin", "<a href=\"#" + node.id + "\">" + tocItemText + "</a>");
 
     return result;
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -1609,7 +1687,7 @@ var lkTableOfContentsTag = (function(tzDomHelper, tzCustomTagHelper) {
  *
  * @module lkAncestorStylesTag
  */
-var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
+var lkAncestorStylesTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, lkDisplayStyles) {
   "use strict";
 
   var commentExpression = new RegExp("<comment>((.|\n)*)<\/comment>", "ig");
@@ -1667,7 +1745,7 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
       // create the matrix object
       var matrix = {
         "elements": elementArray,
-        "styleNames": tzDomHelper.splitWithTrim(styleNames),
+        "styleNames": tzGeneralUtils.splitWithTrim(styleNames),
         "columnOptions": "[id][name]"
       };
 
@@ -1707,7 +1785,7 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
     }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, lkDisplayStylesTag));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule, lkDisplayStylesTag));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -1750,7 +1828,7 @@ var lkAncestorStylesTag = (function(tzDomHelper, tzCustomTagHelper, lkDisplaySty
  *
  * @module lkDisplayStylesTag
  */
-var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkDisplayStylesTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var commentExpression = new RegExp("<comment>((.|\n)*)</comment>", "ig");
@@ -1772,7 +1850,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
       // variant: compact unordered list, where the styleName is the same for each item
       context["useCompactUnorderedList"] = "true"; // all property names are the same
 
-      if (tzDomHelper.isEmpty(context["title"])) {
+      if (tzGeneralUtils.isEmpty(context["title"])) {
         context["title"] = "Rendered '" + styleName + "' styles:";
       }
       var itemIds = displayStylesTagNode.innerHTML.replace(/\s+/g, '');
@@ -1782,7 +1860,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
 
     handleVerboseListVariant: function(displayStylesTagNode, context) {
       // variant: verbose unordered list, where the styleName is contained in tag content: {"elementID": "styleName"}, ...
-      if (tzDomHelper.isEmpty(context["title"])) {
+      if (tzGeneralUtils.isEmpty(context["title"])) {
         context["title"] = "Rendered styles:";
       }
 
@@ -1792,7 +1870,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     handleMatrixVariant: function(displayStylesTagNode, context) {
-      if (tzDomHelper.isEmpty(context["title"])) {
+      if (tzGeneralUtils.isEmpty(context["title"])) {
         context["title"] = "Rendered styles:";
       }
 
@@ -1804,12 +1882,12 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
       var styleNames = displayStylesTagNode.innerHTML.match(styleNamesExpression)[0].replace(styleNamesExpression, "$1");
 
       try {
-        var elements = elementIdsToElements(tzDomHelper.splitWithTrim(elementIds));
+        var elements = elementIdsToElements(tzGeneralUtils.splitWithTrim(elementIds));
 
         var matrix = {};
-        matrix["legendImages"] = tzDomHelper.splitWithTrim(legendImages);
+        matrix["legendImages"] = tzGeneralUtils.splitWithTrim(legendImages);
         matrix["elements"] = elements;
-        matrix["styleNames"] = tzDomHelper.splitWithTrim(styleNames);
+        matrix["styleNames"] = tzGeneralUtils.splitWithTrim(styleNames);
         matrix["columnOptions"] = "[id]";
 
         context["matrix"] = matrix;
@@ -1878,8 +1956,8 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
       var styleName = displayStylesTagNode.getAttribute("styleName");
 
       // handle tag variants (constant styleName for all items or unique styleName per item, etc)
-      if (tzDomHelper.isNotEmpty(displayStylesTagNode.innerHTML)) {
-        if (tzDomHelper.isEmpty(styleName)) {
+      if (tzGeneralUtils.isNotEmpty(displayStylesTagNode.innerHTML)) {
+        if (tzGeneralUtils.isEmpty(styleName)) {
           // styleName was not given, so it must be table or verbose list
           if (elementIdsExpression.test(displayStylesTagNode.innerHTML)) {
             variantMgr.handleMatrixVariant(displayStylesTagNode, context);
@@ -1914,19 +1992,19 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
      */
     render: function(containerNode, context) {
        // handle optional title
-      if (tzDomHelper.isNotEmpty(context.title)) {
+      if (tzGeneralUtils.isNotEmpty(context.title)) {
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, context.title);
       }
 
       // handle optional comment
-      if (tzDomHelper.isNotEmpty(context.comment)) {
+      if (tzGeneralUtils.isNotEmpty(context.comment)) {
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-code-example-comment"}', context.comment);
       }
 
       // render as matrix, unordered list, or error.
-      if (tzDomHelper.isNotEmpty(context.matrix)) {
+      if (tzGeneralUtils.isNotEmpty(context.matrix)) {
         renderAsMatrix(containerNode, context);
-      } else if (tzDomHelper.isNotEmpty(context.unorderedListItems)) {
+      } else if (tzGeneralUtils.isNotEmpty(context.unorderedListItems)) {
         renderAsUnorderedList(containerNode, context);
       } else {
         // property list was not provided, so display an error.
@@ -1948,7 +2026,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
 
     // create table and optionally set the width
     table = tzDomHelper.createElement(wrapper, "table");
-    if (tzDomHelper.isNotEmpty(context.width)) {
+    if (tzGeneralUtils.isNotEmpty(context.width)) {
       table.style.width = context.width;
     }
 
@@ -1956,7 +2034,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     tr = tzDomHelper.createElement(table, "tr");
 
     //   - optionally, display legend
-    if (tzDomHelper.isNotEmpty(matrix.legendImages)) {
+    if (tzGeneralUtils.isNotEmpty(matrix.legendImages)) {
       tzDomHelper.createElementWithAdjacentHtml(tr, "th", null, "legend");
     }
 
@@ -1980,7 +2058,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
       tr = tzDomHelper.createElement(table, "tr");
 
       // first column is the legend
-      if (tzDomHelper.isNotEmpty(matrix.legendImages)) {
+      if (tzGeneralUtils.isNotEmpty(matrix.legendImages)) {
         td = tzDomHelper.createElement(tr, "td", '{"className": "center"}');
         if (matrix.legendImages.length > eleIndex) {
           tzDomHelper.createElement(td, "img", '{"src": "'+matrix.legendImages[eleIndex]+'"}');
@@ -2036,7 +2114,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
    */
   function listItemsToMap(itemIds, styleName) {
     var result = {};
-    var itemIdList = tzDomHelper.splitWithTrim(itemIds);
+    var itemIdList = tzGeneralUtils.splitWithTrim(itemIds);
 
     for (var i = 0; i < itemIdList.length; i++) {
       result[itemIdList[i]] = styleName;
@@ -2067,7 +2145,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     return result;
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -2111,7 +2189,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
  *
  * @module lkJsExampleTag
  */
-var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter, lkResultLogger) {
+var lkJsExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, tzCodeHighlighter, lkResultLogger) {
   "use strict";
 
   var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
@@ -2212,15 +2290,15 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
       // execute the JavaScript code (optional)
       if (context.evalCode == true) {
         // render result heading
-        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
         // render optional result comment, if present
-        if (tzDomHelper.isNotEmpty(context.resultComment)) {
+        if (tzGeneralUtils.isNotEmpty(context.resultComment)) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
         }
 
         // create default ID, if id is missing
-        if (tzDomHelper.isEmpty(context.id)) {
+        if (tzGeneralUtils.isEmpty(context.id)) {
           context.id = "DefaultID" + ++defaultIdCounter;
         }
 
@@ -2232,9 +2310,6 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
         } catch (e) {
           logger.msg("<span style='color:red;'>LabKit caught an Exception:<br> " + e.toString() + "</span>");
         }
-      } else {
-        // render the live JavaScript code
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "script", '{"type":"text/javascript"}', context.rawJs);
       }
     }
   };
@@ -2246,7 +2321,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
   function createLogger(containerNode, context, header) {
     // create an element for the logger to render the results
     var outputNode = tzDomHelper.createElement(containerNode, "pre", '{"className":"lk-result-logger"}');
-    if (tzDomHelper.isNotEmpty(context.loggerHeight)) {
+    if (tzGeneralUtils.isNotEmpty(context.loggerHeight)) {
       outputNode.style.maxHeight = context.loggerHeight;
     }
 
@@ -2259,7 +2334,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
     return logger;
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule, lkResultLoggerModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule, lkResultLoggerModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -2298,7 +2373,7 @@ var lkJsExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter
  *
  * @module lkCssExampleTag
  */
-var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
+var lkCssExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
   var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
@@ -2346,7 +2421,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
       rawCss = rawCss.replace(/^[\n]|[\s]+$/g, "");
 
       // error if empty
-      if (tzDomHelper.isEmpty(rawCss)) {
+      if (tzGeneralUtils.isEmpty(rawCss)) {
         cssError = "CSS Template was not found";
       }
 
@@ -2365,7 +2440,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
       tzDomHelper.removeAllChildNodes(lkCssExampleTagNode);
 
       // check for error
-      if (tzDomHelper.isEmpty(cssError)) {
+      if (tzGeneralUtils.isEmpty(cssError)) {
         this.render(lkCssExampleTagNode, context);
       } else {
         tzDomHelper.createElementWithAdjacentHtml(lkCssExampleTagNode, "p", '{"style.color":"red"}', cssError);
@@ -2401,7 +2476,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
       // inject the live CSS code, if requested
       if (context.injectCode) {
         // render the live CSS
-        if (tzDomHelper.isEmpty(context.rawCss)) {
+        if (tzGeneralUtils.isEmpty(context.rawCss)) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"style.color":"red"}', "Raw CSS is missing");
         } else {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "style", null, context.rawCss);
@@ -2412,7 +2487,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
 
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
 
 /*
  ~ Copyright (c) 2014 George Norman.
@@ -2451,7 +2526,7 @@ var lkCssExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighte
  *
  * @module lkHtmlExampleTag
  */
-var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
+var lkHtmlExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, tzCodeHighlighter) {
   "use strict";
 
   var codeCommentExpression = new RegExp("<codeComment>((.|\n)*)<\/codeComment>", "ig");
@@ -2543,20 +2618,20 @@ var lkHtmlExampleTag = (function(tzDomHelper, tzCustomTagHelper, tzCodeHighlight
       // inject the live HTML code, if requested
       if (context.injectCode) {
         // render result heading
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzDomHelper.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesce(context.resultHeaderTitle, "Rendered Result"));
 
         // render optional result comment, if present
-        if (tzDomHelper.isNotEmpty(context.resultComment)) {
+        if (tzGeneralUtils.isNotEmpty(context.resultComment)) {
           tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-live-code-block-comment"}', context.resultComment);
         }
 
         // render raw HTML from the template
         var div = tzDomHelper.createElementWithAdjacentHtml(containerNode, "div", '{"className":"lk-live-code-block"}', context.rawHtml);
-        if (tzDomHelper.isNotEmpty(context.height)) {
+        if (tzGeneralUtils.isNotEmpty(context.height)) {
           div.style.height = context.height;
         }
       }
     }
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule, tzCodeHighlighterModule));

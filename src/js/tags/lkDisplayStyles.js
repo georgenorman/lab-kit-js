@@ -39,7 +39,7 @@
  *
  * @module lkDisplayStylesTag
  */
-var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
+var lkDisplayStylesTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper) {
   "use strict";
 
   var commentExpression = new RegExp("<comment>((.|\n)*)</comment>", "ig");
@@ -61,7 +61,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
       // variant: compact unordered list, where the styleName is the same for each item
       context["useCompactUnorderedList"] = "true"; // all property names are the same
 
-      if (tzDomHelper.isEmpty(context["title"])) {
+      if (tzGeneralUtils.isEmpty(context["title"])) {
         context["title"] = "Rendered '" + styleName + "' styles:";
       }
       var itemIds = displayStylesTagNode.innerHTML.replace(/\s+/g, '');
@@ -71,7 +71,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
 
     handleVerboseListVariant: function(displayStylesTagNode, context) {
       // variant: verbose unordered list, where the styleName is contained in tag content: {"elementID": "styleName"}, ...
-      if (tzDomHelper.isEmpty(context["title"])) {
+      if (tzGeneralUtils.isEmpty(context["title"])) {
         context["title"] = "Rendered styles:";
       }
 
@@ -81,7 +81,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     },
 
     handleMatrixVariant: function(displayStylesTagNode, context) {
-      if (tzDomHelper.isEmpty(context["title"])) {
+      if (tzGeneralUtils.isEmpty(context["title"])) {
         context["title"] = "Rendered styles:";
       }
 
@@ -93,12 +93,12 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
       var styleNames = displayStylesTagNode.innerHTML.match(styleNamesExpression)[0].replace(styleNamesExpression, "$1");
 
       try {
-        var elements = elementIdsToElements(tzDomHelper.splitWithTrim(elementIds));
+        var elements = elementIdsToElements(tzGeneralUtils.splitWithTrim(elementIds));
 
         var matrix = {};
-        matrix["legendImages"] = tzDomHelper.splitWithTrim(legendImages);
+        matrix["legendImages"] = tzGeneralUtils.splitWithTrim(legendImages);
         matrix["elements"] = elements;
-        matrix["styleNames"] = tzDomHelper.splitWithTrim(styleNames);
+        matrix["styleNames"] = tzGeneralUtils.splitWithTrim(styleNames);
         matrix["columnOptions"] = "[id]";
 
         context["matrix"] = matrix;
@@ -167,8 +167,8 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
       var styleName = displayStylesTagNode.getAttribute("styleName");
 
       // handle tag variants (constant styleName for all items or unique styleName per item, etc)
-      if (tzDomHelper.isNotEmpty(displayStylesTagNode.innerHTML)) {
-        if (tzDomHelper.isEmpty(styleName)) {
+      if (tzGeneralUtils.isNotEmpty(displayStylesTagNode.innerHTML)) {
+        if (tzGeneralUtils.isEmpty(styleName)) {
           // styleName was not given, so it must be table or verbose list
           if (elementIdsExpression.test(displayStylesTagNode.innerHTML)) {
             variantMgr.handleMatrixVariant(displayStylesTagNode, context);
@@ -203,19 +203,19 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
      */
     render: function(containerNode, context) {
        // handle optional title
-      if (tzDomHelper.isNotEmpty(context.title)) {
+      if (tzGeneralUtils.isNotEmpty(context.title)) {
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, context.title);
       }
 
       // handle optional comment
-      if (tzDomHelper.isNotEmpty(context.comment)) {
+      if (tzGeneralUtils.isNotEmpty(context.comment)) {
         tzDomHelper.createElementWithAdjacentHtml(containerNode, "p", '{"className":"lk-code-example-comment"}', context.comment);
       }
 
       // render as matrix, unordered list, or error.
-      if (tzDomHelper.isNotEmpty(context.matrix)) {
+      if (tzGeneralUtils.isNotEmpty(context.matrix)) {
         renderAsMatrix(containerNode, context);
-      } else if (tzDomHelper.isNotEmpty(context.unorderedListItems)) {
+      } else if (tzGeneralUtils.isNotEmpty(context.unorderedListItems)) {
         renderAsUnorderedList(containerNode, context);
       } else {
         // property list was not provided, so display an error.
@@ -237,7 +237,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
 
     // create table and optionally set the width
     table = tzDomHelper.createElement(wrapper, "table");
-    if (tzDomHelper.isNotEmpty(context.width)) {
+    if (tzGeneralUtils.isNotEmpty(context.width)) {
       table.style.width = context.width;
     }
 
@@ -245,7 +245,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     tr = tzDomHelper.createElement(table, "tr");
 
     //   - optionally, display legend
-    if (tzDomHelper.isNotEmpty(matrix.legendImages)) {
+    if (tzGeneralUtils.isNotEmpty(matrix.legendImages)) {
       tzDomHelper.createElementWithAdjacentHtml(tr, "th", null, "legend");
     }
 
@@ -269,7 +269,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
       tr = tzDomHelper.createElement(table, "tr");
 
       // first column is the legend
-      if (tzDomHelper.isNotEmpty(matrix.legendImages)) {
+      if (tzGeneralUtils.isNotEmpty(matrix.legendImages)) {
         td = tzDomHelper.createElement(tr, "td", '{"className": "center"}');
         if (matrix.legendImages.length > eleIndex) {
           tzDomHelper.createElement(td, "img", '{"src": "'+matrix.legendImages[eleIndex]+'"}');
@@ -325,7 +325,7 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
    */
   function listItemsToMap(itemIds, styleName) {
     var result = {};
-    var itemIdList = tzDomHelper.splitWithTrim(itemIds);
+    var itemIdList = tzGeneralUtils.splitWithTrim(itemIds);
 
     for (var i = 0; i < itemIdList.length; i++) {
       result[itemIdList[i]] = styleName;
@@ -356,4 +356,4 @@ var lkDisplayStylesTag = (function(tzDomHelper, tzCustomTagHelper) {
     return result;
   }
 
-}(tzDomHelperModule, tzCustomTagHelperModule));
+}(tzGeneralUtilsModule, tzDomHelperModule, tzCustomTagHelperModule));

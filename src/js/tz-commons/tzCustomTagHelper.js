@@ -13,7 +13,7 @@
  *
  * @module tzCustomTagHelperModule
  */
-var tzCustomTagHelperModule = (function( tzDomHelper ) {
+var tzCustomTagHelperModule = (function( tzGeneralUtils, tzDomHelper ) {
   "use strict";
 
   var templateVariableExpression = new RegExp( "{{(.*?)}}", "g" );
@@ -101,7 +101,7 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
     getTemplate: function( templateId ) {
       var result = tzDomHelper.getInnerHtml( templateId );
 
-      if (tzDomHelper.isEmpty( result )) {
+      if (tzGeneralUtils.isEmpty( result )) {
         result = '<span style="color:red;">Template was not found: ' + templateId + '</span>';
       }
 
@@ -123,4 +123,4 @@ var tzCustomTagHelperModule = (function( tzDomHelper ) {
       return result;
     }
   }
-}( tzDomHelperModule ));
+}( tzGeneralUtilsModule, tzDomHelperModule ));
