@@ -81,7 +81,7 @@ var lkBulletPointTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper)
       var context = {
         "iconClass": lkBulletPointTagNode.getAttribute("iconClass"), // class name
         "styleAttribute": tzGeneralUtils.isEmpty(style) ? "" : "style='" + style + "'", // complete style attribute
-        "leftColumnWidth": tzGeneralUtils.coalesce(lkBulletPointTagNode.getAttribute("leftColumnWidth"), "24px"),
+        "leftColumnWidth": tzGeneralUtils.coalesceOnEmpty(lkBulletPointTagNode.getAttribute("leftColumnWidth"), "24px"),
         "rawRightColumnHtml": lkBulletPointTagNode.innerHTML
       };
 

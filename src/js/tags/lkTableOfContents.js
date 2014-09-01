@@ -118,7 +118,7 @@ var lkTableOfContentsTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHel
       }
 
       // start ToC
-      var toc = tzDomHelper.createElement(null, "ul", '{"className":"'+tzGeneralUtils.coalesce(context.cssClassName, "toc")+'"}'); // default to "toc"
+      var toc = tzDomHelper.createElement(null, "ul", '{"className":"'+tzGeneralUtils.coalesceOnEmpty(context.cssClassName, "toc")+'"}'); // default to "toc"
 
       // generate list of level-1 and level-2 ToC items
       for (var i = 0; i < level1NodeList.length; i++) {
@@ -141,7 +141,7 @@ var lkTableOfContentsTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHel
       }
 
       // add heading
-      context.title = tzGeneralUtils.coalesce(context.title, "Table of Contents");
+      context.title = tzGeneralUtils.coalesceOnEmpty(context.title, "Table of Contents");
       tzDomHelper.createElementWithAdjacentHtml(containerNode,"h2", '{"id":"tableOfContents"}', "<b>" + context.title + "</b>");
 
       // add all items to ToC element
@@ -182,7 +182,7 @@ var lkTableOfContentsTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHel
       result.className += " fail";
     }
 
-    var tocItemText = tzGeneralUtils.coalesce(node.innerHTML, node.id);
+    var tocItemText = tzGeneralUtils.coalesceOnEmpty(node.innerHTML, node.id);
     result.insertAdjacentHTML("afterbegin", "<a href=\"#" + node.id + "\">" + tocItemText + "</a>");
 
     return result;

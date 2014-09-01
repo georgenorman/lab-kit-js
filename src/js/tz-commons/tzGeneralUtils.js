@@ -66,13 +66,21 @@ var tzGeneralUtilsModule = (function( tzLogHelper ) {
     },
 
     /**
-     * Returns the given <code>value</code> if not <code>null</code>, otherwise returns the given <code>defaultValue</code>.
-     *
-     * @param value - value to return if not <code>null</code>.
-     * @param defaultValue - defaultValue to return if value is <code>null</code>.
+     * Returns the given <code>value</code> if not empty, otherwise returns the given <code>defaultValue</code>.
      */
-    coalesce: function( value, defaultValue ) {
+    coalesceOnEmpty: function( value, defaultValue ) {
       var result = this.isEmpty( value ) ? defaultValue : value;
+
+      tzLogHelper.debug( value );
+
+      return result;
+    },
+
+    /**
+     * Returns the given <code>value</code> if not null or undefined, otherwise returns the given <code>defaultValue</code>.
+     */
+    coalesceOnNull: function(value, defaultValue) {
+      var result = value === undefined || value === null ? defaultValue : value;
 
       tzLogHelper.debug( value );
 

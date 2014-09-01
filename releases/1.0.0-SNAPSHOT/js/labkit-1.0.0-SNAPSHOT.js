@@ -149,13 +149,21 @@ var tzGeneralUtilsModule = (function( tzLogHelper ) {
     },
 
     /**
-     * Returns the given <code>value</code> if not <code>null</code>, otherwise returns the given <code>defaultValue</code>.
-     *
-     * @param value - value to return if not <code>null</code>.
-     * @param defaultValue - defaultValue to return if value is <code>null</code>.
+     * Returns the given <code>value</code> if not empty, otherwise returns the given <code>defaultValue</code>.
      */
-    coalesce: function( value, defaultValue ) {
+    coalesceOnEmpty: function( value, defaultValue ) {
       var result = this.isEmpty( value ) ? defaultValue : value;
+
+      tzLogHelper.debug( value );
+
+      return result;
+    },
+
+    /**
+     * Returns the given <code>value</code> if not null or undefined, otherwise returns the given <code>defaultValue</code>.
+     */
+    coalesceOnNull: function(value, defaultValue) {
+      var result = value === undefined || value === null ? defaultValue : value;
 
       tzLogHelper.debug( value );
 
@@ -1355,7 +1363,7 @@ var lkBulletPointTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper)
       var context = {
         "iconClass": lkBulletPointTagNode.getAttribute("iconClass"), // class name
         "styleAttribute": tzGeneralUtils.isEmpty(style) ? "" : "style='" + style + "'", // complete style attribute
-        "leftColumnWidth": tzGeneralUtils.coalesce(lkBulletPointTagNode.getAttribute("leftColumnWidth"), "24px"),
+        "leftColumnWidth": tzGeneralUtils.coalesceOnEmpty(lkBulletPointTagNode.getAttribute("leftColumnWidth"), "24px"),
         "rawRightColumnHtml": lkBulletPointTagNode.innerHTML
       };
 
@@ -1627,7 +1635,7 @@ var lkTableOfContentsTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHel
       }
 
       // start ToC
-      var toc = tzDomHelper.createElement(null, "ul", '{"className":"'+tzGeneralUtils.coalesce(context.cssClassName, "toc")+'"}'); // default to "toc"
+      var toc = tzDomHelper.createElement(null, "ul", '{"className":"'+tzGeneralUtils.coalesceOnEmpty(context.cssClassName, "toc")+'"}'); // default to "toc"
 
       // generate list of level-1 and level-2 ToC items
       for (var i = 0; i < level1NodeList.length; i++) {
@@ -1650,7 +1658,7 @@ var lkTableOfContentsTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHel
       }
 
       // add heading
-      context.title = tzGeneralUtils.coalesce(context.title, "Table of Contents");
+      context.title = tzGeneralUtils.coalesceOnEmpty(context.title, "Table of Contents");
       tzDomHelper.createElementWithAdjacentHtml(containerNode,"h2", '{"id":"tableOfContents"}', "<b>" + context.title + "</b>");
 
       // add all items to ToC element
@@ -1691,7 +1699,7 @@ var lkTableOfContentsTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHel
       result.className += " fail";
     }
 
-    var tocItemText = tzGeneralUtils.coalesce(node.innerHTML, node.id);
+    var tocItemText = tzGeneralUtils.coalesceOnEmpty(node.innerHTML, node.id);
     result.insertAdjacentHTML("afterbegin", "<a href=\"#" + node.id + "\">" + tocItemText + "</a>");
 
     return result;
@@ -2226,7 +2234,7 @@ var lkDisplayStylesTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelpe
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
  *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
  *   <tr><td class="name"><code>logger-height</code></td><td>The constrained height for the logger output</td></tr>
- *   <tr><td class="name"><code>resultHeaderTitle</code></td><td>Optional header title for the result section</td></tr>
+ *   <tr><td class="name"><code>resultHeader</code></td><td>Optional header title for the result section</td></tr>
  * </table>
  *<p>
  *
@@ -2277,15 +2285,22 @@ var lkJsExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, t
       // replace the leading newline and trailing white-space.
       rawJs = rawJs.replace(/^[\n]|[\s]+$/g, "");
 
+      // get the code header title
+      var codeHeader = lkJsExampleTagNode.getAttribute("resultHeader");
+      if (tzGeneralUtils.isEmpty(codeHeader) && lkJsExampleTagNode.hasOwnProperty("resultHeader")) {
+        codeHeader = "";
+      }
+
       // build the context
       var context = {
         "id": lkJsExampleTagNode.getAttribute("id"),
         "renderCode": lkJsExampleTagNode.getAttribute("renderCode") || true,
+        "codeHeader": lkJsExampleTagNode.getAttribute("codeHeader"),
         "codeComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, codeCommentExpression),
         "width": lkJsExampleTagNode.getAttribute("width"),
 
         "evalCode": lkJsExampleTagNode.getAttribute("evalCode") || true,
-        "resultHeaderTitle": lkJsExampleTagNode.getAttribute("resultHeaderTitle"),
+        "resultHeader": codeHeader,
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkJsExampleTagNode, resultCommentExpression),
         "rawJs": rawJs,
 
@@ -2308,12 +2323,13 @@ var lkJsExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, t
      *            <li>renderCode: if true (default), then render the <i>rawJs</i> code example, with syntax highlighting and line numbers;
      *                otherwise, the code example is not rendered (but the JavaScript may still be executed via eval).
      *                You may want to set this to false, if you want the code to be evaluated and results logged to the browser, but don't want the code to be displayed.
+     *            <li>codeHeader: optional header title for the JavaScript code example (defaults to "JavaScript" if undefined or null).
      *            <li>codeComment: optional comment to render above the JavaScript code example.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code example area when scrolling is required.
      *
      *            <li>evalCode: if true (default), then execute the JavaScript (via eval); otherwise, the code is not executed, but is rendered inline.
      *                You may want to set this to false, if you want the code to be displayed and be available to the DOM.
-     *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
+     *            <li>resultHeader: optional header title for the results (defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the evaluated result.
      *            <li>rawJs: the JavaScript code to execute.
      *            <li>loggerHeight: the constrained height for the logger output.
@@ -2323,7 +2339,7 @@ var lkJsExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, t
       // render the JavaScript code example (optional)
       if (context.renderCode == true) {
         tzCodeHighlighter.render(containerNode, {
-          "heading": "JavaScript",
+          "heading": tzGeneralUtils.coalesceOnNull(context.codeHeader, "JavaScript"),
           "codeBlockComment": context.codeComment,
           "lang": "js",
           "width": context.width,
@@ -2333,7 +2349,7 @@ var lkJsExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, t
       // execute the JavaScript code (optional)
       if (context.evalCode == true) {
         // render result heading
-        var header = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        var resultHeader = tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesceOnEmpty(context.resultHeader, "Rendered Result"));
 
         // render optional result comment, if present
         if (tzGeneralUtils.isNotEmpty(context.resultComment)) {
@@ -2346,7 +2362,7 @@ var lkJsExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, t
         }
 
         // create the logger, for use by the code about to be executed (the code can lookup this logger by the id of its <lk-js-example> tag instance).
-        var logger = createLogger(containerNode, context, header);
+        var logger = createLogger(containerNode, context, resultHeader);
 
         try {
           eval(context.rawJs);
@@ -2564,7 +2580,7 @@ var lkCssExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper, 
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
  *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
- *   <tr><td class="name"><code>resultHeaderTitle</code></td><td>Optional header title for the result section</td></tr>
+ *   <tr><td class="name"><code>resultHeader</code></td><td>Optional header title for the result section</td></tr>
  * </table>
  *
  * @module lkHtmlExampleTag
@@ -2617,7 +2633,7 @@ var lkHtmlExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper,
       var context = {
         "codeComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, codeCommentExpression),
         "rawHtml": rawHtml,
-        "resultHeaderTitle": lkHtmlExampleTagNode.getAttribute("resultHeaderTitle"),
+        "resultHeader": lkHtmlExampleTagNode.getAttribute("resultHeader"),
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, resultCommentExpression),
         "width": lkHtmlExampleTagNode.getAttribute("width"),
         "height": lkHtmlExampleTagNode.getAttribute("height"),
@@ -2640,7 +2656,7 @@ var lkHtmlExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper,
      *          <ul>
      *            <li>codeComment: optional comment to render above the HTML code block.
      *            <li>rawHtml: the HTML code to insert.
-     *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
+     *            <li>resultHeader: title for the results (if not provided, then defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
      *            <li>height: optional height.
@@ -2661,7 +2677,7 @@ var lkHtmlExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper,
       // inject the live HTML code, if requested
       if (context.injectCode) {
         // render result heading
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesceOnEmpty(context.resultHeader, "Rendered Result"));
 
         // render optional result comment, if present
         if (tzGeneralUtils.isNotEmpty(context.resultComment)) {

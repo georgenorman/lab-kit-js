@@ -30,7 +30,7 @@
  * <table class="params">
  *   <thead><tr><th>Name</th><th class="last">Description</th></tr></thead>
  *   <tr><td class="name"><code>width</code></td><td>Width of the rendered example</td></tr>
- *   <tr><td class="name"><code>resultHeaderTitle</code></td><td>Optional header title for the result section</td></tr>
+ *   <tr><td class="name"><code>resultHeader</code></td><td>Optional header title for the result section</td></tr>
  * </table>
  *
  * @module lkHtmlExampleTag
@@ -83,7 +83,7 @@ var lkHtmlExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper,
       var context = {
         "codeComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, codeCommentExpression),
         "rawHtml": rawHtml,
-        "resultHeaderTitle": lkHtmlExampleTagNode.getAttribute("resultHeaderTitle"),
+        "resultHeader": lkHtmlExampleTagNode.getAttribute("resultHeader"),
         "resultComment": tzCustomTagHelper.getFirstMatchedGroup(lkHtmlExampleTagNode, resultCommentExpression),
         "width": lkHtmlExampleTagNode.getAttribute("width"),
         "height": lkHtmlExampleTagNode.getAttribute("height"),
@@ -106,7 +106,7 @@ var lkHtmlExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper,
      *          <ul>
      *            <li>codeComment: optional comment to render above the HTML code block.
      *            <li>rawHtml: the HTML code to insert.
-     *            <li>resultHeaderTitle: title for the results (if not provided, then defaults to "Rendered Result").
+     *            <li>resultHeader: title for the results (if not provided, then defaults to "Rendered Result").
      *            <li>resultComment: optional comment to render above the live result.
      *            <li>width: optional width (hack) to force the zebra stripes to fill the entire code area when scrolling is required.
      *            <li>height: optional height.
@@ -127,7 +127,7 @@ var lkHtmlExampleTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelper,
       // inject the live HTML code, if requested
       if (context.injectCode) {
         // render result heading
-        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesce(context.resultHeaderTitle, "Rendered Result"));
+        tzDomHelper.createElementWithAdjacentHtml(containerNode, "h5", null, tzGeneralUtils.coalesceOnEmpty(context.resultHeader, "Rendered Result"));
 
         // render optional result comment, if present
         if (tzGeneralUtils.isNotEmpty(context.resultComment)) {
