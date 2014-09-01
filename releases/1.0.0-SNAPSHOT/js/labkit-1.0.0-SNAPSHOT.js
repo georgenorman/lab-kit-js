@@ -856,20 +856,50 @@ var lkResultLoggerModule = (function(tzGeneralUtils, tzDomHelper, tzLogHelper) {
        * Log the given msg to the DOM node given at construction time, using the default output style (".lk-logger-value")
        *
        * @param msg message to log
-       * @param color optional color of message
+       * @param cssClass optional CSS class name for message
        */
-      msg: function(msg, color) {
-        doLog(formatOutput(msg, color));
+      msg: function(msg, cssClass) {
+        doLog(formatOutput(msg, cssClass));
       },
 
       /**
        * Log a label.
        *
        * @param label
-       * @param color optional color of label
+       * @param cssClass optional CSS class name
        */
-      label: function(label, color) {
-        doLog(formatLabel(label, color, "plain"));
+      label: function(label, cssClass) {
+        doLog(formatLabel(label, cssClass === undefined ? "plain" : cssClass));
+      },
+
+      /**
+       * Log a level-1 heading.
+       *
+       * @param heading
+       * @param cssClass optional CSS class name
+       */
+      heading1: function(heading, cssClass) {
+        doLog(formatLabel(heading, cssClass === undefined ? "h1" : cssClass, true));
+      },
+
+      /**
+       * Log a level-2 heading.
+       *
+       * @param heading
+       * @param cssClass optional CSS class name
+       */
+      heading2: function(heading, cssClass) {
+        doLog(formatLabel(heading, cssClass === undefined ? "h2" : cssClass, true));
+      },
+
+      /**
+       * Log a level-3 heading.
+       *
+       * @param heading
+       * @param cssClass optional CSS class name
+       */
+      heading3: function(heading, cssClass) {
+        doLog(formatLabel(heading, cssClass === undefined ? "h3" : cssClass, true));
       },
 
       /**
@@ -878,12 +908,12 @@ var lkResultLoggerModule = (function(tzGeneralUtils, tzDomHelper, tzLogHelper) {
        * @param label
        * @param value
        * @param comment optional comment to display to the right of the value, surrounded by parens.
-       * @param labelColor optional color of label
+       * @param labelCssClass optional CSS class name for label
        */
-      labelValue: function(label, value, comment, labelColor) {
+      labelValue: function(label, value, comment, labelCssClass) {
         var commentFmt = tzGeneralUtils.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
-        doLog(formatLabel(label, labelColor) + " " + formatOutput(value) + commentFmt)
+        doLog(formatLabel(label, labelCssClass) + " " + formatOutput(value) + commentFmt)
       },
 
       /**
@@ -908,14 +938,14 @@ var lkResultLoggerModule = (function(tzGeneralUtils, tzDomHelper, tzLogHelper) {
        *
        * @param expression the text to use as the label and the text to be evaluated as the value.
        * @param comment optional comment to display to the right of the value, surrounded by parens.
-       * @param labelColor optional color of label
+       * @param labelCssClass optional CSS class name for label
        */
-      expression: function(expression, comment, labelColor) {
-        this.labelExpression(expression, expression, comment, labelColor);
+      expression: function(expression, comment, labelCssClass) {
+        this.labelExpression(expression, expression, comment, labelCssClass);
       },
 
-      labelExpression: function(label, expression, comment, labelColor) {
-        var labelFmt = formatLabel(label, labelColor);
+      labelExpression: function(label, expression, comment, labelCssClass) {
+        var labelFmt = formatLabel(label, labelCssClass);
         var commentFmt = tzGeneralUtils.isEmpty(comment) ? "" : " <small>(" + comment + ")</small>";
 
         // Ternary Operator is broken (tested via FF and Chrome).
@@ -937,6 +967,10 @@ var lkResultLoggerModule = (function(tzGeneralUtils, tzDomHelper, tzLogHelper) {
        */
       error: function(errMsg) {
         doLog("<span style='color:red;'>" + errMsg + "</span>");
+      },
+
+      newline: function() {
+        doLog("");
       },
 
       divider: function(color) {
@@ -963,31 +997,36 @@ var lkResultLoggerModule = (function(tzGeneralUtils, tzDomHelper, tzLogHelper) {
       }
     };
 
-    function formatLabel(label, color, cssClassName) {
-      var style = "";
-      var cssClass = cssClassName === undefined ? "" : " class='"+cssClassName+"'";
-
+    function formatLabel(label, labelCssClass, sansColon) {
+      // label title
+      var styleAttribute = "";
       if (label === undefined) {
         label = "undefined";
-        style = " style='color:red'";
-      } else if (tzGeneralUtils.isNotEmpty(color)) {
-        style = " style='color:" + color + "'";
+        styleAttribute = " style='color:red'";
       }
 
-      return "<label" + style + cssClass + ">" + label + ":</label>";
+      // label style
+      var cssAttribute = labelCssClass === undefined ? "" : " class='" + labelCssClass + "'";
+
+      // colon
+      var colon = sansColon === true ? "" : ":";
+
+      // render
+      return "<label" + styleAttribute + cssAttribute + ">" + label + colon + "</label>";
     }
 
-    function formatOutput(msg, color) {
-      var style = "";
+    function formatOutput(msg, cssClass) {
+      var styleAttribute = "";
+      var cssAttribute = "";
 
       if (msg === undefined) {
         msg = "undefined";
-        style = " style='color:red'";
-      } else if (tzGeneralUtils.isNotEmpty(color)) {
-        style = " style='color:" + color + "'";
+        styleAttribute = " style='color:red'";
+      } else if (tzGeneralUtils.isNotEmpty(cssClass)) {
+        cssAttribute = " class='" + cssClass + "'";
       }
 
-      return "<output" + style + ">" + msg + "</output>";
+      return "<output" + styleAttribute + cssAttribute + ">" + msg + "</output>";
     }
 
     function doLog(msg, withNewline) {
@@ -2161,8 +2200,12 @@ var lkDisplayStylesTag = (function(tzGeneralUtils, tzDomHelper, tzCustomTagHelpe
  * Renders the raw JavaScript code, with syntax highlighting and line numbers,
  * and then executes it (via eval), so that the live results will be reflected in the DOM
  * (e.g., DOM manipulation, results logged to a panel, etc).
- * Optionally, if the eval attribute is set to false, the JavaScript will be rendered inline (instead of executed via eval).
- * Using this option, the lkResultLogger will not be available.
+ * Optionally, if the evalCode attribute is set to false, the JavaScript will not be executed (via eval) or injected into the DOM
+ * (but the syntax-highlighted code will still be rendered).
+ * If the JavaScript code is required to be available to the DOM, then remove the 'type="multiline-template"' attribute from
+ * the script tag.
+ *
+ * When using the evalCode='false' option, the lkResultLogger will not be available.
  * <p>
  * The tag attributes are read from the <code>lk-js-example</code> element, as shown in the examples below:
  *

@@ -11,8 +11,9 @@
   overflow: auto;
 }
 
+
 /* ---------------------------------
- * Label
+ * Messages (see NodeLogger)
  * --------------------------------- */
 
 .lk-result-logger label {
@@ -20,8 +21,23 @@
   color: #666;
 }
 
-.lk-result-logger label.plain {
+.lk-result-logger label.h1 {
   font-weight: bold;
+  color: #036;
+  text-decoration: underline;
+}
+
+.lk-result-logger label.h2 {
+  font-weight: bold;
+  color: #036;
+}
+
+.lk-result-logger label.h3 {
+  font-weight: normal;
+  color: #888;
+}
+
+.lk-result-logger label.plain {
   color: #036;
 }
 
@@ -31,6 +47,22 @@
 .lk-result-logger small {
   font-style: italic;
 }
+
+/** see NodeLogger.label */
+.lk-result-logger .msg-label {
+  color: #888;
+}
+
+/** see NodeLogger.label */
+.lk-result-logger .msg-important-label {
+  color: #e66;
+}
+
+/** see NodeLogger.label */
+.lk-result-logger .msg-warning-label {
+  color: #FFA500;
+}
+
 
 /* ---------------------------------
  * Wait animation
