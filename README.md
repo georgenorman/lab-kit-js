@@ -8,7 +8,7 @@ To help organize the experiments, the `<lk-table-of-contents>` tag can be used t
 ## Demos
 
 * [CSS Lab](http://www.thruzero.com/pages/jcat3/css-lab/index.html)
-* [JS Lab](http://www.thruzero.com/pages/jcat3/js-lab/index.html)
+* [JS Lab](http://www.thruzero.com/pages/jcat3/js-lab/html/index.html)
 * [jQuery Lab](http://www.thruzero.com/pages/jcat3/jquery-lab/index.html)
 
 ## JSDoc
